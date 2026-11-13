@@ -9,12 +9,14 @@
     rafFiyati: { 31: 300, 43: 350, 59: 530 },       // derinliğe göre raf tablası (TL)
     profilFiyati: { 200: 250, 250: 300 },           // profil boyuna göre (TL)
     civataFiyati: 4,                                 // somun-cıvata adet (TL)
-    civataTekli: 8,                                  // raf başı, tekli / bağımsız
+    civataTekli: 8,                                  // raf başı, tekli / ayrı ünite
     civataBitisik: 6,                                // raf başı, bitişik
     payBitisik: 0.5,                                 // bitişik kurulumda ünite başı pay (cm)
     payAyri: 1,                                      // ayrı kurulumda ünite başı pay (cm)
+    azBosluk: 10,                                    // "Az boşluklu" seçeneğinde izin verilen en fazla boşluk (cm)
     kdv: 0.20,
-    varsayilanKat: { 200: 5, 250: 6 }
+    varsayilanKat: { 200: 5, 250: 6 },
+    enFazlaDuvar: 8
   };
   /* ========================================================== */
 
@@ -23,33 +25,40 @@
   R.dataset.ok = "1";
 
   var css = "" +
-    "#raf-hesap{--a:#e2701f;--ink:#1b1b1b;--mut:#666;--ln:#e3e3e3;--bg:#f6f6f6;--st:#56697b;--st2:#93a4b3;" +
+    "#raf-hesap{--a:#e2701f;--ink:#1b1b1b;--mut:#666;--ln:#e3e3e3;--bg:#f6f6f6;" +
     "max-width:960px;margin:0 auto;color:var(--ink);font-family:inherit;font-size:15px;line-height:1.45;text-align:left}" +
     "#raf-hesap *{box-sizing:border-box}" +
     "#raf-hesap .rh-k{background:#fff;border:1px solid var(--ln);border-radius:12px;padding:16px;margin:0 0 14px}" +
     "#raf-hesap h3{font-size:17px;font-weight:700;margin:0 0 12px;padding:0;color:var(--ink)}" +
+    "#raf-hesap h4{font-size:15px;font-weight:700;margin:0;padding:0;color:var(--ink)}" +
     "#raf-hesap .rh-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}" +
     "#raf-hesap label.rh-f{display:block;font-size:13px;color:var(--mut);margin:0}" +
     "#raf-hesap label.rh-f input,#raf-hesap label.rh-f select{display:block;width:100%;height:46px;margin:6px 0 0;padding:0 12px;font:inherit;font-size:16px;color:var(--ink);background:#fff;border:1px solid #cfcfcf;border-radius:8px}" +
+    "#raf-hesap .rh-sep{height:1px;background:var(--ln);margin:14px 0}" +
     "#raf-hesap .rh-s{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}" +
     "#raf-hesap .rh-o{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--ln);border-radius:10px;padding:12px;cursor:pointer;margin:0}" +
-    "#raf-hesap .rh-o input{margin:3px 0 0;width:18px;height:18px;accent-color:var(--a)}" +
+    "#raf-hesap .rh-o input{margin:3px 0 0;width:18px;height:18px;flex:0 0 auto;accent-color:var(--a)}" +
     "#raf-hesap .rh-o b{display:block;font-size:14px}" +
-    "#raf-hesap .rh-o span{font-size:12.5px;color:var(--mut)}" +
+    "#raf-hesap .rh-o span{display:block;font-size:12.5px;color:var(--mut)}" +
+    "#raf-hesap .rh-o em{display:block;font-style:normal;font-weight:800;font-size:16px;margin-top:4px;color:var(--ink)}" +
     "#raf-hesap .rh-o.on{border-color:var(--a);background:#fff5ee}" +
+    "#raf-hesap .rh-dv{border:1px solid var(--ln);border-radius:12px;padding:12px;margin-top:14px}" +
+    "#raf-hesap .rh-dh{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px;margin-bottom:8px}" +
+    "#raf-hesap .rh-dh span{font-size:14px;color:var(--mut)}" +
+    "#raf-hesap .rh-dh strong{font-size:15px}" +
     "#raf-hesap .rh-cz{background:var(--bg);border-radius:8px;padding:8px}" +
     "#raf-hesap .rh-cz svg{display:block;width:100%;height:auto}" +
     "#raf-hesap .rh-n{font-size:13px;color:var(--mut);margin:8px 0 0}" +
-    "#raf-hesap .rh-st{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}" +
+    "#raf-hesap .rh-st{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 12px}" +
     "#raf-hesap .rh-st div{text-align:center;border:1px solid var(--ln);border-radius:10px;padding:8px 4px}" +
     "#raf-hesap .rh-st b{display:block;font-size:20px}" +
     "#raf-hesap .rh-st span{font-size:12px;color:var(--mut)}" +
-    "#raf-hesap .rh-u{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}" +
-    "#raf-hesap .rh-u>div{border:1px solid var(--ln);border-radius:10px;padding:10px}" +
+    "#raf-hesap .rh-u{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}" +
+    "#raf-hesap .rh-u>div{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid var(--ln);border-radius:10px;padding:8px 10px}" +
     "#raf-hesap .rh-u .w{font-size:13px;color:var(--mut)}" +
-    "#raf-hesap .rh-u .c{font-size:17px;font-weight:700;margin:2px 0 8px}" +
+    "#raf-hesap .rh-u .c{font-size:16px;font-weight:700}" +
     "#raf-hesap .rh-u .b{display:flex;gap:6px}" +
-    "#raf-hesap button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid #cfcfcf;background:#fff;color:var(--ink);padding:6px 10px;min-height:38px;flex:1;margin:0;text-transform:none}" +
+    "#raf-hesap button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid #cfcfcf;background:#fff;color:var(--ink);padding:4px 10px;min-height:36px;min-width:36px;margin:0;text-transform:none}" +
     "#raf-hesap button:hover{border-color:var(--a)}" +
     "#raf-hesap .rh-w{color:#c0392b;font-weight:600}" +
     "#raf-hesap table{width:100%;border-collapse:collapse;font-size:14px;margin:0;border:0}" +
@@ -60,7 +69,7 @@
     "#raf-hesap .rh-t{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding:14px;border-radius:10px;background:#fff5ee}" +
     "#raf-hesap .rh-t .big{font-size:28px;font-weight:800;line-height:1.1}" +
     "#raf-hesap .rh-t .lb{font-size:13px;color:var(--mut)}" +
-    "#raf-hesap .rh-wa{background:#25d366;border-color:#25d366;color:#fff;font-weight:700;padding:10px 18px;flex:0 0 auto}" +
+    "#raf-hesap .rh-wa{background:#25d366;border-color:#25d366;color:#fff;font-weight:700;padding:10px 18px}" +
     "#raf-hesap .rh-kdv{display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;margin:0}" +
     "#raf-hesap .rh-kdv input{width:18px;height:18px;margin:0;accent-color:var(--a)}" +
     "#raf-hesap .rh-hd{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}" +
@@ -73,11 +82,19 @@
 
   function opt(arr, suf) { return arr.map(function (v) { return '<option value="' + v + '">' + v + suf + "</option>"; }).join(""); }
   var katOpt = ""; for (var i = 2; i <= 10; i++) katOpt += '<option value="' + i + '">' + i + " kat</option>";
+  var duvarOpt = ""; for (var i2 = 1; i2 <= AYAR.enFazlaDuvar; i2++) duvarOpt += '<option value="' + i2 + '">' + i2 + " duvar</option>";
   var profiller = Object.keys(AYAR.profilFiyati).map(Number);
+  var MODLAR = [
+    { id: "eko", ad: "En uygun fiyat", ac: "En az maliyetli dizilim." },
+    { id: "az", ad: "Az boşluklu", ac: "Boşluk en fazla " + AYAR.azBosluk + " cm, en uygun fiyat." },
+    { id: "dolu", ad: "Duvarı tam doldur", ac: "En az boşluk kalan dizilim." }
+  ];
 
   R.innerHTML =
-    '<div class="rh-k"><h3>1. Ölçüler</h3><div class="rh-g">' +
-    '<label class="rh-f">Duvar genişliği (cm)<input id="rh-w" type="number" inputmode="numeric" min="0" value="500"></label>' +
+    '<div class="rh-k"><h3>1. Duvarlar ve raf ölçüleri</h3>' +
+    '<div class="rh-g"><label class="rh-f">Kaç duvara raf kurulacak?<select id="rh-dn">' + duvarOpt + "</select></label></div>" +
+    '<div class="rh-g" id="rh-dw" style="margin-top:12px"></div>' +
+    '<div class="rh-sep"></div><div class="rh-g">' +
     '<label class="rh-f">Raf derinliği<select id="rh-d">' + opt(AYAR.derinlikler, " cm") + "</select></label>" +
     '<label class="rh-f">Raf yüksekliği<select id="rh-p">' + opt(profiller, " cm") + "</select></label>" +
     '<label class="rh-f">Kat sayısı<select id="rh-k">' + katOpt + "</select></label>" +
@@ -87,69 +104,83 @@
     '<label class="rh-o"><input type="radio" name="rh-t" value="a"><div><b>Ayrı ayrı üniteler</b><span>Her ünite kendi 4 profiliyle kurulur.</span></div></label>' +
     "</div></div>" +
     '<div class="rh-k"><h3>3. Raf yerleşimi</h3>' +
-    '<div class="rh-s" style="margin-bottom:12px">' +
-    '<label class="rh-o"><input type="radio" name="rh-m" value="eko" checked><div><b>En uygun fiyat</b><span>En az maliyetli ünite dizilimi.</span></div></label>' +
-    '<label class="rh-o"><input type="radio" name="rh-m" value="dolu"><div><b>Duvarı tam doldur</b><span>Duvarda en az boşluk kalacak dizilim.</span></div></label>' +
-    "</div>" +
-    '<div class="rh-cz"><svg id="rh-svg" role="img" aria-label="Raf yerleşimi"></svg></div>' +
-    '<p class="rh-n">Şematik görünüm · Ölçüler cm · Ünite sayısını +/− ile değiştirebilirsiniz.</p>' +
-    '<div class="rh-st"><div><b id="rh-s1"></b><span>Ünite</span></div><div><b id="rh-s2"></b><span>Raf tablası</span></div><div><b id="rh-s3"></b><span>Profil</span></div><div><b id="rh-s4"></b><span>Somun-cıvata</span></div></div>' +
-    '<div class="rh-u" id="rh-u"></div><p class="rh-n" id="rh-gn"></p></div>' +
+    '<div class="rh-s" id="rh-m"></div>' +
+    '<div id="rh-ws"></div>' +
+    '<p class="rh-n">Şematik görünüm · Ölçüler cm · Her duvarda ünite sayısını +/− ile değiştirebilirsiniz.</p></div>' +
     '<div class="rh-k"><div class="rh-hd"><h3>4. Fiyat</h3><label class="rh-kdv"><input type="checkbox" id="rh-kdv"> KDV ekle (%' + AYAR.kdv * 100 + ")</label></div>" +
+    '<div class="rh-st"><div><b id="rh-s1"></b><span>Ünite</span></div><div><b id="rh-s2"></b><span>Raf tablası</span></div><div><b id="rh-s3"></b><span>Profil</span></div><div><b id="rh-s4"></b><span>Somun-cıvata</span></div></div>' +
     '<table><thead><tr><th>Malzeme</th><th class="r hs">Adet × Fiyat</th><th class="r">Tutar</th></tr></thead><tbody id="rh-b"></tbody></table>' +
     '<div class="rh-t"><div><div class="lb" id="rh-tl"></div><div class="big" id="rh-tt"></div><div class="lb">Montaj ve nakliye dahil değildir.</div></div>' +
     '<button class="rh-wa" id="rh-wa">WhatsApp ile sipariş ver</button></div></div>';
 
   function $(id) { return document.getElementById(id); }
   function tl(n) { return n.toLocaleString("tr-TR", { style: "currency", currency: "TRY", minimumFractionDigits: 2 }); }
-
-  var S = { w: 500, d: 31, p: 200, k: 5, t: "b", m: "eko", kdv: false, adet: null };
-
-  function toplamUnite(a) { return AYAR.genislikler.reduce(function (s, w) { return s + a[w]; }, 0); }
-  function pay() { return S.t === "b" ? AYAR.payBitisik : AYAR.payAyri; }
-  function kullanilan(a) { return AYAR.genislikler.reduce(function (s, w) { return s + a[w] * (w + pay()); }, 0); }
   function cm(n) { return (Math.round(n * 10) / 10).toLocaleString("tr-TR"); }
 
-  function liste(a) {
-    var n = toplamUnite(a), raf = n * S.k, satir = [];
-    AYAR.genislikler.forEach(function (w) {
-      if (a[w]) satir.push({ ad: "Raf tablası " + S.d + "×" + w + " cm", adet: a[w] * S.k, fiyat: AYAR.rafFiyati[S.d] });
+  var S = { d: 31, p: 200, k: 5, t: "b", m: "eko", kdv: false, duvarlar: [{ w: 300, adet: null }] };
+  var G = AYAR.genislikler;
+
+  function pay() { return S.t === "b" ? AYAR.payBitisik : AYAR.payAyri; }
+  function uniteSay(a) { return G.reduce(function (s, w) { return s + a[w]; }, 0); }
+  function kullanilan(a) { return G.reduce(function (s, w) { return s + a[w] * (w + pay()); }, 0); }
+  function profilSay(n) { return n === 0 ? 0 : S.t === "b" ? 2 * (n + 1) : 4 * n; }
+  function civataRaf(n) { return S.t === "b" && n > 1 ? AYAR.civataBitisik : AYAR.civataTekli; }
+
+  // Tek duvarın malzemeleri
+  function duvarMalzeme(a) {
+    var n = uniteSay(a), raf = n * S.k, prof = profilSay(n), civ = raf * civataRaf(n);
+    var tutar = raf * AYAR.rafFiyati[S.d] + prof * AYAR.profilFiyati[S.p] + civ * AYAR.civataFiyati;
+    return { n: n, raf: raf, prof: prof, civ: civ, tutar: tutar };
+  }
+
+  // Duvara sığan tüm dizilimleri dener ve seçilen moda göre en iyisini döner
+  function yerlestir(W, mod) {
+    var p = pay(), enKucuk = Math.min.apply(null, G) + p, best = null, enAzBosluk = Infinity, adaylar = [];
+    for (var i = 0; i * (G[0] + p) <= W; i++)
+      for (var j = 0; i * (G[0] + p) + j * (G[1] + p) <= W; j++)
+        for (var k = 0; i * (G[0] + p) + j * (G[1] + p) + k * (G[2] + p) <= W; k++) {
+          var n = i + j + k; if (!n) continue;
+          var a = {}; a[G[0]] = i; a[G[1]] = j; a[G[2]] = k;
+          var bos = W - kullanilan(a);
+          if (bos >= enKucuk) continue;               // başka ünite sığıyorsa geç
+          var c = { a: a, bos: bos, f: duvarMalzeme(a).tutar, n: n };
+          adaylar.push(c);
+          if (bos < enAzBosluk) enAzBosluk = bos;
+        }
+    if (!adaylar.length) { var z = {}; G.forEach(function (w) { z[w] = 0; }); return z; }
+    var limit = mod === "az" ? Math.max(AYAR.azBosluk, enAzBosluk) : Infinity;
+    adaylar.forEach(function (c) {
+      if (c.bos > limit + 1e-9) return;
+      var key = mod === "dolu" ? [c.bos, c.f, c.n] : [c.f, c.bos, c.n];
+      if (!best || kucuk(key, best.key)) best = { key: key, a: c.a };
     });
-    var prof = n === 0 ? 0 : S.t === "b" ? 2 * (n + 1) : 4 * n;
+    return best.a;
+  }
+  function kucuk(x, y) { for (var i = 0; i < x.length; i++) if (Math.abs(x[i] - y[i]) > 1e-9) return x[i] < y[i]; return false; }
+
+  // Tüm duvarların toplam malzeme listesi
+  function toplam(liste) {
+    var raflar = {}, n = 0, raf = 0, prof = 0, civ = 0;
+    liste.forEach(function (a) {
+      var m = duvarMalzeme(a);
+      n += m.n; raf += m.raf; prof += m.prof; civ += m.civ;
+      G.forEach(function (w) { raflar[w] = (raflar[w] || 0) + a[w] * S.k; });
+    });
+    var satir = [];
+    G.forEach(function (w) { if (raflar[w]) satir.push({ ad: "Raf tablası " + S.d + "×" + w + " cm", adet: raflar[w], fiyat: AYAR.rafFiyati[S.d] }); });
     if (prof) satir.push({ ad: "Profil " + S.p + " cm", adet: prof, fiyat: AYAR.profilFiyati[S.p] });
     if (prof) satir.push({ ad: "Pabuç (ayak)", adet: prof, fiyat: 0 });
-    var rb = S.t === "b" && n > 1 ? AYAR.civataBitisik : AYAR.civataTekli;
-    if (raf) satir.push({ ad: "Somun-cıvata", not: "raf başı " + rb + " adet", adet: raf * rb, fiyat: AYAR.civataFiyati });
+    if (civ) satir.push({ ad: "Somun-cıvata", not: S.t === "b" ? "bitişikte raf başı " + AYAR.civataBitisik + ", tekli ünitede " + AYAR.civataTekli + " adet" : "raf başı " + AYAR.civataTekli + " adet", adet: civ, fiyat: AYAR.civataFiyati });
     var ara = satir.reduce(function (s, x) { return s + x.adet * x.fiyat; }, 0);
-    return { satir: satir, n: n, raf: raf, prof: prof, civata: raf * rb, ara: ara };
+    return { satir: satir, n: n, raf: raf, prof: prof, civ: civ, ara: ara };
   }
-
-  // Duvara sığan tüm yerleşimleri dener.
-  // "eko": başka ünite sığmayan yerleşimler içinde en ucuzu (eşitse duvarı daha çok dolduran).
-  // "dolu": duvarı en çok dolduran; eşitse en ucuzu.
-  function otomatik() {
-    var W = Math.max(0, S.w), g = AYAR.genislikler, p = pay(), enKucuk = Math.min.apply(null, g) + p, best = null;
-    for (var i = 0; i * (g[0] + p) <= W; i++)
-      for (var j = 0; i * (g[0] + p) + j * (g[1] + p) <= W; j++)
-        for (var k = 0; i * (g[0] + p) + j * (g[1] + p) + k * (g[2] + p) <= W; k++) {
-          var n = i + j + k; if (!n) continue;
-          var a = {}; a[g[0]] = i; a[g[1]] = j; a[g[2]] = k;
-          var u = kullanilan(a), f = liste(a).ara;
-          if (S.m === "eko" && W - u >= enKucuk) continue;
-          var key = S.m === "eko" ? [f, -u, n] : [-u, f, n];
-          if (!best || kucuk(key, best.key)) best = { key: key, a: a };
-        }
-    if (best) return best.a;
-    var bos = {}; g.forEach(function (w) { bos[w] = 0; }); return bos;
-  }
-  function kucuk(x, y) { for (var i = 0; i < x.length; i++) if (x[i] !== y[i]) return x[i] < y[i]; return false; }
 
   // Derinlikli (eğik perspektif) çelik raf çizimi
-  function ciz(a) {
-    var seq = []; AYAR.genislikler.forEach(function (w) { for (var i = 0; i < a[w]; i++) seq.push(w); });
+  function ciz(svg, a, Wd, id) {
+    var seq = []; G.forEach(function (w) { for (var i = 0; i < a[w]; i++) seq.push(w); });
     var p = pay(), H = S.p, D = S.d;
-    var ox = D * 0.62, oy = D * 0.42;            // derinlik kayması (sağ-yukarı)
-    var used = kullanilan(a), W = Math.max(S.w, used, 60);
+    var ox = D * 0.62, oy = D * 0.42;
+    var used = kullanilan(a), W = Math.max(Wd, used, 60);
     var fs = Math.max(10, Math.min(W, 700) / 28);
     var L = fs * 2.6, T = oy + fs * 1.2, pw = 3.6, lip = 3.2;
     var floor = T + H, s = "";
@@ -158,15 +189,13 @@
     function rect(x, y, w, h, fill, extra) { return '<rect x="' + r(x) + '" y="' + r(y) + '" width="' + r(w) + '" height="' + r(h) + '" fill="' + fill + '"' + (extra || "") + "/>"; }
 
     s += "<defs>" +
-      '<linearGradient id="rh-gp" x1="0" x2="1"><stop offset="0" stop-color="#7d8894"/><stop offset=".45" stop-color="#c9d1d8"/><stop offset="1" stop-color="#8b96a1"/></linearGradient>' +
-      '<linearGradient id="rh-gs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eef2f5"/><stop offset="1" stop-color="#cfd7de"/></linearGradient>' +
-      '<linearGradient id="rh-gw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbfbfb"/><stop offset="1" stop-color="#eeeeee"/></linearGradient>' +
+      '<linearGradient id="rh-gp' + id + '" x1="0" x2="1"><stop offset="0" stop-color="#7d8894"/><stop offset=".45" stop-color="#c9d1d8"/><stop offset="1" stop-color="#8b96a1"/></linearGradient>' +
+      '<linearGradient id="rh-gs' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eef2f5"/><stop offset="1" stop-color="#cfd7de"/></linearGradient>' +
+      '<linearGradient id="rh-gw' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbfbfb"/><stop offset="1" stop-color="#eeeeee"/></linearGradient>' +
       "</defs>";
-    // duvar ve zemin
-    s += rect(L + ox, T - oy, S.w, H + oy, "url(#rh-gw)", ' stroke="#e2e2e2"');
-    s += poly([[L, floor], [L + S.w, floor], [L + S.w + ox, floor - oy], [L + ox, floor - oy]], "#e9e5df");
+    s += rect(L + ox, T - oy, Wd, H + oy, "url(#rh-gw" + id + ")", ' stroke="#e2e2e2"');
+    s += poly([[L, floor], [L + Wd, floor], [L + Wd + ox, floor - oy], [L + ox, floor - oy]], "#e9e5df");
 
-    // ünite konumları
     var units = [], x = L;
     seq.forEach(function (w) { units.push({ x: x + (S.t === "a" ? p / 2 : 0), w: w }); x += w + p; });
     var posts = [];
@@ -174,105 +203,138 @@
     else units.forEach(function (u) { posts.push(u.x, u.x + u.w - pw); });
     if (S.t === "b" && posts.length) posts[posts.length - 1] -= pw;
 
-    // gölge
     if (units.length) s += '<ellipse cx="' + r((L + x + ox) / 2) + '" cy="' + r(floor - oy / 2) + '" rx="' + r((x - L) / 2 + ox / 2) + '" ry="' + r(oy / 2 + 2) + '" fill="#000" opacity=".07"/>';
-
-    function delikler(px, top) {
-      var h = "";
-      for (var y = top + 4; y < floor - 4; y += 5) h += rect(px + 1.1, y, 1.4, 2.4, "#4a545e", ' rx=".6"');
-      return h;
-    }
-    // arka profiller
     posts.forEach(function (px) { s += rect(px + ox, T - oy, pw, H, "#9aa5af"); });
 
-    // raf tablaları (alttan üste)
     var ys = [];
     for (var i = 0; i < S.k; i++) ys.push(floor - 6 - (H - 6 - lip) * (S.k === 1 ? 0 : i / (S.k - 1)));
     ys.forEach(function (y) {
       units.forEach(function (u) {
         var x0 = u.x, x1 = u.x + u.w;
-        s += poly([[x0, y], [x1, y], [x1 + ox, y - oy], [x0 + ox, y - oy]], "url(#rh-gs)", ' stroke="#b7c0c8" stroke-width=".5"');
+        s += poly([[x0, y], [x1, y], [x1 + ox, y - oy], [x0 + ox, y - oy]], "url(#rh-gs" + id + ")", ' stroke="#b7c0c8" stroke-width=".5"');
         s += rect(x0, y, u.w, lip, "#a7b1bb");
         s += rect(x0, y, u.w, 0.7, "#e8edf1");
       });
     });
 
-    // ön profiller (köşebent görünümü, delikli) ve pabuçlar
     posts.forEach(function (px) {
       s += poly([[px + pw, T], [px + pw + 1.6, T - 1.1], [px + pw + 1.6, floor - 1.1], [px + pw, floor]], "#6f7a85");
-      s += rect(px, T, pw, H, "url(#rh-gp)");
-      s += delikler(px, T);
+      s += rect(px, T, pw, H, "url(#rh-gp" + id + ")");
+      for (var y = T + 4; y < floor - 4; y += 5) s += rect(px + 1.1, y, 1.4, 2.4, "#4a545e", ' rx=".6"');
       s += rect(px - 0.8, floor - 1.6, pw + 1.6, 2.2, "#2b2f33", ' rx=".5"');
     });
 
-    // ölçüler
     var dimY = floor + fs * 1.4;
     units.forEach(function (u) {
       s += '<text x="' + r(u.x + u.w / 2) + '" y="' + r(dimY) + '" text-anchor="middle" font-size="' + r(fs) + '" font-weight="700" fill="#1b1b1b">' + u.w + "</text>";
     });
-    var kalan = S.w - used;
+    var kalan = Wd - used;
     if (units.length && kalan >= fs * 1.5) s += '<text x="' + r(x + kalan / 2) + '" y="' + r(dimY) + '" text-anchor="middle" font-size="' + r(fs * 0.75) + '" fill="#999">boş ' + cm(kalan) + "</text>";
     var dy2 = dimY + fs * 0.9;
-    s += '<line x1="' + r(L) + '" x2="' + r(L + S.w) + '" y1="' + r(dy2) + '" y2="' + r(dy2) + '" stroke="#999" stroke-width="' + r(fs / 14) + '"/>';
-    s += '<text x="' + r(L + S.w / 2) + '" y="' + r(dy2 + fs * 1.05) + '" text-anchor="middle" font-size="' + r(fs * 0.8) + '" fill="#666">Duvar ' + cm(S.w) + " cm</text>";
+    s += '<line x1="' + r(L) + '" x2="' + r(L + Wd) + '" y1="' + r(dy2) + '" y2="' + r(dy2) + '" stroke="#999" stroke-width="' + r(fs / 14) + '"/>';
+    s += '<text x="' + r(L + Wd / 2) + '" y="' + r(dy2 + fs * 1.05) + '" text-anchor="middle" font-size="' + r(fs * 0.8) + '" fill="#666">Duvar ' + cm(Wd) + " cm</text>";
     s += '<line x1="' + r(L - fs * 0.9) + '" x2="' + r(L - fs * 0.9) + '" y1="' + r(T) + '" y2="' + r(floor) + '" stroke="#e2701f" stroke-width="' + r(fs / 10) + '"/>';
     s += '<text x="' + r(L - fs * 1.25) + '" y="' + r(T + H / 2) + '" text-anchor="middle" font-size="' + r(fs * 0.85) + '" font-weight="700" fill="#e2701f" transform="rotate(-90 ' + r(L - fs * 1.25) + " " + r(T + H / 2) + ')">' + H + " cm</text>";
     if (units.length) {
       var ex = units[units.length - 1].x + units[units.length - 1].w;
-      s += '<text x="' + r(Math.max(ex, L + S.w) + ox + fs * 0.4) + '" y="' + r(T - oy / 2 + fs * 0.3) + '" font-size="' + r(fs * 0.75) + '" fill="#e2701f" font-weight="700">' + D + " cm</text>";
+      s += '<text x="' + r(Math.max(ex, L + Wd) + ox + fs * 0.4) + '" y="' + r(T - oy / 2 + fs * 0.3) + '" font-size="' + r(fs * 0.75) + '" fill="#e2701f" font-weight="700">' + D + " cm</text>";
     }
-    var svg = $("rh-svg");
     svg.setAttribute("viewBox", "0 0 " + r(L + W + ox + fs * 3.6) + " " + r(dy2 + fs * 1.6));
     svg.innerHTML = s;
   }
 
-  function guncelle() {
-    if (!S.adet) S.adet = otomatik();
-    var a = S.adet, b = liste(a), kul = kullanilan(a), kalan = S.w - kul;
-    ciz(a);
-    $("rh-s1").textContent = b.n; $("rh-s2").textContent = b.raf; $("rh-s3").textContent = b.prof; $("rh-s4").textContent = b.civata;
-    $("rh-u").innerHTML = AYAR.genislikler.map(function (w) {
-      return '<div><div class="w">' + S.d + "×" + w + ' cm ünite</div><div class="c">' + a[w] + ' adet</div><div class="b"><button type="button" data-w="' + w + '" data-d="-1">−</button><button type="button" data-w="' + w + '" data-d="1">+</button></div></div>';
+  // Duvar ölçü kutuları (yalnızca duvar sayısı değişince yeniden çizilir)
+  function duvarKutulari() {
+    $("rh-dw").innerHTML = S.duvarlar.map(function (d, i) {
+      return '<label class="rh-f">' + (i + 1) + '. duvar genişliği (cm)<input type="number" inputmode="numeric" min="0" data-dw="' + i + '" value="' + d.w + '"></label>';
     }).join("");
-    $("rh-gn").innerHTML = "Kurulum genişliği: <b>" + cm(kul) + " cm</b> <small>(ünite başı " + cm(pay()) + " cm pay dahil)</small> · " + (kalan >= 0 ? "Kalan: <b>" + cm(kalan) + " cm</b>" : '<span class="rh-w">Duvarı ' + cm(-kalan) + " cm aşıyor!</span>");
+  }
+
+  function sifirla() { S.duvarlar.forEach(function (d) { d.adet = null; }); }
+
+  function guncelle() {
+    S.duvarlar.forEach(function (d) { if (!d.adet) d.adet = yerlestir(d.w, S.m); });
+
+    // yerleşim seçenekleri, her birinin toplam fiyatıyla
+    $("rh-m").innerHTML = MODLAR.map(function (m) {
+      var t = toplam(S.duvarlar.map(function (d) { return yerlestir(d.w, m.id); }));
+      return '<label class="rh-o' + (S.m === m.id ? " on" : "") + '"><input type="radio" name="rh-m" value="' + m.id + '"' + (S.m === m.id ? " checked" : "") + "><div><b>" + m.ad + "</b><span>" + m.ac + "</span><em>" + tl(t.ara) + "</em></div></label>";
+    }).join("");
+
+    // duvar çizimleri
+    var ws = $("rh-ws");
+    ws.innerHTML = S.duvarlar.map(function (d, i) {
+      var a = d.adet, m = duvarMalzeme(a), kul = kullanilan(a), kalan = d.w - kul;
+      return '<div class="rh-dv"><div class="rh-dh"><h4>' + (i + 1) + ". Duvar · " + cm(d.w) + " cm</h4><span>" + m.n + " ünite · <strong>" + tl(m.tutar) + "</strong></span></div>" +
+        '<div class="rh-cz"><svg data-svg="' + i + '" role="img" aria-label="' + (i + 1) + '. duvar raf yerleşimi"></svg></div>' +
+        '<div class="rh-u">' + G.map(function (w) {
+          return '<div><div><div class="w">' + S.d + "×" + w + ' cm</div><div class="c">' + a[w] + ' adet</div></div><div class="b"><button type="button" data-i="' + i + '" data-w="' + w + '" data-d="-1">−</button><button type="button" data-i="' + i + '" data-w="' + w + '" data-d="1">+</button></div></div>';
+        }).join("") + "</div>" +
+        '<p class="rh-n">Kurulum genişliği: <b>' + cm(kul) + " cm</b> (ünite başı " + cm(pay()) + " cm pay dahil) · " +
+        (kalan >= 0 ? "Boşluk: <b>" + cm(kalan) + " cm</b>" : '<span class="rh-w">Duvarı ' + cm(-kalan) + " cm aşıyor!</span>") + "</p></div>";
+    }).join("");
+    S.duvarlar.forEach(function (d, i) { ciz(ws.querySelector('[data-svg="' + i + '"]'), d.adet, d.w, i); });
+
+    // fiyat
+    var b = toplam(S.duvarlar.map(function (d) { return d.adet; }));
+    $("rh-s1").textContent = b.n; $("rh-s2").textContent = b.raf; $("rh-s3").textContent = b.prof; $("rh-s4").textContent = b.civ;
     var kdv = S.kdv ? b.ara * AYAR.kdv : 0;
     var rows = b.satir.map(function (x) {
       return "<tr><td>" + x.ad + (x.not ? "<br><small>" + x.not + "</small>" : "") + '</td><td class="r hs">' + x.adet + " × " + (x.fiyat ? tl(x.fiyat) : "dahil") + '</td><td class="r">' + (x.fiyat ? tl(x.adet * x.fiyat) : "Dahil") + "<br><small>" + x.adet + " adet</small></td></tr>";
     }).join("");
     rows += '<tr><td><b>Ara toplam</b></td><td class="hs"></td><td class="r"><b>' + tl(b.ara) + "</b></td></tr>";
     if (S.kdv) rows += '<tr><td>KDV (%' + AYAR.kdv * 100 + ')</td><td class="hs"></td><td class="r">' + tl(kdv) + "</td></tr>";
-    if (!b.n) rows = '<tr><td colspan="3">Duvar genişliği en az ' + Math.min.apply(null, AYAR.genislikler) + " cm olmalı.</td></tr>";
+    if (!b.n) rows = '<tr><td colspan="3">Duvar genişliği en az ' + Math.min.apply(null, G) + " cm olmalı.</td></tr>";
     $("rh-b").innerHTML = rows;
     $("rh-tl").textContent = S.kdv ? "Toplam (KDV dahil)" : "Toplam (KDV hariç)";
     $("rh-tt").textContent = tl(b.ara + kdv);
-    R.querySelectorAll(".rh-o").forEach(function (o) { o.classList.toggle("on", o.querySelector("input").checked); });
+    R.querySelectorAll('input[name="rh-t"]').forEach(function (o) { o.closest(".rh-o").classList.toggle("on", o.checked); });
   }
 
   function mesaj() {
-    var a = S.adet, b = liste(a), kdv = S.kdv ? b.ara * AYAR.kdv : 0;
-    var u = AYAR.genislikler.filter(function (w) { return a[w]; }).map(function (w) { return a[w] + " adet " + S.d + "×" + w; }).join(", ");
-    return ["Merhaba, raf hesaplama sayfasından yazıyorum.",
-      "Duvar genişliği: " + S.w + " cm",
+    var b = toplam(S.duvarlar.map(function (d) { return d.adet; })), kdv = S.kdv ? b.ara * AYAR.kdv : 0;
+    var satirlar = ["Merhaba, raf hesaplama sayfasından yazıyorum.",
       "Raf: " + S.d + " cm derinlik, " + S.p + " cm yükseklik, " + S.k + " kat",
-      "Kurulum: " + (S.t === "b" ? "Bitişik" : "Ayrı ayrı"),
-      "Üniteler: " + u,
-      "Toplam: " + tl(b.ara + kdv) + (S.kdv ? " (KDV dahil)" : " (KDV hariç)")].join("\n");
+      "Kurulum: " + (S.t === "b" ? "Bitişik" : "Ayrı ayrı")];
+    S.duvarlar.forEach(function (d, i) {
+      var u = G.filter(function (w) { return d.adet[w]; }).map(function (w) { return d.adet[w] + " adet " + S.d + "×" + w; }).join(", ");
+      satirlar.push((i + 1) + ". duvar (" + cm(d.w) + " cm): " + (u || "-"));
+    });
+    satirlar.push("Toplam: " + tl(b.ara + kdv) + (S.kdv ? " (KDV dahil)" : " (KDV hariç)"));
+    return satirlar.join("\n");
   }
 
+  // olaylar
   $("rh-k").value = S.k;
-  $("rh-w").addEventListener("input", function (e) { var v = parseInt(e.target.value, 10); S.w = isNaN(v) ? 0 : Math.min(3000, v); S.adet = null; guncelle(); });
-  $("rh-d").addEventListener("change", function (e) { S.d = +e.target.value; S.adet = null; guncelle(); });
-  $("rh-p").addEventListener("change", function (e) { S.p = +e.target.value; S.k = AYAR.varsayilanKat[S.p] || S.k; $("rh-k").value = S.k; S.adet = null; guncelle(); });
-  $("rh-k").addEventListener("change", function (e) { S.k = +e.target.value; S.adet = null; guncelle(); });
+  $("rh-dn").addEventListener("change", function (e) {
+    var n = +e.target.value;
+    while (S.duvarlar.length < n) S.duvarlar.push({ w: 300, adet: null });
+    S.duvarlar.length = n;
+    duvarKutulari(); guncelle();
+  });
+  $("rh-dw").addEventListener("input", function (e) {
+    var i = e.target.dataset.dw; if (i === undefined) return;
+    var v = parseFloat(String(e.target.value).replace(",", "."));
+    S.duvarlar[i].w = isNaN(v) ? 0 : Math.min(3000, Math.max(0, v));
+    S.duvarlar[i].adet = null; guncelle();
+  });
+  $("rh-d").addEventListener("change", function (e) { S.d = +e.target.value; sifirla(); guncelle(); });
+  $("rh-p").addEventListener("change", function (e) { S.p = +e.target.value; S.k = AYAR.varsayilanKat[S.p] || S.k; $("rh-k").value = S.k; sifirla(); guncelle(); });
+  $("rh-k").addEventListener("change", function (e) { S.k = +e.target.value; sifirla(); guncelle(); });
   $("rh-kdv").addEventListener("change", function (e) { S.kdv = e.target.checked; guncelle(); });
-  R.querySelectorAll('input[name="rh-t"]').forEach(function (r) { r.addEventListener("change", function (e) { S.t = e.target.value; S.adet = null; guncelle(); }); });
-  R.querySelectorAll('input[name="rh-m"]').forEach(function (r) { r.addEventListener("change", function (e) { S.m = e.target.value; S.adet = null; guncelle(); }); });
+  R.addEventListener("change", function (e) {
+    if (e.target.name === "rh-t") { S.t = e.target.value; sifirla(); guncelle(); }
+    if (e.target.name === "rh-m") { S.m = e.target.value; sifirla(); guncelle(); }
+  });
   R.addEventListener("click", function (e) {
     var bt = e.target.closest("button[data-w]");
     if (!bt) return;
-    var w = +bt.dataset.w; S.adet[w] = Math.max(0, S.adet[w] + (+bt.dataset.d)); guncelle();
+    var d = S.duvarlar[+bt.dataset.i], w = +bt.dataset.w;
+    d.adet[w] = Math.max(0, d.adet[w] + (+bt.dataset.d)); guncelle();
   });
   $("rh-wa").addEventListener("click", function () { window.open("https://wa.me/" + AYAR.whatsapp + "?text=" + encodeURIComponent(mesaj()), "_blank"); });
+
+  duvarKutulari();
   guncelle();
 })();
 </script>
