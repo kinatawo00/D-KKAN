@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Çelik Raf Hesaplama</title>
+<meta name="description" content="Duvar ölçünüzü girin, çelik raf ünitelerini otomatik yerleştirsin ve malzeme fiyatını hesaplasın.">
+<style>
+:root{
+  --bg:#f4f5f7; --card:#ffffff; --ink:#15181d; --muted:#5f6773; --line:#e2e5ea;
+  --accent:#1f5f9e; --accent-ink:#ffffff; --accent-soft:#e6eef7;
+  --steel:#5b7186; --steel-2:#8ea3b6; --wall:#eef0f3; --gap:#f3d9d4; --warn:#b42318; --ok:#1b7f4b;
+  --radius:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e1013; --card:#171a1f; --ink:#eef1f4; --muted:#9aa3ae; --line:#2a2f37;
+    --accent:#5aa2e6; --accent-ink:#08111b; --accent-soft:#1a2a3a;
+    --steel:#7f97ad; --steel-2:#55697c; --wall:#1d2127; --gap:#3a2422; --warn:#f2867a; --ok:#5fcf93;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e1013; --card:#171a1f; --ink:#eef1f4; --muted:#9aa3ae; --line:#2a2f37;
+  --accent:#5aa2e6; --accent-ink:#08111b; --accent-soft:#1a2a3a;
+  --steel:#7f97ad; --steel-2:#55697c; --wall:#1d2127; --gap:#3a2422; --warn:#f2867a; --ok:#5fcf93;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0 16px}
+.brand{font-weight:800;letter-spacing:.04em;font-size:22px}
+.brand small{display:block;font-weight:500;letter-spacing:0;font-size:13px;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:14px}
+h2{font-size:16px;margin:0 0 14px;display:flex;align-items:center;gap:8px}
+h2 .n{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+label.f{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted)}
+input,select{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%;min-height:44px}
+input:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px}
+.seg{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.opt{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:12px;padding:12px;cursor:pointer}
+.opt input{width:18px;min-height:18px;height:18px;margin:2px 0 0;accent-color:var(--accent)}
+.opt b{display:block;font-size:14px}
+.opt span{font-size:12.5px;color:var(--muted)}
+.opt:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.drawing{width:100%;overflow:hidden;border-radius:10px;background:var(--wall);padding:8px}
+.drawing svg{display:block;width:100%;height:auto}
+.caption{font-size:12.5px;color:var(--muted);margin-top:8px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+.stat{text-align:center;padding:10px 4px;border:1px solid var(--line);border-radius:12px}
+.stat b{display:block;font-size:22px}
+.stat span{font-size:12px;color:var(--muted)}
+.units{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.unit{border:1px solid var(--line);border-radius:12px;padding:12px}
+.unit .w{font-size:13px;color:var(--muted)}
+.unit .c{font-size:18px;font-weight:700;margin:2px 0 8px}
+.unit .p{font-size:12px;color:var(--muted)}
+.stepper{display:flex;gap:6px}
+.stepper button{flex:1}
+button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 12px;min-height:40px}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-top:12px}
+.note{font-size:13px;color:var(--muted)}
+.warn{color:var(--warn);font-weight:600}
+.ok{color:var(--ok)}
+.badge{display:inline-block;font-size:12px;padding:3px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-size:12px;font-weight:600;color:var(--muted);padding:8px 6px;border-bottom:1px solid var(--line)}
+td{padding:10px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+td.r,th.r{text-align:right;white-space:nowrap}
+td small{color:var(--muted)}
+tr.sub td{font-weight:600}
+.total{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:16px;padding:16px;border-radius:12px;background:var(--accent-soft)}
+.total .big{font-size:30px;font-weight:800;line-height:1.1}
+.total .lbl{font-size:13px;color:var(--muted)}
+.toggle{display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer}
+.toggle input{width:18px;min-height:18px;height:18px;accent-color:var(--accent)}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.show{opacity:1}
+footer{font-size:12px;color:var(--muted);text-align:center;padding:8px 0 24px}
+@media (max-width:640px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .units{grid-template-columns:1fr}
+  .total .big{font-size:26px}
+  .hide-sm{display:none}
+}
+@media print{
+  body{background:#fff;color:#000}
+  .no-print{display:none!important}
+  .card{border-color:#ccc;break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><span id="brandName"></span><small id="brandSub"></small></div>
+    <button class="no-print" id="themeBtn" aria-label="Tema değiştir" title="Tema değiştir">◐</button>
+  </header>
+
+  <section class="card">
+    <h2><span class="n">1</span>Duvar ve raf ölçüleri</h2>
+    <div class="grid">
+      <label class="f">Duvar genişliği (cm)<input id="wallW" type="number" inputmode="numeric" min="60" max="5000" step="1"></label>
+      <label class="f">Duvar yüksekliği (cm)<input id="wallH" type="number" inputmode="numeric" min="100" max="1000" step="1"></label>
+      <label class="f">Raf derinliği<select id="depth"></select></label>
+      <label class="f">Profil (raf) yüksekliği<select id="profile"></select></label>
+      <label class="f">Kat sayısı (ünite başı raf)<select id="levels"></select></label>
+    </div>
+    <p class="note" id="heightNote"></p>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">2</span>Kurulum tipi</h2>
+    <div class="seg">
+      <label class="opt"><input type="radio" name="type" value="shared"><div><b>Ortak profilli (bitişik)</b><span>Yan yana üniteler aradaki profilleri paylaşır. Daha ekonomik.</span></div></label>
+      <label class="opt"><input type="radio" name="type" value="independent"><div><b>Bağımsız üniteler</b><span>Her ünite kendi 4 profiliyle ayrı kurulur.</span></div></label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">3</span>Raf yerleşimi</h2>
+    <div class="seg no-print" style="margin-bottom:14px">
+      <label class="opt"><input type="radio" name="mode" value="fill"><div><b>Duvarı tam doldur</b><span>Duvar genişliğini en az boşlukla doldurur.</span></div></label>
+      <label class="opt"><input type="radio" name="mode" value="eco"><div><b>En ekonomik</b><span>Başka ünite sığmayacak şekilde en düşük fiyatlı yerleşim.</span></div></label>
+    </div>
+    <div class="drawing"><svg id="svg" role="img" aria-label="Raf yerleşimi önden görünüm"></svg></div>
+    <div class="caption">Önden şematik görünüm · Nominal ölçüler (cm)</div>
+
+    <div class="stats">
+      <div class="stat"><b id="sUnits">0</b><span>Ünite</span></div>
+      <div class="stat"><b id="sShelves">0</b><span>Raf tablası</span></div>
+      <div class="stat"><b id="sProfiles">0</b><span>Profil</span></div>
+      <div class="stat"><b id="sBolts">0</b><span>Somun-cıvata</span></div>
+    </div>
+
+    <div class="units" id="units"></div>
+    <div class="row">
+      <div class="note" id="widthNote"></div>
+      <div id="manualBox" class="no-print"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="row" style="margin-top:0;margin-bottom:10px">
+      <h2 style="margin:0"><span class="n">4</span>Fiyat dökümü</h2>
+      <label class="toggle no-print"><input type="checkbox" id="kdv"> <span id="kdvLbl"></span></label>
+    </div>
+    <table>
+      <thead><tr><th>Malzeme</th><th class="r hide-sm">Adet × Birim fiyat</th><th class="r">Tutar</th></tr></thead>
+      <tbody id="bom"></tbody>
+    </table>
+    <div class="total">
+      <div>
+        <div class="lbl" id="totalLbl"></div>
+        <div class="big" id="total"></div>
+        <div class="lbl">Montaj ve nakliye dahil değildir.</div>
+      </div>
+      <div class="actions no-print">
+        <button class="primary" id="waBtn">WhatsApp ile gönder</button>
+        <button id="linkBtn">Linki kopyala</button>
+        <button id="printBtn">Yazdır / PDF</button>
+      </div>
+    </div>
+  </section>
+
+  <footer id="foot"></footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   AYARLAR — fiyat ve ölçüleri buradan değiştirin.
+   ========================================================= */
+const CONFIG = {
+  brand: "ACAR RAF",
+  subtitle: "Çelik Raf Hesaplama",
+  // WhatsApp numarası (ülke koduyla, boşluksuz, ör. "905321234567").
+  // Boş bırakılırsa WhatsApp kişi seçme ekranını açar.
+  whatsapp: "",
+  depths: [31, 43, 59],          // raf derinlikleri (cm)
+  widths: [93, 75, 60],          // ünite genişlikleri (cm), büyükten küçüğe
+  // Raf tablası fiyatı: derinlik -> genişlik -> TL
+  shelfPrice: {
+    31: { 60: 300, 75: 300, 93: 300 },
+    43: { 60: 350, 75: 350, 93: 350 },
+    59: { 60: 530, 75: 530, 93: 530 }
+  },
+  profilePrice: { 200: 250, 250: 300 },  // profil boyu (cm) -> TL
+  boltPrice: 4,                  // somun-cıvata adet fiyatı (TL)
+  boltsPerShelf: 8,              // raf başına somun-cıvata
+  kdvRate: 0.20,
+  levels: { min: 2, max: 10 },
+  defaultLevels: { 200: 5, 250: 6 },
+  defaults: { wallW: 500, wallH: 250, depth: 31, profile: 200, type: "shared", mode: "fill", kdv: false }
+};
+
+/* ========================================================= */
+const $ = id => document.getElementById(id);
+const tl = n => n.toLocaleString("tr-TR", { style: "currency", currency: "TRY", minimumFractionDigits: 2 });
+const profilesList = Object.keys(CONFIG.profilePrice).map(Number).sort((a, b) => a - b);
+
+let state = { ...CONFIG.defaults, levels: CONFIG.defaultLevels[CONFIG.defaults.profile], counts: null };
+
+/* ---------- URL <-> state ---------- */
+function readUrl() {
+  const q = new URLSearchParams(location.search);
+  const num = (k, d) => (q.has(k) && !isNaN(+q.get(k)) ? +q.get(k) : d);
+  state.wallW = num("w", state.wallW);
+  state.wallH = num("h", state.wallH);
+  if (CONFIG.depths.includes(num("d", 0))) state.depth = num("d", 0);
+  if (profilesList.includes(num("p", 0))) state.profile = num("p", 0);
+  state.levels = num("k", CONFIG.defaultLevels[state.profile] || 5);
+  if (["shared", "independent"].includes(q.get("t"))) state.type = q.get("t");
+  if (["fill", "eco", "manual"].includes(q.get("m"))) state.mode = q.get("m");
+  state.kdv = q.get("kdv") === "1";
+  if (state.mode === "manual") {
+    state.counts = {};
+    CONFIG.widths.forEach(w => (state.counts[w] = Math.max(0, num("u" + w, 0) | 0)));
+  }
+}
+function shareUrl() {
+  const q = new URLSearchParams({ w: state.wallW, h: state.wallH, d: state.depth, p: state.profile, k: state.levels, t: state.type, m: state.mode });
+  if (state.kdv) q.set("kdv", "1");
+  if (state.mode === "manual") CONFIG.widths.forEach(w => q.set("u" + w, state.counts[w]));
+  return location.origin + location.pathname + "?" + q.toString();
+}
+
+/* ---------- Hesaplama ---------- */
+function unitCount(c) { return CONFIG.widths.reduce((s, w) => s + c[w], 0); }
+function usedWidth(c) { return CONFIG.widths.reduce((s, w) => s + w * c[w], 0); }
+function profileCount(n) { return n === 0 ? 0 : state.type === "shared" ? 2 * (n + 1) : 4 * n; }
+
+function bom(c) {
+  const n = unitCount(c);
+  const lines = [];
+  CONFIG.widths.forEach(w => {
+    if (!c[w]) return;
+    const qty = c[w] * state.levels;
+    const price = CONFIG.shelfPrice[state.depth][w];
+    lines.push({ name: `Raf tablası ${state.depth}×${w} cm`, qty, price });
+  });
+  const shelves = n * state.levels;
+  const prof = profileCount(n);
+  if (prof) lines.push({ name: `Profil ${state.profile} cm`, qty: prof, price: CONFIG.profilePrice[state.profile] });
+  const bolts = shelves * CONFIG.boltsPerShelf;
+  if (bolts) lines.push({ name: "Somun-cıvata", qty: bolts, price: CONFIG.boltPrice, note: `raf başı ${CONFIG.boltsPerShelf} adet` });
+  const subtotal = lines.reduce((s, l) => s + l.qty * l.price, 0);
+  return { lines, n, shelves, prof, bolts, subtotal };
+}
+
+// Tek, bağımsız bir ünitenin fiyatı (4 profil + raflar + cıvata)
+function singleUnitPrice(w) {
+  return 4 * CONFIG.profilePrice[state.profile] +
+    state.levels * (CONFIG.shelfPrice[state.depth][w] + CONFIG.boltsPerShelf * CONFIG.boltPrice);
+}
+
+function autoLayout(mode) {
+  const W = Math.max(0, state.wallW | 0);
+  const [a, b, c] = CONFIG.widths;
+  const minW = Math.min(...CONFIG.widths);
+  let best = null;
+  for (let i = 0; i * a <= W; i++)
+    for (let j = 0; i * a + j * b <= W; j++)
+      for (let k = 0; i * a + j * b + k * c <= W; k++) {
+        const counts = { [a]: i, [b]: j, [c]: k };
+        const used = i * a + j * b + k * c;
+        const n = i + j + k;
+        if (n === 0) continue;
+        const cost = bom(counts).subtotal;
+        let key;
+        if (mode === "eco") {
+          if (W - used >= minW) continue;           // hâlâ ünite sığıyorsa geçme
+          key = [cost, -used, n];
+        } else {
+          key = [-used, n, cost];
+        }
+        if (!best || lexLess(key, best.key)) best = { key, counts };
+      }
+  return best ? best.counts : Object.fromEntries(CONFIG.widths.map(w => [w, 0]));
+}
+function lexLess(x, y) { for (let i = 0; i < x.length; i++) { if (x[i] !== y[i]) return x[i] < y[i]; } return false; }
+
+/* ---------- Çizim ---------- */
+function draw(c) {
+  const svg = $("svg");
+  const W = Math.max(state.wallW, usedWidth(c), 60);
+  const H = Math.max(state.wallH, state.profile);
+  const padL = 34, padR = 10, padT = 14, padB = 20;
+  const vw = W + padL + padR, vh = H + padT + padB;
+  const fs = Math.max(10, Math.min(W, 900) / 34);
+  const post = Math.max(2.5, W / 260);
+  const shelfT = Math.max(2.5, W / 300);
+  const css = getComputedStyle(document.documentElement);
+  const col = k => css.getPropertyValue(k).trim();
+  let s = `<rect x="${padL}" y="${padT}" width="${state.wallW}" height="${state.wallH}" fill="${col("--card")}" stroke="${col("--line")}" stroke-width="${post / 2}"/>`;
+  const floorY = padT + H;
+  s += `<line x1="${padL - 6}" x2="${padL + W + 6}" y1="${floorY}" y2="${floorY}" stroke="${col("--muted")}" stroke-width="${post / 1.5}"/>`;
+
+  // üniteler: büyükten küçüğe dizilir
+  const seq = [];
+  CONFIG.widths.forEach(w => { for (let i = 0; i < c[w]; i++) seq.push(w); });
+  let x = padL;
+  const top = floorY - state.profile;
+  const L = state.levels;
+  const bottomGap = Math.min(10, state.profile * 0.05);
+  seq.forEach((w, idx) => {
+    // raflar
+    for (let i = 0; i < L; i++) {
+      const y = floorY - bottomGap - (state.profile - bottomGap - shelfT) * (L === 1 ? 0 : i / (L - 1)) - shelfT;
+      s += `<rect x="${x}" y="${y}" width="${w}" height="${shelfT}" fill="${col("--steel-2")}"/>`;
+    }
+    // profiller
+    const leftShared = state.type === "shared" && idx > 0;
+    if (!leftShared) s += `<rect x="${x}" y="${top}" width="${post}" height="${state.profile}" fill="${col("--steel")}"/>`;
+    s += `<rect x="${x + w - post}" y="${top}" width="${post}" height="${state.profile}" fill="${col("--steel")}"/>`;
+    // ölçü
+    s += `<text x="${x + w / 2}" y="${floorY + fs * 1.35}" text-anchor="middle" font-size="${fs}" font-weight="700" fill="${col("--ink")}">${w}</text>`;
+    x += w;
+  });
+  // kalan / taşma
+  const rest = state.wallW - usedWidth(c);
+  if (rest > 0 && seq.length) {
+    s += `<rect x="${x}" y="${top}" width="${rest}" height="${state.profile}" fill="${col("--gap")}" opacity=".7"/>`;
+    if (rest >= fs * 1.6) s += `<text x="${x + rest / 2}" y="${floorY + fs * 1.35}" text-anchor="middle" font-size="${fs * 0.85}" fill="${col("--muted")}">${rest}</text>`;
+  }
+  // toplam genişlik ölçü çizgisi
+  const dy = floorY + fs * 2.2;
+  s += `<line x1="${padL}" x2="${padL + state.wallW}" y1="${dy}" y2="${dy}" stroke="${col("--muted")}" stroke-width="${post / 2.5}"/>`;
+  s += `<text x="${padL + state.wallW / 2}" y="${dy + fs * 1.05}" text-anchor="middle" font-size="${fs * 0.8}" fill="${col("--muted")}">Duvar ${state.wallW} cm</text>`;
+  // yükseklik ölçüsü
+  s += `<line x1="${padL - 14}" x2="${padL - 14}" y1="${top}" y2="${floorY}" stroke="${col("--accent")}" stroke-width="${post / 2}"/>`;
+  s += `<text x="${padL - 18}" y="${(top + floorY) / 2}" text-anchor="middle" font-size="${fs * 0.8}" fill="${col("--accent")}" transform="rotate(-90 ${padL - 18} ${(top + floorY) / 2})">${state.profile}</text>`;
+
+  svg.setAttribute("viewBox", `0 0 ${vw} ${vh + fs * 3.6}`);
+  svg.innerHTML = s;
+}
+
+/* ---------- Arayüz ---------- */
+function fillSelects() {
+  $("depth").innerHTML = CONFIG.depths.map(d => `<option value="${d}">${d} cm</option>`).join("");
+  const okProfiles = profilesList.filter(p => p <= state.wallH);
+  const list = okProfiles.length ? okProfiles : [profilesList[0]];
+  if (!list.includes(state.profile)) state.profile = list[list.length - 1];
+  $("profile").innerHTML = list.map(p => `<option value="${p}">${p} cm</option>`).join("");
+  let lv = "";
+  for (let i = CONFIG.levels.min; i <= CONFIG.levels.max; i++) lv += `<option value="${i}">${i} kat</option>`;
+  $("levels").innerHTML = lv;
+}
+
+function render() {
+  fillSelects();
+  $("wallW").value = state.wallW;
+  $("wallH").value = state.wallH;
+  $("depth").value = state.depth;
+  $("profile").value = state.profile;
+  state.levels = Math.min(CONFIG.levels.max, Math.max(CONFIG.levels.min, state.levels));
+  $("levels").value = state.levels;
+  document.querySelectorAll('input[name="type"]').forEach(r => (r.checked = r.value === state.type));
+  document.querySelectorAll('input[name="mode"]').forEach(r => (r.checked = r.value === state.mode));
+  $("kdv").checked = state.kdv;
+
+  if (state.mode !== "manual") state.counts = autoLayout(state.mode);
+  const c = state.counts;
+  const b = bom(c);
+  const used = usedWidth(c);
+  const rest = state.wallW - used;
+
+  // yükseklik notu
+  const gap = state.levels > 1 ? Math.round((state.profile - 10) / (state.levels - 1)) : 0;
+  let hn = `Raflar arası yaklaşık <b>${gap} cm</b> (raf aralığı profil delikleri üzerinden ayarlanabilir).`;
+  if (state.wallH < profilesList[0]) hn = `<span class="warn">Duvar yüksekliği en kısa profilden (${profilesList[0]} cm) düşük.</span>`;
+  $("heightNote").innerHTML = hn;
+
+  draw(c);
+  $("sUnits").textContent = b.n;
+  $("sShelves").textContent = b.shelves;
+  $("sProfiles").textContent = b.prof;
+  $("sBolts").textContent = b.bolts;
+
+  $("units").innerHTML = CONFIG.widths.map(w => `
+    <div class="unit">
+      <div class="w">${state.depth}×${w} cm ünite</div>
+      <div class="c">${c[w]} ünite</div>
+      <div class="stepper no-print">
+        <button data-w="${w}" data-d="-1" aria-label="${w} cm ünite azalt">−</button>
+        <button data-w="${w}" data-d="1" aria-label="${w} cm ünite ekle">+</button>
+      </div>
+      <div class="p" style="margin-top:8px">Tek başına ünite: ${tl(singleUnitPrice(w))}</div>
+    </div>`).join("");
+
+  let wn = `Kullanılan genişlik: <b>${used} cm</b> · `;
+  wn += rest >= 0 ? `Kalan: <b>${rest} cm</b>` : `<span class="warn">Duvarı ${-rest} cm aşıyor!</span>`;
+  $("widthNote").innerHTML = wn;
+  $("manualBox").innerHTML = state.mode === "manual"
+    ? `<span class="badge">Elle düzenlendi</span> <button id="autoBtn">Otomatiğe dön</button>` : "";
+
+  // fiyat dökümü
+  let rows = b.lines.map(l => `<tr><td>${l.name}${l.note ? `<br><small>${l.note}</small>` : ""}</td>
+    <td class="r hide-sm">${l.qty} × ${tl(l.price)}</td><td class="r">${tl(l.qty * l.price)}<br><small>${l.qty} adet</small></td></tr>`).join("");
+  const kdvAmt = state.kdv ? b.subtotal * CONFIG.kdvRate : 0;
+  rows += `<tr class="sub"><td>Ara toplam</td><td class="hide-sm"></td><td class="r">${tl(b.subtotal)}</td></tr>`;
+  if (state.kdv) rows += `<tr><td>KDV (%${CONFIG.kdvRate * 100})</td><td class="hide-sm"></td><td class="r">${tl(kdvAmt)}</td></tr>`;
+  if (!b.n) rows = `<tr><td colspan="3" class="note">Duvar genişliği en az ${Math.min(...CONFIG.widths)} cm olmalı.</td></tr>`;
+  $("bom").innerHTML = rows;
+  $("totalLbl").textContent = state.kdv ? "Toplam (KDV dahil)" : "Toplam malzeme bedeli (KDV hariç)";
+  $("total").textContent = tl(b.subtotal + kdvAmt);
+  $("kdvLbl").textContent = `%${CONFIG.kdvRate * 100} KDV ekle`;
+
+  history.replaceState(null, "", shareUrl());
+}
+
+function summaryText() {
+  const c = state.counts, b = bom(c);
+  const kdvAmt = state.kdv ? b.subtotal * CONFIG.kdvRate : 0;
+  const parts = CONFIG.widths.filter(w => c[w]).map(w => `${c[w]} × ${state.depth}×${w} cm`).join(", ");
+  return [
+    `${CONFIG.brand} – Çelik raf teklif talebi`,
+    `Duvar: ${state.wallW} × ${state.wallH} cm`,
+    `Raf: ${state.depth} cm derinlik, ${state.profile} cm profil, ${state.levels} kat`,
+    `Kurulum: ${state.type === "shared" ? "Ortak profilli" : "Bağımsız üniteler"}`,
+    `Üniteler: ${parts || "-"}`,
+    ...b.lines.map(l => `• ${l.name}: ${l.qty} × ${tl(l.price)} = ${tl(l.qty * l.price)}`),
+    `Toplam: ${tl(b.subtotal + kdvAmt)} ${state.kdv ? "(KDV dahil)" : "(KDV hariç)"}`,
+    shareUrl()
+  ].join("\n");
+}
+
+function toast(msg) { const t = $("toast"); t.textContent = msg; t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 1800); }
+
+/* ---------- Olaylar ---------- */
+function bindNum(id, key, min, max) {
+  $(id).addEventListener("input", e => {
+    const v = parseInt(e.target.value, 10);
+    if (isNaN(v)) return;
+    state[key] = Math.min(max, Math.max(min, v));
+    if (state.mode === "manual" && key === "wallW") {} // elle düzenlemede sayılar korunur
+    clearTimeout(bindNum.t);
+    bindNum.t = setTimeout(() => { const f = document.activeElement; render(); if (f && f.id === id) { f.focus(); } }, 250);
+  });
+}
+bindNum("wallW", "wallW", 0, 5000);
+bindNum("wallH", "wallH", 0, 1000);
+$("depth").addEventListener("change", e => { state.depth = +e.target.value; render(); });
+$("profile").addEventListener("change", e => {
+  state.profile = +e.target.value;
+  state.levels = CONFIG.defaultLevels[state.profile] || state.levels;
+  render();
+});
+$("levels").addEventListener("change", e => { state.levels = +e.target.value; render(); });
+document.querySelectorAll('input[name="type"]').forEach(r => r.addEventListener("change", e => { state.type = e.target.value; render(); }));
+document.querySelectorAll('input[name="mode"]').forEach(r => r.addEventListener("change", e => { state.mode = e.target.value; render(); }));
+$("kdv").addEventListener("change", e => { state.kdv = e.target.checked; render(); });
+document.addEventListener("click", e => {
+  const btn = e.target.closest("button[data-w]");
+  if (btn) {
+    const w = +btn.dataset.w, d = +btn.dataset.d;
+    state.counts = { ...state.counts, [w]: Math.max(0, state.counts[w] + d) };
+    state.mode = "manual";
+    render();
+  }
+  if (e.target.id === "autoBtn") { state.mode = "fill"; render(); }
+});
+$("waBtn").addEventListener("click", () => {
+  const url = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(summaryText())}`;
+  window.open(url, "_blank", "noopener");
+});
+$("linkBtn").addEventListener("click", async () => {
+  try { await navigator.clipboard.writeText(shareUrl()); toast("Link kopyalandı"); }
+  catch { prompt("Linki kopyalayın:", shareUrl()); }
+});
+$("printBtn").addEventListener("click", () => window.print());
+$("themeBtn").addEventListener("click", () => {
+  const root = document.documentElement;
+  const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  root.dataset.theme = dark ? "light" : "dark";
+  try { localStorage.setItem("raf-theme", root.dataset.theme); } catch {}
+  render();
+});
+matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", render);
+
+/* ---------- Başlat ---------- */
+try { const t = localStorage.getItem("raf-theme"); if (t) document.documentElement.dataset.theme = t; } catch {}
+$("brandName").textContent = CONFIG.brand;
+$("brandSub").textContent = CONFIG.subtitle;
+document.title = `${CONFIG.brand} – ${CONFIG.subtitle}`;
+$("foot").textContent = `Fiyatlar bilgi amaçlıdır; kesin teklif için bizimle iletişime geçin.`;
+readUrl();
+render();
+</script>
+</body>
+</html>
