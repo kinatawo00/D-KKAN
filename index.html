@@ -191,7 +191,8 @@ const CONFIG = {
   },
   profilePrice: { 200: 250, 250: 300 },  // profil boyu (cm) -> TL
   boltPrice: 4,                  // somun-cıvata adet fiyatı (TL)
-  boltsPerShelf: 8,              // raf başına somun-cıvata
+  boltsPerShelf: 8,              // raf başına somun-cıvata (tekli / bağımsız ünite)
+  boltsPerShelfShared: 6,        // raf başına somun-cıvata (bitişik kurulum)
   footPrice: 0,                  // pabuç (ayak) adet fiyatı; 0 = fiyata dahil
   kdvRate: 0.20,
   levels: { min: 2, max: 10 },
@@ -248,8 +249,9 @@ function bom(c) {
   const prof = profileCount(n);
   if (prof) lines.push({ name: `Profil ${state.profile} cm`, qty: prof, price: CONFIG.profilePrice[state.profile] });
   if (prof) lines.push({ name: "Pabuç (ayak)", qty: prof, price: CONFIG.footPrice, note: "profil başına 1 adet" });
-  const bolts = shelves * CONFIG.boltsPerShelf;
-  if (bolts) lines.push({ name: "Somun-cıvata", qty: bolts, price: CONFIG.boltPrice, note: `raf başı ${CONFIG.boltsPerShelf} adet` });
+  const perShelf = state.type === "shared" && n > 1 ? CONFIG.boltsPerShelfShared : CONFIG.boltsPerShelf;
+  const bolts = shelves * perShelf;
+  if (bolts) lines.push({ name: "Somun-cıvata", qty: bolts, price: CONFIG.boltPrice, note: `raf başı ${perShelf} adet` });
   const subtotal = lines.reduce((s, l) => s + l.qty * l.price, 0);
   return { lines, n, shelves, prof, bolts, subtotal };
 }
