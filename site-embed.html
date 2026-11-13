@@ -2,7 +2,7 @@
      Ticimax'ta yeni bir içerik sayfası açıp editörü HTML / Kaynak kod moduna alın
      ve aşağıdaki kodun tamamını yapıştırın. -->
 <iframe id="raf-hesap"
-        src="https://kinatawo00.github.io/D-KKAN/"
+        src="https://mellow-cascaron-09b0f9.netlify.app/"
         title="Çelik Raf Hesaplama"
         style="width:100%;min-height:1900px;border:0;display:block"
         allow="clipboard-write"
@@ -10,7 +10,7 @@
 <script>
   // Hesaplayıcının yüksekliğine göre çerçeveyi otomatik büyütür/küçültür.
   window.addEventListener("message", function (e) {
-    if (e.origin !== "https://kinatawo00.github.io") return;
+    if (e.origin !== "https://mellow-cascaron-09b0f9.netlify.app") return;
     if (e.data && e.data.type === "raf-hesap-height") {
       var f = document.getElementById("raf-hesap");
       f.style.minHeight = "0";
