@@ -13,4 +13,4 @@ Müşterilerin duvar ölçüsünü girerek çelik raf ünitelerini otomatik yerl
 ## Siteye ekleme (önerilen)
 `raf-hesaplama-kodu.html` (aynısı `.txt` olarak da var) dosyasının tamamını Ticimax'ta **Modüller → Sayfa Yönetimi → Yeni sayfa** içeriğine, editörün kaynak kod (`<>`) modunda yapıştırın. Harici site veya üyelik gerekmez. Fiyatlar dosyanın başındaki `AYAR` bölümündedir.
 
-`index.html` aynı hesaplayıcının tek başına açılan, daha ayrıntılı sürümüdür.
+`index.html` aynı hesaplayıcının tek başına açılan sürümüdür (kodun etrafına sayfa iskeleti eklenmiş hâli).

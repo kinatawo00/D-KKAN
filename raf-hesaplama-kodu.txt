@@ -11,6 +11,8 @@
     civataFiyati: 4,                                 // somun-cıvata adet (TL)
     civataTekli: 8,                                  // raf başı, tekli / bağımsız
     civataBitisik: 6,                                // raf başı, bitişik
+    payBitisik: 0.5,                                 // bitişik kurulumda ünite başı pay (cm)
+    payAyri: 1,                                      // ayrı kurulumda ünite başı pay (cm)
     kdv: 0.20,
     varsayilanKat: { 200: 5, 250: 6 }
   };
@@ -85,8 +87,12 @@
     '<label class="rh-o"><input type="radio" name="rh-t" value="a"><div><b>Ayrı ayrı üniteler</b><span>Her ünite kendi 4 profiliyle kurulur.</span></div></label>' +
     "</div></div>" +
     '<div class="rh-k"><h3>3. Raf yerleşimi</h3>' +
+    '<div class="rh-s" style="margin-bottom:12px">' +
+    '<label class="rh-o"><input type="radio" name="rh-m" value="eko" checked><div><b>En uygun fiyat</b><span>En az maliyetli ünite dizilimi.</span></div></label>' +
+    '<label class="rh-o"><input type="radio" name="rh-m" value="dolu"><div><b>Duvarı tam doldur</b><span>Duvarda en az boşluk kalacak dizilim.</span></div></label>' +
+    "</div>" +
     '<div class="rh-cz"><svg id="rh-svg" role="img" aria-label="Raf yerleşimi"></svg></div>' +
-    '<p class="rh-n">Önden görünüm · Ölçüler cm · Ünite sayısını +/− ile değiştirebilirsiniz.</p>' +
+    '<p class="rh-n">Şematik görünüm · Ölçüler cm · Ünite sayısını +/− ile değiştirebilirsiniz.</p>' +
     '<div class="rh-st"><div><b id="rh-s1"></b><span>Ünite</span></div><div><b id="rh-s2"></b><span>Raf tablası</span></div><div><b id="rh-s3"></b><span>Profil</span></div><div><b id="rh-s4"></b><span>Somun-cıvata</span></div></div>' +
     '<div class="rh-u" id="rh-u"></div><p class="rh-n" id="rh-gn"></p></div>' +
     '<div class="rh-k"><div class="rh-hd"><h3>4. Fiyat</h3><label class="rh-kdv"><input type="checkbox" id="rh-kdv"> KDV ekle (%' + AYAR.kdv * 100 + ")</label></div>" +
@@ -97,10 +103,12 @@
   function $(id) { return document.getElementById(id); }
   function tl(n) { return n.toLocaleString("tr-TR", { style: "currency", currency: "TRY", minimumFractionDigits: 2 }); }
 
-  var S = { w: 500, d: 31, p: 200, k: 5, t: "b", kdv: false, adet: null };
+  var S = { w: 500, d: 31, p: 200, k: 5, t: "b", m: "eko", kdv: false, adet: null };
 
   function toplamUnite(a) { return AYAR.genislikler.reduce(function (s, w) { return s + a[w]; }, 0); }
-  function kullanilan(a) { return AYAR.genislikler.reduce(function (s, w) { return s + a[w] * w; }, 0); }
+  function pay() { return S.t === "b" ? AYAR.payBitisik : AYAR.payAyri; }
+  function kullanilan(a) { return AYAR.genislikler.reduce(function (s, w) { return s + a[w] * (w + pay()); }, 0); }
+  function cm(n) { return (Math.round(n * 10) / 10).toLocaleString("tr-TR"); }
 
   function liste(a) {
     var n = toplamUnite(a), raf = n * S.k, satir = [];
@@ -116,41 +124,105 @@
     return { satir: satir, n: n, raf: raf, prof: prof, civata: raf * rb, ara: ara };
   }
 
+  // Duvara sığan tüm yerleşimleri dener.
+  // "eko": başka ünite sığmayan yerleşimler içinde en ucuzu (eşitse duvarı daha çok dolduran).
+  // "dolu": duvarı en çok dolduran; eşitse en ucuzu.
   function otomatik() {
-    var W = Math.max(0, S.w | 0), g = AYAR.genislikler, best = null;
-    for (var i = 0; i * g[0] <= W; i++)
-      for (var j = 0; i * g[0] + j * g[1] <= W; j++)
-        for (var k = 0; i * g[0] + j * g[1] + k * g[2] <= W; k++) {
+    var W = Math.max(0, S.w), g = AYAR.genislikler, p = pay(), enKucuk = Math.min.apply(null, g) + p, best = null;
+    for (var i = 0; i * (g[0] + p) <= W; i++)
+      for (var j = 0; i * (g[0] + p) + j * (g[1] + p) <= W; j++)
+        for (var k = 0; i * (g[0] + p) + j * (g[1] + p) + k * (g[2] + p) <= W; k++) {
           var n = i + j + k; if (!n) continue;
-          var u = i * g[0] + j * g[1] + k * g[2];
-          if (!best || u > best.u || (u === best.u && n < best.n)) { best = { u: u, n: n, a: {} }; best.a[g[0]] = i; best.a[g[1]] = j; best.a[g[2]] = k; }
+          var a = {}; a[g[0]] = i; a[g[1]] = j; a[g[2]] = k;
+          var u = kullanilan(a), f = liste(a).ara;
+          if (S.m === "eko" && W - u >= enKucuk) continue;
+          var key = S.m === "eko" ? [f, -u, n] : [-u, f, n];
+          if (!best || kucuk(key, best.key)) best = { key: key, a: a };
         }
     if (best) return best.a;
     var bos = {}; g.forEach(function (w) { bos[w] = 0; }); return bos;
   }
+  function kucuk(x, y) { for (var i = 0; i < x.length; i++) if (x[i] !== y[i]) return x[i] < y[i]; return false; }
 
+  // Derinlikli (eğik perspektif) çelik raf çizimi
   function ciz(a) {
     var seq = []; AYAR.genislikler.forEach(function (w) { for (var i = 0; i < a[w]; i++) seq.push(w); });
-    var W = Math.max(S.w, kullanilan(a), 60), H = S.p, L = 30, T = 10;
-    var fs = Math.max(11, Math.min(W, 900) / 30), post = Math.max(2.5, W / 260), sh = Math.max(2.5, W / 300);
-    var floor = T + H, s = "", x = L;
-    s += '<rect x="' + L + '" y="' + T + '" width="' + S.w + '" height="' + H + '" fill="#fff"/>';
-    s += '<line x1="' + (L - 6) + '" x2="' + (L + W + 6) + '" y1="' + floor + '" y2="' + floor + '" stroke="#999" stroke-width="' + post / 1.5 + '"/>';
-    seq.forEach(function (w, idx) {
-      for (var i = 0; i < S.k; i++) {
-        var y = floor - 8 - (H - 8 - sh) * (S.k === 1 ? 0 : i / (S.k - 1)) - sh;
-        s += '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + sh + '" fill="#93a4b3"/>';
-      }
-      if (!(S.t === "b" && idx > 0)) s += '<rect x="' + x + '" y="' + T + '" width="' + post + '" height="' + H + '" fill="#56697b"/>';
-      s += '<rect x="' + (x + w - post) + '" y="' + T + '" width="' + post + '" height="' + H + '" fill="#56697b"/>';
-      s += '<text x="' + (x + w / 2) + '" y="' + (floor + fs * 1.3) + '" text-anchor="middle" font-size="' + fs + '" font-weight="700" fill="#1b1b1b">' + w + "</text>";
-      x += w;
+    var p = pay(), H = S.p, D = S.d;
+    var ox = D * 0.62, oy = D * 0.42;            // derinlik kayması (sağ-yukarı)
+    var used = kullanilan(a), W = Math.max(S.w, used, 60);
+    var fs = Math.max(10, Math.min(W, 700) / 28);
+    var L = fs * 2.6, T = oy + fs * 1.2, pw = 3.6, lip = 3.2;
+    var floor = T + H, s = "";
+    function r(n) { return Math.round(n * 10) / 10; }
+    function poly(pts, fill, extra) { return '<polygon points="' + pts.map(function (q) { return r(q[0]) + "," + r(q[1]); }).join(" ") + '" fill="' + fill + '"' + (extra || "") + "/>"; }
+    function rect(x, y, w, h, fill, extra) { return '<rect x="' + r(x) + '" y="' + r(y) + '" width="' + r(w) + '" height="' + r(h) + '" fill="' + fill + '"' + (extra || "") + "/>"; }
+
+    s += "<defs>" +
+      '<linearGradient id="rh-gp" x1="0" x2="1"><stop offset="0" stop-color="#7d8894"/><stop offset=".45" stop-color="#c9d1d8"/><stop offset="1" stop-color="#8b96a1"/></linearGradient>' +
+      '<linearGradient id="rh-gs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eef2f5"/><stop offset="1" stop-color="#cfd7de"/></linearGradient>' +
+      '<linearGradient id="rh-gw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbfbfb"/><stop offset="1" stop-color="#eeeeee"/></linearGradient>' +
+      "</defs>";
+    // duvar ve zemin
+    s += rect(L + ox, T - oy, S.w, H + oy, "url(#rh-gw)", ' stroke="#e2e2e2"');
+    s += poly([[L, floor], [L + S.w, floor], [L + S.w + ox, floor - oy], [L + ox, floor - oy]], "#e9e5df");
+
+    // ünite konumları
+    var units = [], x = L;
+    seq.forEach(function (w) { units.push({ x: x + (S.t === "a" ? p / 2 : 0), w: w }); x += w + p; });
+    var posts = [];
+    if (S.t === "b") { units.forEach(function (u, i) { if (i === 0) posts.push(u.x); posts.push(u.x + u.w); }); }
+    else units.forEach(function (u) { posts.push(u.x, u.x + u.w - pw); });
+    if (S.t === "b" && posts.length) posts[posts.length - 1] -= pw;
+
+    // gölge
+    if (units.length) s += '<ellipse cx="' + r((L + x + ox) / 2) + '" cy="' + r(floor - oy / 2) + '" rx="' + r((x - L) / 2 + ox / 2) + '" ry="' + r(oy / 2 + 2) + '" fill="#000" opacity=".07"/>';
+
+    function delikler(px, top) {
+      var h = "";
+      for (var y = top + 4; y < floor - 4; y += 5) h += rect(px + 1.1, y, 1.4, 2.4, "#4a545e", ' rx=".6"');
+      return h;
+    }
+    // arka profiller
+    posts.forEach(function (px) { s += rect(px + ox, T - oy, pw, H, "#9aa5af"); });
+
+    // raf tablaları (alttan üste)
+    var ys = [];
+    for (var i = 0; i < S.k; i++) ys.push(floor - 6 - (H - 6 - lip) * (S.k === 1 ? 0 : i / (S.k - 1)));
+    ys.forEach(function (y) {
+      units.forEach(function (u) {
+        var x0 = u.x, x1 = u.x + u.w;
+        s += poly([[x0, y], [x1, y], [x1 + ox, y - oy], [x0 + ox, y - oy]], "url(#rh-gs)", ' stroke="#b7c0c8" stroke-width=".5"');
+        s += rect(x0, y, u.w, lip, "#a7b1bb");
+        s += rect(x0, y, u.w, 0.7, "#e8edf1");
+      });
     });
-    var kalan = S.w - kullanilan(a);
-    if (kalan > 0 && seq.length) s += '<rect x="' + x + '" y="' + T + '" width="' + kalan + '" height="' + H + '" fill="#f6d5c3" opacity=".7"/>';
-    s += '<text x="' + (L - 12) + '" y="' + (T + H / 2) + '" text-anchor="middle" font-size="' + fs * 0.8 + '" fill="#e2701f" transform="rotate(-90 ' + (L - 12) + " " + (T + H / 2) + ')">' + H + "</text>";
+
+    // ön profiller (köşebent görünümü, delikli) ve pabuçlar
+    posts.forEach(function (px) {
+      s += poly([[px + pw, T], [px + pw + 1.6, T - 1.1], [px + pw + 1.6, floor - 1.1], [px + pw, floor]], "#6f7a85");
+      s += rect(px, T, pw, H, "url(#rh-gp)");
+      s += delikler(px, T);
+      s += rect(px - 0.8, floor - 1.6, pw + 1.6, 2.2, "#2b2f33", ' rx=".5"');
+    });
+
+    // ölçüler
+    var dimY = floor + fs * 1.4;
+    units.forEach(function (u) {
+      s += '<text x="' + r(u.x + u.w / 2) + '" y="' + r(dimY) + '" text-anchor="middle" font-size="' + r(fs) + '" font-weight="700" fill="#1b1b1b">' + u.w + "</text>";
+    });
+    var kalan = S.w - used;
+    if (units.length && kalan >= fs * 1.5) s += '<text x="' + r(x + kalan / 2) + '" y="' + r(dimY) + '" text-anchor="middle" font-size="' + r(fs * 0.75) + '" fill="#999">boş ' + cm(kalan) + "</text>";
+    var dy2 = dimY + fs * 0.9;
+    s += '<line x1="' + r(L) + '" x2="' + r(L + S.w) + '" y1="' + r(dy2) + '" y2="' + r(dy2) + '" stroke="#999" stroke-width="' + r(fs / 14) + '"/>';
+    s += '<text x="' + r(L + S.w / 2) + '" y="' + r(dy2 + fs * 1.05) + '" text-anchor="middle" font-size="' + r(fs * 0.8) + '" fill="#666">Duvar ' + cm(S.w) + " cm</text>";
+    s += '<line x1="' + r(L - fs * 0.9) + '" x2="' + r(L - fs * 0.9) + '" y1="' + r(T) + '" y2="' + r(floor) + '" stroke="#e2701f" stroke-width="' + r(fs / 10) + '"/>';
+    s += '<text x="' + r(L - fs * 1.25) + '" y="' + r(T + H / 2) + '" text-anchor="middle" font-size="' + r(fs * 0.85) + '" font-weight="700" fill="#e2701f" transform="rotate(-90 ' + r(L - fs * 1.25) + " " + r(T + H / 2) + ')">' + H + " cm</text>";
+    if (units.length) {
+      var ex = units[units.length - 1].x + units[units.length - 1].w;
+      s += '<text x="' + r(Math.max(ex, L + S.w) + ox + fs * 0.4) + '" y="' + r(T - oy / 2 + fs * 0.3) + '" font-size="' + r(fs * 0.75) + '" fill="#e2701f" font-weight="700">' + D + " cm</text>";
+    }
     var svg = $("rh-svg");
-    svg.setAttribute("viewBox", "0 0 " + (W + L + 10) + " " + (floor + fs * 1.8));
+    svg.setAttribute("viewBox", "0 0 " + r(L + W + ox + fs * 3.6) + " " + r(dy2 + fs * 1.6));
     svg.innerHTML = s;
   }
 
@@ -162,7 +234,7 @@
     $("rh-u").innerHTML = AYAR.genislikler.map(function (w) {
       return '<div><div class="w">' + S.d + "×" + w + ' cm ünite</div><div class="c">' + a[w] + ' adet</div><div class="b"><button type="button" data-w="' + w + '" data-d="-1">−</button><button type="button" data-w="' + w + '" data-d="1">+</button></div></div>';
     }).join("");
-    $("rh-gn").innerHTML = "Kullanılan genişlik: <b>" + kul + " cm</b> · " + (kalan >= 0 ? "Kalan: <b>" + kalan + " cm</b>" : '<span class="rh-w">Duvarı ' + (-kalan) + " cm aşıyor!</span>");
+    $("rh-gn").innerHTML = "Kurulum genişliği: <b>" + cm(kul) + " cm</b> <small>(ünite başı " + cm(pay()) + " cm pay dahil)</small> · " + (kalan >= 0 ? "Kalan: <b>" + cm(kalan) + " cm</b>" : '<span class="rh-w">Duvarı ' + cm(-kalan) + " cm aşıyor!</span>");
     var kdv = S.kdv ? b.ara * AYAR.kdv : 0;
     var rows = b.satir.map(function (x) {
       return "<tr><td>" + x.ad + (x.not ? "<br><small>" + x.not + "</small>" : "") + '</td><td class="r hs">' + x.adet + " × " + (x.fiyat ? tl(x.fiyat) : "dahil") + '</td><td class="r">' + (x.fiyat ? tl(x.adet * x.fiyat) : "Dahil") + "<br><small>" + x.adet + " adet</small></td></tr>";
@@ -188,12 +260,13 @@
   }
 
   $("rh-k").value = S.k;
-  $("rh-w").addEventListener("input", function (e) { var v = parseInt(e.target.value, 10); S.w = isNaN(v) ? 0 : Math.min(5000, v); S.adet = null; guncelle(); });
-  $("rh-d").addEventListener("change", function (e) { S.d = +e.target.value; guncelle(); });
-  $("rh-p").addEventListener("change", function (e) { S.p = +e.target.value; S.k = AYAR.varsayilanKat[S.p] || S.k; $("rh-k").value = S.k; guncelle(); });
-  $("rh-k").addEventListener("change", function (e) { S.k = +e.target.value; guncelle(); });
+  $("rh-w").addEventListener("input", function (e) { var v = parseInt(e.target.value, 10); S.w = isNaN(v) ? 0 : Math.min(3000, v); S.adet = null; guncelle(); });
+  $("rh-d").addEventListener("change", function (e) { S.d = +e.target.value; S.adet = null; guncelle(); });
+  $("rh-p").addEventListener("change", function (e) { S.p = +e.target.value; S.k = AYAR.varsayilanKat[S.p] || S.k; $("rh-k").value = S.k; S.adet = null; guncelle(); });
+  $("rh-k").addEventListener("change", function (e) { S.k = +e.target.value; S.adet = null; guncelle(); });
   $("rh-kdv").addEventListener("change", function (e) { S.kdv = e.target.checked; guncelle(); });
-  R.querySelectorAll('input[name="rh-t"]').forEach(function (r) { r.addEventListener("change", function (e) { S.t = e.target.value; guncelle(); }); });
+  R.querySelectorAll('input[name="rh-t"]').forEach(function (r) { r.addEventListener("change", function (e) { S.t = e.target.value; S.adet = null; guncelle(); }); });
+  R.querySelectorAll('input[name="rh-m"]').forEach(function (r) { r.addEventListener("change", function (e) { S.m = e.target.value; S.adet = null; guncelle(); }); });
   R.addEventListener("click", function (e) {
     var bt = e.target.closest("button[data-w]");
     if (!bt) return;
