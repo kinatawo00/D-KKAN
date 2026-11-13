@@ -10,9 +10,7 @@ Müşterilerin duvar ölçüsünü girerek çelik raf ünitelerini otomatik yerl
 - Önden şematik çizim, malzeme listesi, birim fiyatlar, %20 KDV seçeneği
 - Paylaşılabilir link (seçimler linkte saklanır), WhatsApp ile gönderme, yazdırma / PDF
 
-## Fiyatları değiştirme
-`index.html` içindeki `CONFIG` bölümünü düzenleyin (raf, profil, somun-cıvata ve pabuç fiyatları, WhatsApp numarası).
+## Siteye ekleme (önerilen)
+`raf-hesaplama-kodu.html` (aynısı `.txt` olarak da var) dosyasının tamamını Ticimax'ta **Modüller → Sayfa Yönetimi → Yeni sayfa** içeriğine, editörün kaynak kod (`<>`) modunda yapıştırın. Harici site veya üyelik gerekmez. Fiyatlar dosyanın başındaki `AYAR` bölümündedir.
 
-## Yayınlama
-1. **GitHub Pages:** Depo → Settings → Pages → "Deploy from a branch" → `main` / `(root)` → Save. Birkaç dakika sonra hesaplayıcı `https://kinatawo00.github.io/D-KKAN/` adresinde açılır. Bu link doğrudan müşterilerle paylaşılabilir.
-2. **Siteye gömme (Ticimax):** Yeni bir içerik sayfası açın, editörü HTML / kaynak kod moduna alın ve `site-embed.html` dosyasının içeriğini yapıştırın. Çerçevenin yüksekliği kendiliğinden ayarlanır.
+`index.html` aynı hesaplayıcının tek başına açılan, daha ayrıntılı sürümüdür.
