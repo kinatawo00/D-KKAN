@@ -180,7 +180,7 @@ const CONFIG = {
   subtitle: "Çelik Raf Hesaplama",
   // WhatsApp numarası (ülke koduyla, boşluksuz, ör. "905321234567").
   // Boş bırakılırsa WhatsApp kişi seçme ekranını açar.
-  whatsapp: "",
+  whatsapp: "905376605348",
   depths: [31, 43, 59],          // raf derinlikleri (cm)
   widths: [93, 75, 60],          // ünite genişlikleri (cm), büyükten küçüğe
   // Raf tablası fiyatı: derinlik -> genişlik -> TL
@@ -192,6 +192,7 @@ const CONFIG = {
   profilePrice: { 200: 250, 250: 300 },  // profil boyu (cm) -> TL
   boltPrice: 4,                  // somun-cıvata adet fiyatı (TL)
   boltsPerShelf: 8,              // raf başına somun-cıvata
+  footPrice: 0,                  // pabuç (ayak) adet fiyatı; 0 = fiyata dahil
   kdvRate: 0.20,
   levels: { min: 2, max: 10 },
   defaultLevels: { 200: 5, 250: 6 },
@@ -246,6 +247,7 @@ function bom(c) {
   const shelves = n * state.levels;
   const prof = profileCount(n);
   if (prof) lines.push({ name: `Profil ${state.profile} cm`, qty: prof, price: CONFIG.profilePrice[state.profile] });
+  if (prof) lines.push({ name: "Pabuç (ayak)", qty: prof, price: CONFIG.footPrice, note: "profil başına 1 adet" });
   const bolts = shelves * CONFIG.boltsPerShelf;
   if (bolts) lines.push({ name: "Somun-cıvata", qty: bolts, price: CONFIG.boltPrice, note: `raf başı ${CONFIG.boltsPerShelf} adet` });
   const subtotal = lines.reduce((s, l) => s + l.qty * l.price, 0);
@@ -254,7 +256,7 @@ function bom(c) {
 
 // Tek, bağımsız bir ünitenin fiyatı (4 profil + raflar + cıvata)
 function singleUnitPrice(w) {
-  return 4 * CONFIG.profilePrice[state.profile] +
+  return 4 * (CONFIG.profilePrice[state.profile] + CONFIG.footPrice) +
     state.levels * (CONFIG.shelfPrice[state.depth][w] + CONFIG.boltsPerShelf * CONFIG.boltPrice);
 }
 
@@ -400,7 +402,7 @@ function render() {
 
   // fiyat dökümü
   let rows = b.lines.map(l => `<tr><td>${l.name}${l.note ? `<br><small>${l.note}</small>` : ""}</td>
-    <td class="r hide-sm">${l.qty} × ${tl(l.price)}</td><td class="r">${tl(l.qty * l.price)}<br><small>${l.qty} adet</small></td></tr>`).join("");
+    <td class="r hide-sm">${l.qty} × ${l.price ? tl(l.price) : "dahil"}</td><td class="r">${l.price ? tl(l.qty * l.price) : "Dahil"}<br><small>${l.qty} adet</small></td></tr>`).join("");
   const kdvAmt = state.kdv ? b.subtotal * CONFIG.kdvRate : 0;
   rows += `<tr class="sub"><td>Ara toplam</td><td class="hide-sm"></td><td class="r">${tl(b.subtotal)}</td></tr>`;
   if (state.kdv) rows += `<tr><td>KDV (%${CONFIG.kdvRate * 100})</td><td class="hide-sm"></td><td class="r">${tl(kdvAmt)}</td></tr>`;
@@ -423,7 +425,7 @@ function summaryText() {
     `Raf: ${state.depth} cm derinlik, ${state.profile} cm profil, ${state.levels} kat`,
     `Kurulum: ${state.type === "shared" ? "Ortak profilli" : "Bağımsız üniteler"}`,
     `Üniteler: ${parts || "-"}`,
-    ...b.lines.map(l => `• ${l.name}: ${l.qty} × ${tl(l.price)} = ${tl(l.qty * l.price)}`),
+    ...b.lines.map(l => l.price ? `• ${l.name}: ${l.qty} × ${tl(l.price)} = ${tl(l.qty * l.price)}` : `• ${l.name}: ${l.qty} adet (dahil)`),
     `Toplam: ${tl(b.subtotal + kdvAmt)} ${state.kdv ? "(KDV dahil)" : "(KDV hariç)"}`,
     shareUrl()
   ].join("\n");

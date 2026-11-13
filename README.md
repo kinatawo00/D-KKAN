@@ -11,7 +11,7 @@ Müşterilerin duvar ölçüsünü girerek çelik raf ünitelerini otomatik yerl
 - Paylaşılabilir link (seçimler linkte saklanır), WhatsApp ile gönderme, yazdırma / PDF
 
 ## Fiyatları değiştirme
-`index.html` içindeki `CONFIG` bölümünü düzenleyin (raf, profil ve somun-cıvata fiyatları, WhatsApp numarası).
+`index.html` içindeki `CONFIG` bölümünü düzenleyin (raf, profil, somun-cıvata ve pabuç fiyatları, WhatsApp numarası).
 
 ## Yayınlama
 - **Web sitesine ekleme:** `index.html` dosyasını sitenize yükleyin (ör. `acarraf.com/raf-hesapla/`) veya bir sayfaya iframe ile gömün:
