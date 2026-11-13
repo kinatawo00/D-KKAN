@@ -492,6 +492,13 @@ document.title = `${CONFIG.brand} – ${CONFIG.subtitle}`;
 $("foot").textContent = `Fiyatlar bilgi amaçlıdır; kesin teklif için bizimle iletişime geçin.`;
 readUrl();
 render();
+
+/* Siteye iframe ile gömüldüğünde yüksekliği üst sayfaya bildir */
+if (window.parent !== window) {
+  const sendHeight = () => parent.postMessage({ type: "raf-hesap-height", height: document.documentElement.scrollHeight }, "*");
+  new ResizeObserver(sendHeight).observe(document.body);
+  sendHeight();
+}
 </script>
 </body>
 </html>

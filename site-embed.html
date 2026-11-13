@@ -1,0 +1,20 @@
+<!-- Raf hesaplayıcıyı web sitesine gömme kodu.
+     Ticimax'ta yeni bir içerik sayfası açıp editörü HTML / Kaynak kod moduna alın
+     ve aşağıdaki kodun tamamını yapıştırın. -->
+<iframe id="raf-hesap"
+        src="https://kinatawo00.github.io/D-KKAN/"
+        title="Çelik Raf Hesaplama"
+        style="width:100%;min-height:1900px;border:0;display:block"
+        allow="clipboard-write"
+        loading="lazy"></iframe>
+<script>
+  // Hesaplayıcının yüksekliğine göre çerçeveyi otomatik büyütür/küçültür.
+  window.addEventListener("message", function (e) {
+    if (e.origin !== "https://kinatawo00.github.io") return;
+    if (e.data && e.data.type === "raf-hesap-height") {
+      var f = document.getElementById("raf-hesap");
+      f.style.minHeight = "0";
+      f.style.height = (e.data.height + 20) + "px";
+    }
+  });
+</script>

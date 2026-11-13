@@ -14,6 +14,5 @@ Müşterilerin duvar ölçüsünü girerek çelik raf ünitelerini otomatik yerl
 `index.html` içindeki `CONFIG` bölümünü düzenleyin (raf, profil, somun-cıvata ve pabuç fiyatları, WhatsApp numarası).
 
 ## Yayınlama
-- **Web sitesine ekleme:** `index.html` dosyasını sitenize yükleyin (ör. `acarraf.com/raf-hesapla/`) veya bir sayfaya iframe ile gömün:
-  `<iframe src="/raf-hesapla/index.html" style="width:100%;height:2200px;border:0"></iframe>`
-- **GitHub Pages:** Depo ayarlarında Pages'i `main` dalı için açın. Hesaplayıcı `https://<kullanıcı>.github.io/D-KKAN/` adresinden yayınlanır.
+1. **GitHub Pages:** Depo → Settings → Pages → "Deploy from a branch" → `main` / `(root)` → Save. Birkaç dakika sonra hesaplayıcı `https://kinatawo00.github.io/D-KKAN/` adresinde açılır. Bu link doğrudan müşterilerle paylaşılabilir.
+2. **Siteye gömme (Ticimax):** Yeni bir içerik sayfası açın, editörü HTML / kaynak kod moduna alın ve `site-embed.html` dosyasının içeriğini yapıştırın. Çerçevenin yüksekliği kendiliğinden ayarlanır.
