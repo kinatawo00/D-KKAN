@@ -1,0 +1,21 @@
+<script>
+/* "Kendi Rafını Kendin Hesapla" butonu - aşağıdaki sayfaların üstüne eklenir */
+(function () {
+  var SAYFALAR = ["/raf-sistemleri", "/celik-raf-sistemleri"];
+  var HEDEF = "/raf-hesaplama";
+  function ekle() {
+    var yol = location.pathname.replace(/\/+$/, "").toLowerCase();
+    if (SAYFALAR.indexOf(yol) === -1) return;
+    var alan = document.getElementById("divCenterBlock");
+    if (!alan || document.getElementById("rh-buton")) return;
+    if (alan.querySelector('a[href="' + HEDEF + '"]')) return;   // zaten varsa tekrar ekleme
+    var d = document.createElement("div");
+    d.id = "rh-buton";
+    d.style.cssText = "text-align:center;margin:16px 0;clear:both";
+    d.innerHTML = '<a href="' + HEDEF + '" style="display:inline-block;background:#e2701f;color:#fff;font-weight:700;font-size:17px;padding:14px 28px;border-radius:10px;text-decoration:none">Kendi Rafını Kendin Hesapla &rarr;</a>' +
+      '<div style="font-size:13px;color:#666;margin-top:6px">Duvar ölçünü gir, kaç raf sığacağını ve fiyatını hemen gör.</div>';
+    alan.insertBefore(d, alan.firstChild);
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", ekle); else ekle();
+})();
+</script>
