@@ -1,0 +1,68 @@
+<div id="raf-secim">
+  <h2 class="rs-bas">Kendi Rafını Kendin Hesapla</h2>
+  <p class="rs-alt">Hangi raf sistemini hesaplamak istiyorsunuz?</p>
+  <div class="rs-kartlar">
+    <button type="button" class="rs-kart" data-sec="celik">
+      <svg viewBox="0 0 120 90" aria-hidden="true"><rect x="14" y="8" width="5" height="76" fill="#8b96a1"/><rect x="101" y="8" width="5" height="76" fill="#8b96a1"/><g fill="#c9d1d8" stroke="#8b96a1"><rect x="14" y="12" width="92" height="5"/><rect x="14" y="34" width="92" height="5"/><rect x="14" y="56" width="92" height="5"/><rect x="14" y="76" width="92" height="5"/></g></svg>
+      <b>Çelik Raf Hesapla</b>
+      <span>Arşiv, depo ve ev için cıvatalı çelik raflar</span>
+    </button>
+    <button type="button" class="rs-kart" data-sec="rack">
+      <svg viewBox="0 0 120 90" aria-hidden="true"><rect x="12" y="6" width="6" height="78" fill="#2a4fb8"/><rect x="102" y="6" width="6" height="78" fill="#2a4fb8"/><g fill="#f4f5f7" stroke="#cdd2d8"><rect x="18" y="14" width="84" height="5"/><rect x="18" y="44" width="84" height="5"/><rect x="18" y="74" width="84" height="5"/></g><g fill="#e2701f"><rect x="18" y="19" width="84" height="5"/><rect x="18" y="49" width="84" height="5"/><rect x="18" y="79" width="84" height="5"/></g></svg>
+      <b>Hafif Rack Hesapla</b>
+      <span>Travers ve ayaklı, yüksek taşıma kapasiteli raflar</span>
+    </button>
+  </div>
+  <div class="rs-ust" hidden><button type="button" class="rs-geri">&larr; Raf tipini değiştir</button><span class="rs-secili"></span></div>
+  <div class="rs-panel" data-panel="celik" hidden>
+<!--CELIK-->
+  </div>
+  <div class="rs-panel" data-panel="rack" hidden>
+<!--RACK-->
+  </div>
+</div>
+<script>
+(function () {
+  var K = document.getElementById("raf-secim");
+  if (!K || K.dataset.ok) return;
+  K.dataset.ok = "1";
+  var st = document.createElement("style");
+  st.textContent =
+    "#raf-secim{max-width:960px;margin:0 auto;font-family:inherit;color:#1b1b1b;text-align:left}" +
+    "#raf-secim .rs-bas{font-size:26px;font-weight:800;margin:0 0 4px;text-align:center}" +
+    "#raf-secim .rs-alt{font-size:15px;color:#666;margin:0 0 18px;text-align:center}" +
+    "#raf-secim .rs-kartlar{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-bottom:16px}" +
+    "#raf-secim .rs-kart{display:flex;flex-direction:column;align-items:center;gap:6px;padding:22px 16px;background:#fff;border:2px solid #e3e3e3;border-radius:14px;cursor:pointer;font:inherit;color:#1b1b1b;text-align:center;text-transform:none;margin:0}" +
+    "#raf-secim .rs-kart:hover{border-color:#e2701f;box-shadow:0 4px 14px rgba(0,0,0,.06)}" +
+    "#raf-secim .rs-kart.on{border-color:#e2701f;background:#fff5ee}" +
+    "#raf-secim .rs-kart svg{width:120px;height:90px;display:block}" +
+    "#raf-secim .rs-kart b{font-size:19px;font-weight:800}" +
+    "#raf-secim .rs-kart span{font-size:13px;color:#666}" +
+    "#raf-secim .rs-ust{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 0 12px}" +
+    "#raf-secim .rs-geri{font:inherit;cursor:pointer;border:1px solid #cfcfcf;background:#fff;color:#1b1b1b;border-radius:8px;padding:8px 14px;text-transform:none;margin:0}" +
+    "#raf-secim .rs-geri:hover{border-color:#e2701f}" +
+    "#raf-secim .rs-secili{font-weight:700;font-size:17px}" +
+    "#raf-secim [hidden]{display:none!important}";
+  document.head.appendChild(st);
+
+  var kartlar = K.querySelector(".rs-kartlar"), ust = K.querySelector(".rs-ust");
+  var ADLAR = { celik: "Çelik Raf Hesaplama", rack: "Hafif Rack Hesaplama" };
+  function goster(sec, kaydir) {
+    K.querySelectorAll(".rs-panel").forEach(function (p) { p.hidden = p.dataset.panel !== sec; });
+    var acik = !!ADLAR[sec];
+    kartlar.hidden = acik;
+    K.querySelector(".rs-alt").hidden = acik;
+    ust.hidden = !acik;
+    K.querySelector(".rs-secili").textContent = ADLAR[sec] || "";
+    if (kaydir) K.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+  K.addEventListener("click", function (e) {
+    var k = e.target.closest("[data-sec]");
+    if (k) { goster(k.dataset.sec, true); try { history.replaceState(null, "", "#" + (k.dataset.sec === "rack" ? "hafif-rack" : "celik-raf")); } catch (x) {} }
+    if (e.target.closest(".rs-geri")) { goster("", true); try { history.replaceState(null, "", location.pathname + location.search); } catch (x) {} }
+  });
+  // Link ile doğrudan açma: sayfa#celik-raf veya sayfa#hafif-rack
+  var h = location.hash.replace("#", "");
+  goster(h === "hafif-rack" ? "rack" : h === "celik-raf" ? "celik" : "", false);
+})();
+</script>

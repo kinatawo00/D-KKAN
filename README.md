@@ -17,3 +17,8 @@ Müşterilerin duvar ölçüsünü girerek çelik raf ünitelerini otomatik yerl
 
 ## Hafif rack hesaplayıcı
 `hafif-rack-kodu.html` (aynısı `.txt`) Ticimax'ta ayrı bir sayfaya (ör. `hafif-rack-hesaplama`) aynı şekilde yapıştırılır. Ayak, travers ve raf fiyatları dosyanın başındaki `AYAR` bölümündedir. `hafif-rack.html` tek başına açılan sürümdür.
+
+## Tek sayfa: Kendi Rafını Kendin Hesapla (güncel kullanım)
+Sitedeki sayfaya yapıştırılan kod artık `kendi-rafini-hesapla.txt` dosyasıdır. Sayfa açılınca "Çelik Raf Hesapla" ve "Hafif Rack Hesapla" seçenekleri çıkar.
+Bu dosya `python3 birlestir.py` ile `secim-ekrani.html`, `raf-hesaplama-kodu.html` ve `hafif-rack-kodu.html` dosyalarından üretilir; fiyat değişikliğinden sonra betiği yeniden çalıştırın.
+Doğrudan açma linkleri: `/raf-hesaplama#celik-raf` ve `/raf-hesaplama#hafif-rack`.
