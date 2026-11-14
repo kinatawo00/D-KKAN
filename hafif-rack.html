@@ -17,8 +17,19 @@
     traversler: [180, 150, 120, 90],              // travers (göz) boyları, büyükten küçüğe
     traversFiyati: { 90: 300, 120: 350, 150: 400, 180: 450 },
     rafEni: 30,                                   // raflar hep 30 cm genişliğinde
-    rafFiyati: { 40: 140, 50: 160, 60: 180, 70: 200, 80: 250, 90: 300 },   // derinliğe göre (TL)
-    ayakPayi: 0,                                  // her ayağın genişliğe eklediği pay (cm)
+    rafFiyati: { 40: 140, 50: 160, 60: 180, 70: 200, 80: 250, 90: 300 },   // 0,70 mm sac raf, derinliğe göre (TL)
+    // Renk seçenekleri: ayak ve travers fiyatı bu çarpanla hesaplanır
+    renkler: {
+      standart: { ad: "Turuncu-Mavi", carpan: 1 },
+      beyaz: { ad: "Beyaz", carpan: 0.8 }        // beyazda ayak ve travers %20 daha ucuz
+    },
+    // Raf malzemesi: 0,70 mm sac fiyatına eklenecek fark (TL, raf başına)
+    raflar: {
+      sac070: { ad: "0,70 mm sac", kisa: "0,70 mm sac", fark: 0 },
+      sac100: { ad: "1 mm sac", kisa: "1 mm sac", fark: 100 },
+      sunta: { ad: "1,8 sunta", kisa: "sunta", fark: -50 }
+    },
+    ayakPayi: 3,                                  // her ayağın genişliğe eklediği pay (cm)
     azBosluk: 10,                                 // "Az boşluklu" seçeneğinde en fazla boşluk (cm)
     kdv: 0.20,
     varsayilanKat: { 200: 4, 250: 5 },
@@ -88,7 +99,6 @@
 
   var T_ = AYAR.traversler;
   var MODLAR = [
-    { id: "eko", ad: "En uygun fiyat", ac: "En az maliyetli dizilim." },
     { id: "az", ad: "Az boşluklu", ac: "Boşluk en fazla " + AYAR.azBosluk + " cm, en uygun fiyat." },
     { id: "dolu", ad: "Duvarı tam doldur", ac: "En az boşluk kalan dizilim." }
   ];
@@ -113,7 +123,10 @@
   function kd(n) { return tl(Math.round(n * (1 + AYAR.kdv) * 100) / 100); }
   function cm(n) { return (Math.round(n * 10) / 10).toLocaleString("tr-TR"); }
 
-  var S = { m: "eko", duvarlar: [{ w: 240, d: 50, h: 200, k: 4, adet: null }] };
+  var S = { m: "az", duvarlar: [{ w: 240, d: 50, h: 200, k: 4, r: "standart", t: "sac070", adet: null }] };
+  function rafF(dv) { return AYAR.rafFiyati[dv.d] + AYAR.raflar[dv.t].fark; }
+  function ayakF(dv) { return AYAR.ayakFiyati[dv.h][dv.d] * AYAR.renkler[dv.r].carpan; }
+  function travF(dv, L) { return AYAR.traversFiyati[L] * AYAR.renkler[dv.r].carpan; }
 
   function gozSay(a) { return T_.reduce(function (s, L) { return s + a[L]; }, 0); }
   function kullanilan(a) { var n = gozSay(a); return T_.reduce(function (s, L) { return s + a[L] * L; }, 0) + (n ? (n + 1) * AYAR.ayakPayi : 0); }
@@ -123,25 +136,25 @@
   function duvarMalzeme(a, dv) {
     var n = gozSay(a), ayak = n ? n + 1 : 0, trav = 0, raf = 0;
     T_.forEach(function (L) { trav += a[L] * 2 * dv.k; raf += a[L] * rafAdet(L) * dv.k; });
-    var tutar = ayak * AYAR.ayakFiyati[dv.h][dv.d] + raf * AYAR.rafFiyati[dv.d];
-    T_.forEach(function (L) { tutar += a[L] * 2 * dv.k * AYAR.traversFiyati[L]; });
+    var tutar = ayak * ayakF(dv) + raf * rafF(dv);
+    T_.forEach(function (L) { tutar += a[L] * 2 * dv.k * travF(dv, L); });
     return { n: n, ayak: ayak, trav: trav, raf: raf, tutar: tutar };
   }
 
   // Duvara sığan dizilimleri dener (sonuçlar önbelleğe alınır)
   var onbellek = {};
   function yerlestir(dv, mod) {
-    var anahtar = [dv.w, dv.d, dv.h, dv.k, mod].join("|");
+    var anahtar = [dv.w, dv.d, dv.h, dv.k, dv.r, dv.t, mod].join("|");
     if (onbellek[anahtar]) return Object.assign({}, onbellek[anahtar]);
     var W = dv.w, p = AYAR.ayakPayi, enKucuk = Math.min.apply(null, T_) + p;
-    var gozMaliyet = T_.map(function (L) { return 2 * dv.k * AYAR.traversFiyati[L] + rafAdet(L) * dv.k * AYAR.rafFiyati[dv.d]; });
-    var ayakF = AYAR.ayakFiyati[dv.h][dv.d], adaylar = [], enAz = Infinity;
+    var gozMaliyet = T_.map(function (L) { return 2 * dv.k * travF(dv, L) + rafAdet(L) * dv.k * rafF(dv); });
+    var ayakFiyat = ayakF(dv), adaylar = [], enAz = Infinity;
     function dene(idx, kalanW, sayilar, n, maliyet) {
       if (idx === T_.length) {
         if (!n) return;
         var bos = kalanW - p;                 // en sondaki ayağın payı
         if (bos < 0 || bos >= enKucuk) return;
-        var f = maliyet + (n + 1) * ayakF;
+        var f = maliyet + (n + 1) * ayakFiyat;
         var fark = Math.max.apply(null, T_.filter(function (L, i) { return sayilar[i]; })) - Math.min.apply(null, T_.filter(function (L, i) { return sayilar[i]; }));
         adaylar.push({ s: sayilar.slice(), bos: bos, f: f, n: n, fark: fark });
         if (bos < enAz) enAz = bos;
@@ -172,25 +185,34 @@
 
   // Tüm duvarların toplam malzeme listesi; liste: [{ a, dv }]
   function toplam(liste) {
-    var ayaklar = {}, travs = {}, raflar = {}, n = 0, ayak = 0, trav = 0, raf = 0;
+    var kalem = {}, sira = [], n = 0, ayak = 0, trav = 0, raf = 0;
+    function ekle(anahtar, ad, not, adet, fiyat) {
+      if (!adet) return;
+      if (!kalem[anahtar]) { kalem[anahtar] = { ad: ad, not: not, adet: 0, fiyat: fiyat }; sira.push(anahtar); }
+      kalem[anahtar].adet += adet;
+    }
     liste.forEach(function (x) {
-      var m = duvarMalzeme(x.a, x.dv);
+      var dv = x.dv, m = duvarMalzeme(x.a, dv), renk = AYAR.renkler[dv.r].ad;
       n += m.n; ayak += m.ayak; trav += m.trav; raf += m.raf;
-      if (m.ayak) { var ka = x.dv.d + "×" + x.dv.h; ayaklar[ka] = (ayaklar[ka] || 0) + m.ayak; }
-      T_.forEach(function (L) { if (x.a[L]) { travs[L] = (travs[L] || 0) + x.a[L] * 2 * x.dv.k; raflar[x.dv.d] = (raflar[x.dv.d] || 0) + x.a[L] * rafAdet(L) * x.dv.k; } });
+      ekle("1|" + dv.h + "|" + dv.d + "|" + dv.r, "Ayak " + dv.d + "×" + dv.h + " cm · " + renk, "", m.ayak, ayakF(dv));
+      T_.forEach(function (L) {
+        if (!x.a[L]) return;
+        ekle("2|" + (1000 + L) + "|" + dv.r, "Travers " + L + " cm · " + renk, "kat başı 2 adet (ön + arka)", x.a[L] * 2 * dv.k, travF(dv, L));
+        ekle("3|" + (100 + dv.d) + "|" + dv.t, "Raf " + dv.d + "×" + AYAR.rafEni + " cm · " + AYAR.raflar[dv.t].ad, "", x.a[L] * rafAdet(L) * dv.k, rafF(dv));
+      });
     });
-    var satir = [];
-    AYAR.yukseklikler.forEach(function (h) {
-      AYAR.derinlikler.forEach(function (d) { var k = d + "×" + h; if (ayaklar[k]) satir.push({ ad: "Ayak " + k + " cm", adet: ayaklar[k], fiyat: AYAR.ayakFiyati[h][d] }); });
-    });
-    T_.slice().sort(function (a, b) { return a - b; }).forEach(function (L) { if (travs[L]) satir.push({ ad: "Travers " + L + " cm", not: "kat başı 2 adet (ön + arka)", adet: travs[L], fiyat: AYAR.traversFiyati[L] }); });
-    AYAR.derinlikler.forEach(function (d) { if (raflar[d]) satir.push({ ad: "Raf " + d + "×" + AYAR.rafEni + " cm", adet: raflar[d], fiyat: AYAR.rafFiyati[d] }); });
+    var satir = sira.sort().map(function (k) { return kalem[k]; });
     var ara = satir.reduce(function (s, x) { return s + x.adet * x.fiyat; }, 0);
     return { satir: satir, n: n, ayak: ayak, trav: trav, raf: raf, ara: ara };
   }
 
   // Hafif rack çizimi (eğik perspektif): mavi ayaklar, turuncu traversler, beyaz raflar
   function ciz(svg, a, dv, id) {
+    var beyaz = dv.r === "beyaz", sunta = dv.t === "sunta";
+    var RK = beyaz
+      ? { p1: "#d9dcdf", p2: "#ffffff", p3: "#cfd3d7", arka: "#d7dadd", yan: "#bfc4c9", delik: "#9aa1a8", t1: "#ffffff", t2: "#dfe2e5", tArka: "#d3d7db", kenar: ' stroke="#b9bfc5" stroke-width=".5"' }
+      : { p1: "#1c3f9e", p2: "#3f66cf", p3: "#1a3787", arka: "#2a4699", yan: "#16307a", delik: "#0d1d4d", t1: "#ff8a2a", t2: "#d9600f", tArka: "#c9580e", kenar: "" };
+    var RF = sunta ? { s1: "#f7f3ec", s2: "#e6dccb", ek: "#d8ccb8", on: "#c9b48f" } : { s1: "#ffffff", s2: "#e3e6ea", ek: "#c4cad1", on: "" };
     var seq = []; T_.forEach(function (L) { for (var i = 0; i < a[L]; i++) seq.push(L); });
     var Wd = dv.w, H = dv.h, D = dv.d, p = AYAR.ayakPayi;
     var ox = D * 0.55, oy = D * 0.38;
@@ -204,9 +226,9 @@
     function line(x1, y1, x2, y2, c, w) { return '<line x1="' + r(x1) + '" y1="' + r(y1) + '" x2="' + r(x2) + '" y2="' + r(y2) + '" stroke="' + c + '" stroke-width="' + w + '"/>'; }
 
     s += "<defs>" +
-      '<linearGradient id="rk-gp' + id + '" x1="0" x2="1"><stop offset="0" stop-color="#1c3f9e"/><stop offset=".45" stop-color="#3f66cf"/><stop offset="1" stop-color="#1a3787"/></linearGradient>' +
-      '<linearGradient id="rk-gb' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8a2a"/><stop offset="1" stop-color="#d9600f"/></linearGradient>' +
-      '<linearGradient id="rk-gs' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e3e6ea"/></linearGradient>' +
+      '<linearGradient id="rk-gp' + id + '" x1="0" x2="1"><stop offset="0" stop-color="' + RK.p1 + '"/><stop offset=".45" stop-color="' + RK.p2 + '"/><stop offset="1" stop-color="' + RK.p3 + '"/></linearGradient>' +
+      '<linearGradient id="rk-gb' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + RK.t1 + '"/><stop offset="1" stop-color="' + RK.t2 + '"/></linearGradient>' +
+      '<linearGradient id="rk-gs' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + RF.s1 + '"/><stop offset="1" stop-color="' + RF.s2 + '"/></linearGradient>' +
       '<linearGradient id="rk-gw' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbfbfb"/><stop offset="1" stop-color="#eeeeee"/></linearGradient>' +
       "</defs>";
     s += rect(L0 + ox, T - oy, Wd, H + oy, "url(#rk-gw" + id + ")", ' stroke="#e2e2e2"');
@@ -223,7 +245,7 @@
     if (seq.length) s += '<ellipse cx="' + r((L0 + x + ox) / 2) + '" cy="' + r(floor - oy / 2) + '" rx="' + r((x - L0) / 2 + ox / 2) + '" ry="' + r(oy / 2 + 2) + '" fill="#000" opacity=".07"/>';
 
     // arka ayaklar
-    ayaklar.forEach(function (ax) { s += rect(ax + ox, T - oy, pw, H, "#2a4699"); });
+    ayaklar.forEach(function (ax) { s += rect(ax + ox, T - oy, pw, H, RK.arka, RK.kenar); });
 
     var ys = [];
     for (var i = 0; i < dv.k; i++) ys.push(floor - 8 - (H - 8 - bh) * (dv.k === 1 ? 0 : i / (dv.k - 1)));
@@ -231,26 +253,21 @@
       gozler.forEach(function (g) {
         var x0 = g.x, x1 = g.x + g.L;
         // arka travers
-        s += rect(x0 + ox, y - oy, x1 - x0, bh * 0.8, "#c9580e");
+        s += rect(x0 + ox, y - oy, x1 - x0, bh * 0.8, RK.tArka, RK.kenar);
         // raf yüzeyi ve 30 cm'lik ek yerleri
         s += poly([[x0, y], [x1, y], [x1 + ox, y - oy], [x0 + ox, y - oy]], "url(#rk-gs" + id + ")", ' stroke="#cdd2d8" stroke-width=".5"');
-        for (var e = g.x + AYAR.rafEni; e < g.x + g.L - 1; e += AYAR.rafEni) s += line(e, y, e + ox, y - oy, "#c4cad1", 0.6);
+        for (var e = g.x + AYAR.rafEni; e < g.x + g.L - 1; e += AYAR.rafEni) s += line(e, y, e + ox, y - oy, RF.ek, 0.6);
+        if (sunta) s += rect(x0, y - 1.8, x1 - x0, 1.8, RF.on);
         // ön travers
-        s += rect(x0, y, x1 - x0, bh, "url(#rk-gb" + id + ")");
+        s += rect(x0, y, x1 - x0, bh, "url(#rk-gb" + id + ")", RK.kenar);
       });
     });
 
-    // ayak çerçeveleri: yan bağlantılar, ön dikme, delikler, taban
+    // ayaklar: ön dikme, delikler, taban (yan çapraz yok)
     ayaklar.forEach(function (ax) {
-      var bx = ax + ox, by = -oy;
-      var adim = Math.max(30, H / 5);
-      for (var y = floor - 10; y > T + 10; y -= adim) {
-        s += line(ax + pw / 2, y, bx + pw / 2, y + by, "#2f50ad", 1.6);
-        if (y - adim > T + 10) s += line(ax + pw / 2, y, bx + pw / 2, y - adim + by, "#2f50ad", 1.2);
-      }
-      s += poly([[ax + pw, T], [ax + pw + 1.8, T - 1.2], [ax + pw + 1.8, floor - 1.2], [ax + pw, floor]], "#16307a");
-      s += rect(ax, T, pw, H, "url(#rk-gp" + id + ")");
-      for (var yy = T + 4; yy < floor - 5; yy += 5) { s += rect(ax + 0.8, yy, 1.1, 3, "#0d1d4d", ' rx=".5"'); s += rect(ax + 2.6, yy, 1.1, 3, "#0d1d4d", ' rx=".5"'); }
+      s += poly([[ax + pw, T], [ax + pw + 1.8, T - 1.2], [ax + pw + 1.8, floor - 1.2], [ax + pw, floor]], RK.yan);
+      s += rect(ax, T, pw, H, "url(#rk-gp" + id + ")", RK.kenar);
+      for (var yy = T + 4; yy < floor - 5; yy += 5) { s += rect(ax + 0.8, yy, 1.1, 3, RK.delik, ' rx=".5"'); s += rect(ax + 2.6, yy, 1.1, 3, RK.delik, ' rx=".5"'); }
       s += rect(ax - 1, floor - 1.8, pw + 2, 2.4, "#1b1f24", ' rx=".5"');
     });
 
@@ -272,6 +289,9 @@
   function sec(i, f, arr, suf, val) {
     return '<select data-dw="' + i + '" data-f="' + f + '">' + arr.map(function (v) { return '<option value="' + v + '"' + (v === val ? " selected" : "") + ">" + v + suf + "</option>"; }).join("") + "</select>";
   }
+  function sec2(i, f, nesne, val) {
+    return '<select data-dw="' + i + '" data-f="' + f + '">' + Object.keys(nesne).map(function (k) { return '<option value="' + k + '"' + (k === val ? " selected" : "") + ">" + nesne[k].ad + "</option>"; }).join("") + "</select>";
+  }
   function duvarKutulari() {
     var katlar = []; for (var k = 2; k <= 10; k++) katlar.push(k);
     $("rk-dw").innerHTML = S.duvarlar.map(function (d, i) {
@@ -280,6 +300,8 @@
         '<label class="rk-f">Derinlik' + sec(i, "d", AYAR.derinlikler, " cm", d.d) + "</label>" +
         '<label class="rk-f">Yükseklik' + sec(i, "h", AYAR.yukseklikler, " cm", d.h) + "</label>" +
         '<label class="rk-f">Kat sayısı' + sec(i, "k", katlar, " kat", d.k) + "</label>" +
+        '<label class="rk-f">Renk' + sec2(i, "r", AYAR.renkler, d.r) + "</label>" +
+        '<label class="rk-f">Raf malzemesi' + sec2(i, "t", AYAR.raflar, d.t) + "</label>" +
         "</div></div>";
     }).join("");
   }
@@ -296,12 +318,12 @@
     var ws = $("rk-ws");
     ws.innerHTML = S.duvarlar.map(function (d, i) {
       var a = d.adet, m = duvarMalzeme(a, d), kul = kullanilan(a), kalan = d.w - kul;
-      return '<div class="rk-dv"><div class="rk-dh"><h4>' + (i + 1) + ". Duvar · " + cm(d.w) + " cm · " + d.d + " cm derinlik · " + d.h + " cm · " + d.k + " kat</h4><span>" + m.n + " göz · <strong>" + kd(m.tutar) + "</strong></span></div>" +
+      return '<div class="rk-dv"><div class="rk-dh"><h4>' + (i + 1) + ". Duvar · " + cm(d.w) + " cm · " + d.d + " cm derinlik · " + d.h + " cm · " + d.k + " kat · " + AYAR.renkler[d.r].ad + " · " + AYAR.raflar[d.t].ad + "</h4><span>" + m.n + " göz · <strong>" + kd(m.tutar) + "</strong></span></div>" +
         '<div class="rk-cz"><svg data-svg="' + i + '" role="img" aria-label="' + (i + 1) + '. duvar hafif rack yerleşimi"></svg></div>' +
         '<div class="rk-u">' + T_.map(function (L) {
           return '<div><div><div class="w">' + L + ' cm göz</div><div class="c">' + a[L] + ' adet</div></div><div class="b"><button type="button" data-i="' + i + '" data-l="' + L + '" data-d="-1">−</button><button type="button" data-i="' + i + '" data-l="' + L + '" data-d="1">+</button></div></div>';
         }).join("") + "</div>" +
-        '<p class="rk-n">Kurulum genişliği: <b>' + cm(kul) + " cm</b> · " +
+        '<p class="rk-n">Kurulum genişliği: <b>' + cm(kul) + " cm</b> (ayak başı " + cm(AYAR.ayakPayi) + " cm pay dahil) · " +
         (kalan >= 0 ? "Boşluk: <b>" + cm(kalan) + " cm</b>" : '<span class="rk-w">Duvarı ' + cm(-kalan) + " cm aşıyor!</span>") + "</p></div>";
     }).join("");
     S.duvarlar.forEach(function (d, i) { ciz(ws.querySelector('[data-svg="' + i + '"]'), d.adet, d, i); });
@@ -322,7 +344,7 @@
     var satirlar = ["Merhaba, hafif rack hesaplama sayfasından yazıyorum."];
     S.duvarlar.forEach(function (d, i) {
       var u = T_.filter(function (L) { return d.adet[L]; }).map(function (L) { return d.adet[L] + " adet " + L + " cm göz"; }).join(", ");
-      satirlar.push((i + 1) + ". duvar (" + cm(d.w) + " cm, " + d.d + " cm derinlik, " + d.h + " cm yükseklik, " + d.k + " kat): " + (u || "-"));
+      satirlar.push((i + 1) + ". duvar (" + cm(d.w) + " cm, " + d.d + " cm derinlik, " + d.h + " cm yükseklik, " + d.k + " kat, " + AYAR.renkler[d.r].ad + ", " + AYAR.raflar[d.t].ad + " raf): " + (u || "-"));
     });
     b.satir.forEach(function (x) { satirlar.push("• " + x.ad + ": " + x.adet + " adet"); });
     satirlar.push("Toplam: " + kd(b.ara) + " (KDV dahil)");
@@ -332,7 +354,7 @@
   // olaylar
   $("rk-dn").addEventListener("change", function (e) {
     var n = +e.target.value;
-    while (S.duvarlar.length < n) { var son = S.duvarlar[S.duvarlar.length - 1]; S.duvarlar.push({ w: 240, d: son.d, h: son.h, k: son.k, adet: null }); }
+    while (S.duvarlar.length < n) { var son = S.duvarlar[S.duvarlar.length - 1]; S.duvarlar.push({ w: 240, d: son.d, h: son.h, k: son.k, r: son.r, t: son.t, adet: null }); }
     S.duvarlar.length = n;
     duvarKutulari(); guncelle();
   });
@@ -343,7 +365,7 @@
       var v = parseFloat(String(e.target.value).replace(",", "."));
       d.w = isNaN(v) ? 0 : Math.min(3000, Math.max(0, v));
     } else {
-      d[f] = +e.target.value;
+      d[f] = (f === "r" || f === "t") ? e.target.value : +e.target.value;
       if (f === "h") { d.k = AYAR.varsayilanKat[d.h] || d.k; e.target.closest(".rk-g").querySelector('[data-f="k"]').value = d.k; }
     }
     d.adet = null; guncelle();
