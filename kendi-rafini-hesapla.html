@@ -583,8 +583,8 @@
   function ciz(svg, a, dv, id) {
     var beyaz = dv.r === "beyaz", sunta = dv.t === "sunta";
     var RK = beyaz
-      ? { p1: "#d9dcdf", p2: "#ffffff", p3: "#cfd3d7", arka: "#d7dadd", yan: "#bfc4c9", delik: "#9aa1a8", t1: "#ffffff", t2: "#dfe2e5", tArka: "#d3d7db", kenar: ' stroke="#b9bfc5" stroke-width=".5"' }
-      : { p1: "#1c3f9e", p2: "#3f66cf", p3: "#1a3787", arka: "#2a4699", yan: "#16307a", delik: "#0d1d4d", t1: "#ff8a2a", t2: "#d9600f", tArka: "#c9580e", kenar: "" };
+      ? { p1: "#d9dcdf", p2: "#ffffff", p3: "#cfd3d7", arka: "#d7dadd", bag: "#e9ecef", bagUst: "#ffffff", yan: "#bfc4c9", delik: "#9aa1a8", t1: "#ffffff", t2: "#dfe2e5", tArka: "#d3d7db", kenar: ' stroke="#b9bfc5" stroke-width=".5"' }
+      : { p1: "#1c3f9e", p2: "#3f66cf", p3: "#1a3787", arka: "#2a4699", bag: "#2445a8", bagUst: "#4a70d6", yan: "#16307a", delik: "#0d1d4d", t1: "#ff8a2a", t2: "#d9600f", tArka: "#c9580e", kenar: "" };
     var RF = sunta ? { s1: "#f7f3ec", s2: "#e6dccb", ek: "#d8ccb8", on: "#c9b48f" } : { s1: "#ffffff", s2: "#e3e6ea", ek: "#c4cad1", on: "" };
     var seq = []; T_.forEach(function (L) { for (var i = 0; i < a[L]; i++) seq.push(L); });
     var Wd = dv.w, H = dv.h, D = dv.d, p = AYAR.ayakPayi;
@@ -636,7 +636,15 @@
       });
     });
 
-    // ayaklar: ön dikme, delikler, taban (yan çapraz yok)
+    // ayak çerçevesi: ön ve arka dikmeyi üstte, ortada ve altta birleştiren yatay parçalar
+    ayaklar.forEach(function (ax) {
+      var bk = 4.5, x1 = ax + pw / 2, x2 = ax + pw / 2 + ox;
+      [T + 3, T + H / 2 - bk / 2, floor - 3 - bk].forEach(function (y) {
+        s += poly([[x1, y], [x2, y - oy], [x2, y - oy + bk], [x1, y + bk]], RK.bag, RK.kenar);
+        s += poly([[x1, y], [x2, y - oy], [x2, y - oy + 1.2], [x1, y + 1.2]], RK.bagUst);
+      });
+    });
+    // ayaklar: ön dikme, delikler, taban
     ayaklar.forEach(function (ax) {
       s += poly([[ax + pw, T], [ax + pw + 1.8, T - 1.2], [ax + pw + 1.8, floor - 1.2], [ax + pw, floor]], RK.yan);
       s += rect(ax, T, pw, H, "url(#rk-gp" + id + ")", RK.kenar);
