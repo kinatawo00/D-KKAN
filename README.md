@@ -14,3 +14,6 @@ Müşterilerin duvar ölçüsünü girerek çelik raf ünitelerini otomatik yerl
 `raf-hesaplama-kodu.html` (aynısı `.txt` olarak da var) dosyasının tamamını Ticimax'ta **Modüller → Sayfa Yönetimi → Yeni sayfa** içeriğine, editörün kaynak kod (`<>`) modunda yapıştırın. Harici site veya üyelik gerekmez. Fiyatlar dosyanın başındaki `AYAR` bölümündedir.
 
 `index.html` aynı hesaplayıcının tek başına açılan sürümüdür (kodun etrafına sayfa iskeleti eklenmiş hâli).
+
+## Hafif rack hesaplayıcı
+`hafif-rack-kodu.html` (aynısı `.txt`) Ticimax'ta ayrı bir sayfaya (ör. `hafif-rack-hesaplama`) aynı şekilde yapıştırılır. Ayak, travers ve raf fiyatları dosyanın başındaki `AYAR` bölümündedir. `hafif-rack.html` tek başına açılan sürümdür.
