@@ -378,7 +378,7 @@
   // Fiyatlar KDV HARİÇ girilir; ekranda KDV eklenmiş hâli gösterilir.
   var AYAR = {
     whatsapp: "905376605348",
-    derinlikler: [40, 50, 60, 70, 80, 90],        // ayak ve raf derinliği (cm)
+    derinlikler: [40, 50, 60, 70, 80, 90],        // ayak ve tabla derinliği (cm)
     yukseklikler: [200, 250],                     // ayak yüksekliği (cm)
     ayakFiyati: {                                 // yükseklik -> derinlik -> TL
       200: { 40: 1300, 50: 1300, 60: 1300, 70: 1300, 80: 1450, 90: 1450 },
@@ -386,21 +386,24 @@
     },
     traversler: [180, 150, 120, 90],              // travers (göz) boyları, büyükten küçüğe
     traversFiyati: { 90: 300, 120: 350, 150: 400, 180: 450 },
-    rafEni: 30,                                   // raflar hep 30 cm genişliğinde
-    rafFiyati: { 40: 140, 50: 160, 60: 180, 70: 200, 80: 250, 90: 300 },   // 0,70 mm sac raf, derinliğe göre (TL)
+    rafEni: 30,                                   // tablalar hep 30 cm genişliğinde
+    rafFiyati: { 40: 140, 50: 160, 60: 180, 70: 200, 80: 250, 90: 300 },   // 0,70 mm sac tabla, derinliğe göre (TL)
     // Renk seçenekleri: ayak ve travers fiyatı bu çarpanla hesaplanır
     renkler: {
       standart: { ad: "Turuncu-Mavi", carpan: 1 },
       beyaz: { ad: "Beyaz", carpan: 0.8 }        // beyazda ayak ve travers %20 daha ucuz
     },
-    // Raf malzemesi: 0,70 mm sac fiyatına eklenecek fark (TL, raf başına)
+    // Tabla malzemesi: 0,70 mm sac tabla fiyatına eklenecek fark (TL, tabla başına)
     raflar: {
-      sac070: { ad: "0,70 mm sac", kisa: "0,70 mm sac", fark: 0 },
-      sac100: { ad: "1 mm sac", kisa: "1 mm sac", fark: 100 },
-      sunta: { ad: "1,8 sunta", kisa: "sunta", fark: -50 }
+      sac070: { ad: "0,70 mm sac tabla", kisa: "0,70 mm sac", fark: 0 },
+      sac100: { ad: "1 mm sac tabla", kisa: "1 mm sac", fark: 100 },
+      sunta: { ad: "1,8 sunta tabla", kisa: "1,8 sunta", fark: -50 }
     },
     ayakPayi: 3,                                  // her ayağın genişliğe eklediği pay (cm)
-    azBosluk: 10,                                 // "Az boşluklu" seçeneğinde en fazla boşluk (cm)
+    // "Az boşluklu" seçeneği: ÖNCE FİYAT, SONRA BOŞLUK.
+    // En az boşluk bırakan dizilimden en fazla bu kadar (cm) fazla boşluk bırakan
+    // dizilimler arasından EN UCUZU seçilir. Örn. 10 cm ve 15 cm boşluklu iki seçenekten ucuz olanı.
+    fiyatPayi: 15,
     kdv: 0.20,
     varsayilanKat: { 200: 4, 250: 5 },
     enFazlaDuvar: 8
@@ -469,7 +472,7 @@
 
   var T_ = AYAR.traversler;
   var MODLAR = [
-    { id: "az", ad: "Az boşluklu", ac: "Boşluk en fazla " + AYAR.azBosluk + " cm, en uygun fiyat." },
+    { id: "az", ad: "Az boşluklu", ac: "Az boşluk bırakan dizilimler içinde en uygun fiyatlısı." },
     { id: "dolu", ad: "Duvarı tam doldur", ac: "En az boşluk kalan dizilim." }
   ];
   var duvarOpt = ""; for (var i2 = 1; i2 <= AYAR.enFazlaDuvar; i2++) duvarOpt += '<option value="' + i2 + '">' + i2 + " duvar</option>";
@@ -483,7 +486,7 @@
     '<div id="rk-ws"></div>' +
     '<p class="rk-n">Şematik görünüm · Ölçüler cm · Her duvarda göz (travers) sayısını +/− ile değiştirebilirsiniz.</p></div>' +
     '<div class="rk-k"><div class="rk-hd"><h3>3. Fiyat</h3><span class="rk-n" style="margin:0">Fiyatlara %' + AYAR.kdv * 100 + " KDV dahildir</span></div>" +
-    '<div class="rk-st"><div><b id="rk-s1"></b><span>Göz</span></div><div><b id="rk-s2"></b><span>Ayak</span></div><div><b id="rk-s3"></b><span>Travers</span></div><div><b id="rk-s4"></b><span>Raf</span></div></div>' +
+    '<div class="rk-st"><div><b id="rk-s1"></b><span>Göz</span></div><div><b id="rk-s2"></b><span>Ayak</span></div><div><b id="rk-s3"></b><span>Travers</span></div><div><b id="rk-s4"></b><span>Tabla</span></div></div>' +
     '<table><thead><tr><th>Malzeme</th><th class="r hs">Adet × Fiyat</th><th class="r">Tutar</th></tr></thead><tbody id="rk-b"></tbody></table>' +
     '<div class="rk-t"><div><div class="lb">Toplam (KDV dahil)</div><div class="big" id="rk-tt"></div><div class="lb">Montaj ve nakliye dahil değildir.</div></div>' +
     '<button class="rk-wa" id="rk-wa">WhatsApp ile sipariş ver</button></div></div>';
@@ -540,7 +543,7 @@
     dene(0, W, [0, 0, 0, 0], 0, 0);
     var sonuc = {}; T_.forEach(function (L) { sonuc[L] = 0; });
     if (adaylar.length) {
-      var limit = mod === "az" ? Math.max(AYAR.azBosluk, enAz) : Infinity, best = null;
+      var limit = mod === "az" ? enAz + AYAR.fiyatPayi : Infinity, best = null;
       adaylar.forEach(function (c) {
         if (c.bos > limit + 1e-9) return;
         var key = mod === "dolu" ? [c.bos, c.f, c.n, c.fark] : [c.f, c.bos, c.n, c.fark];
@@ -568,7 +571,7 @@
       T_.forEach(function (L) {
         if (!x.a[L]) return;
         ekle("2|" + (1000 + L) + "|" + dv.r, "Travers " + L + " cm · " + renk, "kat başı 2 adet (ön + arka)", x.a[L] * 2 * dv.k, travF(dv, L));
-        ekle("3|" + (100 + dv.d) + "|" + dv.t, "Raf " + dv.d + "×" + AYAR.rafEni + " cm · " + AYAR.raflar[dv.t].ad, "", x.a[L] * rafAdet(L) * dv.k, rafF(dv));
+        ekle("3|" + (100 + dv.d) + "|" + dv.t, "Tabla " + dv.d + "×" + AYAR.rafEni + " cm · " + AYAR.raflar[dv.t].kisa, "", x.a[L] * rafAdet(L) * dv.k, rafF(dv));
       });
     });
     var satir = sira.sort().map(function (k) { return kalem[k]; });
@@ -576,7 +579,7 @@
     return { satir: satir, n: n, ayak: ayak, trav: trav, raf: raf, ara: ara };
   }
 
-  // Hafif rack çizimi (eğik perspektif): mavi ayaklar, turuncu traversler, beyaz raflar
+  // Hafif rack çizimi (eğik perspektif): ayaklar, traversler ve tablalar
   function ciz(svg, a, dv, id) {
     var beyaz = dv.r === "beyaz", sunta = dv.t === "sunta";
     var RK = beyaz
@@ -624,7 +627,7 @@
         var x0 = g.x, x1 = g.x + g.L;
         // arka travers
         s += rect(x0 + ox, y - oy, x1 - x0, bh * 0.8, RK.tArka, RK.kenar);
-        // raf yüzeyi ve 30 cm'lik ek yerleri
+        // tabla yüzeyi ve 30 cm'lik ek yerleri
         s += poly([[x0, y], [x1, y], [x1 + ox, y - oy], [x0 + ox, y - oy]], "url(#rk-gs" + id + ")", ' stroke="#cdd2d8" stroke-width=".5"');
         for (var e = g.x + AYAR.rafEni; e < g.x + g.L - 1; e += AYAR.rafEni) s += line(e, y, e + ox, y - oy, RF.ek, 0.6);
         if (sunta) s += rect(x0, y - 1.8, x1 - x0, 1.8, RF.on);
@@ -671,7 +674,7 @@
         '<label class="rk-f">Yükseklik' + sec(i, "h", AYAR.yukseklikler, " cm", d.h) + "</label>" +
         '<label class="rk-f">Kat sayısı' + sec(i, "k", katlar, " kat", d.k) + "</label>" +
         '<label class="rk-f">Renk' + sec2(i, "r", AYAR.renkler, d.r) + "</label>" +
-        '<label class="rk-f">Raf malzemesi' + sec2(i, "t", AYAR.raflar, d.t) + "</label>" +
+        '<label class="rk-f">Tabla malzemesi' + sec2(i, "t", AYAR.raflar, d.t) + "</label>" +
         "</div></div>";
     }).join("");
   }
@@ -714,7 +717,7 @@
     var satirlar = ["Merhaba, hafif rack hesaplama sayfasından yazıyorum."];
     S.duvarlar.forEach(function (d, i) {
       var u = T_.filter(function (L) { return d.adet[L]; }).map(function (L) { return d.adet[L] + " adet " + L + " cm göz"; }).join(", ");
-      satirlar.push((i + 1) + ". duvar (" + cm(d.w) + " cm, " + d.d + " cm derinlik, " + d.h + " cm yükseklik, " + d.k + " kat, " + AYAR.renkler[d.r].ad + ", " + AYAR.raflar[d.t].ad + " raf): " + (u || "-"));
+      satirlar.push((i + 1) + ". duvar (" + cm(d.w) + " cm, " + d.d + " cm derinlik, " + d.h + " cm yükseklik, " + d.k + " kat, " + AYAR.renkler[d.r].ad + ", " + AYAR.raflar[d.t].ad + "): " + (u || "-"));
     });
     b.satir.forEach(function (x) { satirlar.push("• " + x.ad + ": " + x.adet + " adet"); });
     satirlar.push("Toplam: " + kd(b.ara) + " (KDV dahil)");
