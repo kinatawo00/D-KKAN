@@ -22,3 +22,8 @@ Müşterilerin duvar ölçüsünü girerek çelik raf ünitelerini otomatik yerl
 Sitedeki sayfaya yapıştırılan kod artık `kendi-rafini-hesapla.txt` dosyasıdır. Sayfa açılınca "Çelik Raf Hesapla" ve "Hafif Rack Hesapla" seçenekleri çıkar.
 Bu dosya `python3 birlestir.py` ile `secim-ekrani.html`, `raf-hesaplama-kodu.html` ve `hafif-rack-kodu.html` dosyalarından üretilir; fiyat değişikliğinden sonra betiği yeniden çalıştırın.
 Doğrudan açma linkleri: `/raf-hesaplama#celik-raf` ve `/raf-hesaplama#hafif-rack`.
+
+## Market rafı hesaplayıcı
+`market-rafi-kodu.html`: tek duvar, L, U veya dört duvarlı oda. Köşelerde birleşen iki duvardan da karşı duvarın ayak derinliği kadar pay düşülür.
+Ünite: 1 ayak + 1 taban raf + 4 raf + 5 perde + 8 raf kolu; her duvara 1 son ayak eklenir. Fiyatlar dosyanın başındaki `AYAR` bölümündedir.
+Birleşik sayfada üçüncü seçenektir; doğrudan link: `/raf-hesaplama#market-rafi`.

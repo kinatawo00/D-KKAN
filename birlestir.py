@@ -1,4 +1,4 @@
-"""Seçim ekranı + çelik raf + hafif rack kodlarını tek dosyada birleştirir.
+"""Seçim ekranı + çelik raf + hafif rack + market rafı kodlarını tek dosyada birleştirir.
 
 Çalıştırma:  python3 birlestir.py
 Çıktılar:    kendi-rafini-hesapla.txt  (Ticimax sayfasına yapıştırılacak kod)
@@ -10,6 +10,7 @@ d = Path(__file__).parent
 kod = (d / "secim-ekrani.html").read_text(encoding="utf-8")
 kod = kod.replace("<!--CELIK-->", (d / "raf-hesaplama-kodu.html").read_text(encoding="utf-8").strip())
 kod = kod.replace("<!--RACK-->", (d / "hafif-rack-kodu.html").read_text(encoding="utf-8").strip())
+kod = kod.replace("<!--MARKET-->", (d / "market-rafi-kodu.html").read_text(encoding="utf-8").strip())
 (d / "kendi-rafini-hesapla.txt").write_text(kod, encoding="utf-8")
 (d / "kendi-rafini-hesapla.html").write_text(
     '<!doctype html>\n<html lang="tr"><head><meta charset="utf-8">'
