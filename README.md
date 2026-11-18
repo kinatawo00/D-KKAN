@@ -25,8 +25,9 @@ Doğrudan açma linkleri: `/raf-hesaplama#celik-raf` ve `/raf-hesaplama#hafif-ra
 
 ## Market rafı hesaplayıcı
 `market-rafi-kodu.html`: tek duvar, L, U veya dört duvarlı oda; kapı ve köşe rafı seçenekleri.
-- Fiyat ünite bazında ve KDV dahil: ünite (1 ayak + taban raf + 4 raf + 5 perde + 8 raf kolu) + her raf dizisinin sonuna 1 son ayak + isteğe bağlı ekstra raf.
-- Ünite ölçüleri 97, 77, 67 cm; ünite ölçüsü ayağı kapsar (ayak payı 0).
-- Köşelerde iki duvardan da raf derinliği, köşe rafı varsa 70 cm düşülür. Kapı, duvarı iki ayrı raf dizisine böler.
+- Fiyat ünite bazında ve KDV dahil: ünite 4500 TL (köşe ünitesi dahil), her bağlı raf dizisinin sonuna 1 son ayak 1500 TL, isteğe bağlı ekstra raf 750 TL (köşe üniteleri dahil her üniteye).
+- Ayak sayısı = ünite sayısı + dizi sayısı. Dizi yalnızca kapıda veya açık uçta kopar.
+- Ünite ölçüleri 97, 77, 67 cm; her ünite için 1 cm ayak payı eklenir.
+- Köşelerde iki duvardan da raf derinliği, köşe rafı varsa 70 cm düşülür. Kapı genişliği duvardan düşülür.
 - Raf rengi (beyaz, siyah, antrasit) ve etiket rengi (kırmızı, turuncu, sarı, beyaz, antrasit, siyah) seçilir.
 Birleşik sayfada üçüncü seçenektir; doğrudan link: `/raf-hesaplama#market-rafi`.
