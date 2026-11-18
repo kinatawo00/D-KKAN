@@ -32,3 +32,7 @@ Doğrudan açma linkleri: `/raf-hesaplama#celik-raf` ve `/raf-hesaplama#hafif-ra
 - Köşelerde iki duvardan da raf derinliği, köşe rafı varsa 70 cm düşülür. Kapı genişliği duvardan düşülür.
 - Raf rengi (beyaz, siyah, antrasit) ve etiket rengi (kırmızı, turuncu, sarı, beyaz, antrasit, siyah) seçilir.
 Birleşik sayfada üçüncü seçenektir; doğrudan link: `/raf-hesaplama#market-rafi`.
+
+## Ticimax'a yapıştırılacak küçük kod
+Birleşik kod büyüdüğü için Ticimax editörü kaydederken takılabiliyor. `kucult.js` betik kısımlarını sıkıştırır:
+`npm i terser` yapılmış bir klasörü `NODE_PATH` ile göstererek `node kucult.js` çalıştırın; çıktı `kendi-rafini-hesapla-kucuk.txt` olur (yaklaşık %30 daha küçük, aynı işlev).
