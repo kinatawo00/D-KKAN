@@ -34,4 +34,6 @@ Doğrudan açma linkleri: `/raf-hesaplama#celik-raf` ve `/raf-hesaplama#hafif-ra
 Birleşik sayfada üçüncü seçenektir; doğrudan link: `/raf-hesaplama#market-rafi`.
 
 ## Kod kontrolü
-`python3 birlestir.py` birleşik kodu üretirken betiklerdeki `</` dizilerini `<\/` olarak yazar (HTML denetleyicileri ve sayfa editörleri bunları hata sayar) ve `node` kuruluysa her betiğin sözdizimini `node --check` ile denetler.
+`python3 birlestir.py` birleşik kodu üretirken:
+- kodda rakamdan hemen sonra kesme işareti (ör. `97'lik`) varsa durur. Bu kalıp site güvenlik duvarınca SQL saldırısı sanılıp Ticimax'ta kaydetmeyi engelliyor.
+- `node` kuruluysa her betiğin sözdizimini `node --check` ile denetler.

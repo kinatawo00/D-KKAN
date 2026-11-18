@@ -116,7 +116,7 @@
     { n: 4, ad: "Dört duvar (oda)" }
   ];
   var MODLAR = [
-    { id: "az", ad: "Önerilen dizilim", ac: "Önce 97'lik üniteler; son ünitelerde 77 ve 67'liklerle tamamlanır." },
+    { id: "az", ad: "Önerilen dizilim", ac: "Önce 97 cm üniteler kullanılır, sonda 77 ve 67 cm ünitelerle tamamlanır." },
     { id: "dolu", ad: "Duvarı tam doldur", ac: "En az boşluk kalan dizilim." }
   ];
   var ekstraOpt = '<option value="0">Ekstra raf yok</option>';
@@ -181,9 +181,9 @@
   function uniteFiyati() { return AYAR.uniteFiyati + S.ekstra * AYAR.ekstraRafFiyati; }
 
   // ---- ÖNERİLEN DİZİLİM (97 öncelikli):
-  // Önce 97'likler dizilir; son iki ünitelik alan 136–196 cm arasında kalacak şekilde.
+  // Önce 97 cm üniteler dizilir, son iki ünitelik alan 136 ile 196 cm arasında kalacak şekilde.
   // Son iki ünite: 97+77, 97+67, 77+77, 77+67, 67+67 (sığan en büyüğü).
-  // Son iki ünitelik alan 136 cm'den küçük kalıyorsa son üç ünite 77/67 ile en az boşlukla tamamlanır.
+  // Son iki ünitelik alan 136 cm altında kalıyorsa son üç ünite 77 ve 67 cm ile en az boşlukla tamamlanır.
   function oncelikli(L) {
     var p = AYAR.ayakPayi, B = G[0], a = bos();                       // G = [97, 77, 67]
     var w = function (g) { return g + p; };
@@ -214,7 +214,7 @@
     var kuyruk;
     if (R < 2 * w(B)) kuyruk = enIyi(tumKombi(2, G).filter(function (k) { return !(k[0] === B && k[1] === B); }), R);
     else {
-      // bir 97 daha konursa son iki ünitelik alan 136'dan küçük kalır -> son üç ünite 77/67 ile tamamlanır
+      // bir 97 daha konursa son iki ünitelik alan 136 cm altında kalır, son üç ünite 77 ve 67 cm ile tamamlanır
       kuyruk = enIyi(tumKombi(3, G.slice(1)).concat([[B, B]]), R);
     }
     a[B] += n97;

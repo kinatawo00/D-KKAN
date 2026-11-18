@@ -20,8 +20,14 @@ def guvenli_betik(m):
     return "<script>" + m.group(1).replace("</", "<\\/") + "</script>"
 
 
-kod = re.sub(r"<script>([\s\S]*?)</script>", guvenli_betik, kod)
+# Not: "</" -> "<\\/" dönüşümü kapalı. HTML5'te betik içindeki "</div>" geçerlidir ve sitede sorunsuz
+# kaydedilen sürümde bu dönüşüm yoktu; çok sayıda "<\\/" güvenlik duvarına gizlenmiş kod gibi görünebilir.
+# kod = re.sub(r"<script>([\s\S]*?)</script>", guvenli_betik, kod)
 assert "<!--" not in kod, "birleşik kodda HTML yorumu kaldı"
+# Rakamdan hemen sonra gelen kesme işareti (ör. 97'lik) site güvenlik duvarlarınca SQL saldırısı sanılıp
+# kaydetme isteğini engelleyebilir; bu kalıp kodda olmamalı.
+riskli = re.findall(r"[0-9]'", kod)
+assert not riskli, f"kodda rakam + kesme işareti var ({len(riskli)} adet); metni kesme işaretsiz yazın"
 (d / "kendi-rafini-hesapla.txt").write_text(kod, encoding="utf-8")
 (d / "kendi-rafini-hesapla.html").write_text(
     '<!doctype html>\n<html lang="tr"><head><meta charset="utf-8">'
