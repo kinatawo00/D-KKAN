@@ -1,0 +1,32 @@
+<script>
+/* Kendi Rafını Kendin Hesapla: hesaplayıcıyı sadece /raf-hesaplama sayfasında yükler */
+(function () {
+  var ADRES = "/raf-hesaplama";
+  var DOSYA = "https://cdn.jsdelivr.net/gh/kinatawo00/D-KKAN@155a65d89b36a63e2dee44778f82bf4e430f6e70/raf-hesapla.js";
+  function calistir() {
+    if (location.pathname.replace(/\/+$/, "").toLowerCase() !== ADRES) return;
+    if (document.getElementById("raf-hesapla-uygulama")) return yukle();
+    var alan = document.getElementById("divCenterBlock") || document.body;
+    var kok = document.createElement("div");
+    kok.id = "raf-hesapla-uygulama";
+    // sayfada eski sürüm hesaplayıcı varsa onun yerine koy
+    var eski = document.getElementById("raf-secim");
+    if (eski) { eski.parentNode.replaceChild(kok, eski); return yukle(); }
+    // sayfa içeriğindeki "Raf hesaplayıcı yükleniyor" yazısının yerine koy, yoksa sona ekle
+    var yer = null;
+    alan.querySelectorAll("p, div, span").forEach(function (e) {
+      if (!yer && e.children.length === 0 && /Raf hesaplay/i.test(e.textContent)) yer = e;
+    });
+    if (yer) yer.parentNode.replaceChild(kok, yer); else alan.appendChild(kok);
+    yukle();
+  }
+  function yukle() {
+    if (document.getElementById("raf-hesapla-dosya")) return;
+    var s = document.createElement("script");
+    s.id = "raf-hesapla-dosya";
+    s.src = DOSYA;
+    document.head.appendChild(s);
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", calistir); else calistir();
+})();
+</script>

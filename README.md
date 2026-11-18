@@ -46,3 +46,8 @@ Güncelleme adımları:
 1. Kaynak dosyaları düzenle, `python3 birlestir.py` çalıştır, değişiklikleri gönder (push).
 2. Yeni commit kimliğini al (`git rev-parse HEAD`).
 3. `sayfa-kodu.txt` içindeki adreste `@...` kısmını yeni commit kimliğiyle değiştir ve Ticimax'taki iki satırı güncelle.
+
+### Sayfa içeriği kaydedilemezse: Script Yönetimi yükleyicisi
+Ticimax sayfa içeriğine `<script>` içeren kod kaydedilemiyorsa `script-yonetimi-yukleyici.txt` Script Yönetimi'ne (Tüm Sayfalar) eklenir.
+Yükleyici yalnızca `/raf-hesaplama` sayfasında çalışır: sayfadaki eski hesaplayıcıyı (`#raf-secim`) veya "Raf hesaplayıcı yükleniyor" yazısını yeni hesaplayıcıyla değiştirir; ikisi de yoksa içeriğin sonuna ekler.
+Güncellemede yükleyicideki `DOSYA` adresinin `@...` kısmı yeni commit kimliğiyle değiştirilir.
