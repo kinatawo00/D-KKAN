@@ -24,6 +24,9 @@ Bu dosya `python3 birlestir.py` ile `secim-ekrani.html`, `raf-hesaplama-kodu.htm
 Doğrudan açma linkleri: `/raf-hesaplama#celik-raf` ve `/raf-hesaplama#hafif-rack`.
 
 ## Market rafı hesaplayıcı
-`market-rafi-kodu.html`: tek duvar, L, U veya dört duvarlı oda. Köşelerde birleşen iki duvardan da karşı duvarın ayak derinliği kadar pay düşülür.
-Ünite: 1 ayak + 1 taban raf + 4 raf + 5 perde + 8 raf kolu; her duvara 1 son ayak eklenir. Fiyatlar dosyanın başındaki `AYAR` bölümündedir.
+`market-rafi-kodu.html`: tek duvar, L, U veya dört duvarlı oda; kapı ve köşe rafı seçenekleri.
+- Fiyat ünite bazında ve KDV dahil: ünite (1 ayak + taban raf + 4 raf + 5 perde + 8 raf kolu) + her raf dizisinin sonuna 1 son ayak + isteğe bağlı ekstra raf.
+- Ünite ölçüleri 97, 77, 67 cm; ünite ölçüsü ayağı kapsar (ayak payı 0).
+- Köşelerde iki duvardan da raf derinliği, köşe rafı varsa 70 cm düşülür. Kapı, duvarı iki ayrı raf dizisine böler.
+- Raf rengi (beyaz, siyah, antrasit) ve etiket rengi (kırmızı, turuncu, sarı, beyaz, antrasit, siyah) seçilir.
 Birleşik sayfada üçüncü seçenektir; doğrudan link: `/raf-hesaplama#market-rafi`.
