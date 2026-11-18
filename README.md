@@ -37,3 +37,12 @@ Birleşik sayfada üçüncü seçenektir; doğrudan link: `/raf-hesaplama#market
 `python3 birlestir.py` birleşik kodu üretirken:
 - kodda rakamdan hemen sonra kesme işareti (ör. `97'lik`) varsa durur. Bu kalıp site güvenlik duvarınca SQL saldırısı sanılıp Ticimax'ta kaydetmeyi engelliyor.
 - `node` kuruluysa her betiğin sözdizimini `node --check` ile denetler.
+
+## Siteye ekleme (güncel yöntem)
+Ticimax panelinden uzun kod göndermek güvenlik duvarına takılıp IP engeline yol açtığı için hesaplayıcı tek dosyada (`raf-hesapla.js`) toplanır ve jsDelivr üzerinden yayınlanır.
+Sayfa içeriğine yalnızca `sayfa-kodu.txt` dosyasındaki iki satır yapıştırılır.
+
+Güncelleme adımları:
+1. Kaynak dosyaları düzenle, `python3 birlestir.py` çalıştır, değişiklikleri gönder (push).
+2. Yeni commit kimliğini al (`git rev-parse HEAD`).
+3. `sayfa-kodu.txt` içindeki adreste `@...` kısmını yeni commit kimliğiyle değiştir ve Ticimax'taki iki satırı güncelle.

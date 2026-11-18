@@ -1,0 +1,2 @@
+<div id="raf-hesapla-uygulama">Raf hesaplayıcı yükleniyor...</div>
+<script src="https://cdn.jsdelivr.net/gh/kinatawo00/D-KKAN@155a65d89b36a63e2dee44778f82bf4e430f6e70/raf-hesapla.js"></script>
