@@ -28,6 +28,7 @@ Doğrudan açma linkleri: `/raf-hesaplama#celik-raf` ve `/raf-hesaplama#hafif-ra
 - Fiyat ünite bazında ve KDV dahil: ünite 4500 TL (köşe ünitesi dahil), her bağlı raf dizisinin sonuna 1 son ayak 1500 TL, isteğe bağlı ekstra raf 750 TL (köşe üniteleri dahil her üniteye).
 - Ayak sayısı = ünite sayısı + dizi sayısı. Dizi yalnızca kapıda veya açık uçta kopar.
 - Ünite ölçüleri 97, 77, 67 cm; her ünite için 1 cm ayak payı eklenir.
+- Önerilen dizilim 97 önceliklidir: 97'likler, son iki ünitelik alan 136–196 cm kalacak şekilde dizilir; son iki ünite 97+77 (176–196), 97+67 (166–176), 77+77 (156–166), 77+67 (146–156), 67+67 (136–146). Alan 136 cm'den küçük kalırsa son üç ünite 77/67 ile en az boşlukla tamamlanır.
 - Köşelerde iki duvardan da raf derinliği, köşe rafı varsa 70 cm düşülür. Kapı genişliği duvardan düşülür.
 - Raf rengi (beyaz, siyah, antrasit) ve etiket rengi (kırmızı, turuncu, sarı, beyaz, antrasit, siyah) seçilir.
 Birleşik sayfada üçüncü seçenektir; doğrudan link: `/raf-hesaplama#market-rafi`.

@@ -890,7 +890,7 @@
     { n: 4, ad: "Dört duvar (oda)" }
   ];
   var MODLAR = [
-    { id: "az", ad: "Az boşluklu", ac: "Az boşluk bırakan dizilimler içinde en uygun fiyatlısı." },
+    { id: "az", ad: "Önerilen dizilim", ac: "Önce 97'lik üniteler; son ünitelerde 77 ve 67'liklerle tamamlanır." },
     { id: "dolu", ad: "Duvarı tam doldur", ac: "En az boşluk kalan dizilim." }
   ];
   var ekstraOpt = '<option value="0">Ekstra raf yok</option>';
@@ -954,12 +954,55 @@
   // bir raf dizisinin fiyatı: ünite fiyatı × adet + son ayak + ekstra raflar
   function uniteFiyati() { return AYAR.uniteFiyati + S.ekstra * AYAR.ekstraRafFiyati; }
 
-  // ---- yerleşim: her ünite sayısı için sığan en geniş toplamı bulur (DP), sonra moda göre seçer
+  // ---- ÖNERİLEN DİZİLİM (97 öncelikli):
+  // Önce 97'likler dizilir; son iki ünitelik alan 136–196 cm arasında kalacak şekilde.
+  // Son iki ünite: 97+77, 97+67, 77+77, 77+67, 67+67 (sığan en büyüğü).
+  // Son iki ünitelik alan 136 cm'den küçük kalıyorsa son üç ünite 77/67 ile en az boşlukla tamamlanır.
+  function oncelikli(L) {
+    var p = AYAR.ayakPayi, B = G[0], a = bos();                       // G = [97, 77, 67]
+    var w = function (g) { return g + p; };
+    var tumKombi = function (adet, olculer) {                          // adet kadar üniteden oluşan tüm kombinasyonlar
+      var sonuc = [];
+      (function gez(kalan, bas, secilen) {
+        if (!kalan) { sonuc.push(secilen.slice()); return; }
+        for (var i = bas; i < olculer.length; i++) { secilen.push(olculer[i]); gez(kalan - 1, i, secilen); secilen.pop(); }
+      })(adet, 0, []);
+      return sonuc;
+    };
+    var top = function (k) { return k.reduce(function (s, g) { return s + w(g); }, 0); };
+    var enIyi = function (adaylar, alan) {                             // sığanlar içinde en az boşluk; eşitse daha az ünite
+      var best = null;
+      adaylar.forEach(function (k) {
+        var t = top(k); if (t > alan) return;
+        if (!best || t > top(best) || (t === top(best) && k.length < best.length)) best = k;
+      });
+      return best;
+    };
+    var son2 = 2 * w(G[2]);                                            // 136 cm
+    if (L < son2) {                                                    // kısa duvar: tek veya iki ünite
+      var k0 = enIyi(tumKombi(1, G).concat(tumKombi(2, G)), L);
+      if (k0) k0.forEach(function (g) { a[g]++; });
+      return a;
+    }
+    var n97 = Math.floor((L - son2) / w(B)), R = L - n97 * w(B);      // R: son iki ünitelik alan (136 ≤ R < 234)
+    var kuyruk;
+    if (R < 2 * w(B)) kuyruk = enIyi(tumKombi(2, G).filter(function (k) { return !(k[0] === B && k[1] === B); }), R);
+    else {
+      // bir 97 daha konursa son iki ünitelik alan 136'dan küçük kalır -> son üç ünite 77/67 ile tamamlanır
+      kuyruk = enIyi(tumKombi(3, G.slice(1)).concat([[B, B]]), R);
+    }
+    a[B] += n97;
+    (kuyruk || []).forEach(function (g) { a[g]++; });
+    return a;
+  }
+
+  // ---- "Duvarı tam doldur": her ünite sayısı için sığan en geniş toplamı bulur (DP)
   var onbellek = {};
   function yerlestir(L, mod) {
     L = Math.floor(L);
     var anahtar = L + "|" + mod;
     if (onbellek[anahtar]) return Object.assign({}, onbellek[anahtar]);
+    if (mod === "az") { onbellek[anahtar] = oncelikli(L); return Object.assign({}, onbellek[anahtar]); }
     var p = AYAR.ayakPayi, enKucuk = Math.min.apply(null, G), maxN = Math.floor(L / (enKucuk + p));
     var sonuc = bos();
     if (maxN >= 1) {
