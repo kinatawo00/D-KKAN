@@ -53,3 +53,30 @@ if shutil.which("node"):
             raise SystemExit(f"{i + 1}. betikte sözdizimi hatası:\n{sonuc.stderr}")
     print("sözdizimi kontrolü: tüm betikler hatasız")
 
+# ---- Tek dosyalık JavaScript sürümü (raf-hesapla.js) ----
+# Ticimax panelinden uzun kod göndermek güvenlik duvarına takıldığı için, hesaplayıcının tamamı
+# tek bir .js dosyasında toplanır. Sayfaya yalnızca bir <div> ve bu dosyayı çağıran <script src> konur.
+import json
+
+statik = re.sub(r"<script>[\s\S]*?</script>", "", kod).strip()
+betikler = re.findall(r"<script>([\s\S]*?)</script>", kod)
+paket = (
+    "/* Kendi Rafını Kendin Hesapla - acarraf.com (birlestir.py ile üretilir, elle düzenlemeyin) */\n"
+    "(function () {\n"
+    "  function baslat() {\n"
+    "    var kok = document.getElementById(\"raf-hesapla-uygulama\");\n"
+    "    if (!kok || kok.dataset.ok) return;\n"
+    "    kok.dataset.ok = \"1\";\n"
+    "    kok.innerHTML = " + json.dumps(statik, ensure_ascii=False) + ";\n"
+    + "\n".join(betikler) +
+    "\n  }\n"
+    "  if (document.readyState === \"loading\") document.addEventListener(\"DOMContentLoaded\", baslat); else baslat();\n"
+    "})();\n"
+)
+(d / "raf-hesapla.js").write_text(paket, encoding="utf-8")
+if shutil.which("node"):
+    sonuc = subprocess.run(["node", "--check", str(d / "raf-hesapla.js")], capture_output=True, text=True)
+    if sonuc.returncode != 0:
+        raise SystemExit("raf-hesapla.js sözdizimi hatası:\n" + sonuc.stderr)
+print("raf-hesapla.js oluşturuldu (" + str(len(paket.encode("utf-8"))) + " bayt)")
+
