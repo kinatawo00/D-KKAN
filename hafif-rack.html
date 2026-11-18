@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Hafif Rack Hesaplama</title>
-<style>body{margin:0;padding:16px;background:#f4f4f4;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}</style></head><body>
-<div id="rack-hesap">Hafif rack hesaplayıcı yükleniyor...</div>
+<style>body{margin:0;padding:16px;background:#f4f4f4;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}</style></head><body><div id="rack-hesap">Hafif rack hesaplayıcı yükleniyor...</div>
 <script>
 (function () {
   /* ======== FİYATLAR VE AYARLAR (buradan değiştirin) ======== */
@@ -61,6 +60,7 @@
     P + " .rk-o input{margin:3px 0 0;width:18px;height:18px;flex:0 0 auto;accent-color:var(--a)}",
     P + " .rk-o b{display:block;font-size:14px}",
     P + " .rk-o span{display:block;font-size:12.5px;color:var(--mut)}",
+    P + " .rk-o span.ic{font-size:inherit;color:var(--ink)}",
     P + " .rk-o em{display:block;font-style:normal;font-weight:800;font-size:16px;margin-top:4px;color:var(--ink)}",
     P + " .rk-o.on{border-color:var(--a);background:#fff5ee}",
     P + " .rk-dv{border:1px solid var(--ln);border-radius:12px;padding:12px;margin-top:14px}",
@@ -117,9 +117,9 @@
     '<p class="rk-n">Şematik görünüm · Ölçüler cm · Her duvarda göz (travers) sayısını +/− ile değiştirebilirsiniz.</p></div>' +
     '<div class="rk-k"><div class="rk-hd"><h3>3. Fiyat</h3><span class="rk-n" style="margin:0">Fiyatlara %' + AYAR.kdv * 100 + " KDV dahildir</span></div>" +
     '<div class="rk-st"><div><b id="rk-s1"></b><span>Göz</span></div><div><b id="rk-s2"></b><span>Ayak</span></div><div><b id="rk-s3"></b><span>Travers</span></div><div><b id="rk-s4"></b><span>Tabla</span></div></div>' +
-    '<table><thead><tr><th>Malzeme</th><th class="r hs">Adet × Fiyat</th><th class="r">Tutar</th></tr></thead><tbody id="rk-b"></tbody></table>' +
+    '<table><thead><tr><th scope="col">Malzeme</th><th scope="col" class="r hs">Adet × Fiyat</th><th scope="col" class="r">Tutar</th></tr></thead><tbody id="rk-b"></tbody></table>' +
     '<div class="rk-t"><div><div class="lb">Toplam (KDV dahil)</div><div class="big" id="rk-tt"></div><div class="lb">Montaj ve nakliye dahil değildir.</div></div>' +
-    '<button class="rk-wa" id="rk-wa">WhatsApp ile sipariş ver</button></div></div>';
+    '<button type="button" class="rk-wa" id="rk-wa">WhatsApp ile sipariş ver</button></div></div>';
 
   function $(id) { return document.getElementById(id); }
   function tl(n) { return n.toLocaleString("tr-TR", { style: "currency", currency: "TRY", minimumFractionDigits: 2 }); }
@@ -323,7 +323,7 @@
 
     $("rk-m").innerHTML = MODLAR.map(function (m) {
       var t = toplam(S.duvarlar.map(function (d) { return { a: yerlestir(d, m.id), dv: d }; }));
-      return '<label class="rk-o' + (S.m === m.id ? " on" : "") + '"><input type="radio" name="rk-m" value="' + m.id + '"' + (S.m === m.id ? " checked" : "") + "><div><b>" + m.ad + "</b><span>" + m.ac + "</span><em>" + kd(t.ara) + "</em></div></label>";
+      return '<label class="rk-o' + (S.m === m.id ? " on" : "") + '"><input type="radio" name="rk-m" value="' + m.id + '"' + (S.m === m.id ? " checked" : "") + "><span class=\"ic\"><b>" + m.ad + "</b><span>" + m.ac + "</span><em>" + kd(t.ara) + "</em></span></label>";
     }).join("");
 
     var ws = $("rk-ws");

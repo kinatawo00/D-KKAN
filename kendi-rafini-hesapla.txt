@@ -65,6 +65,7 @@
     "#raf-hesap .rh-o input{margin:3px 0 0;width:18px;height:18px;flex:0 0 auto;accent-color:var(--a)}" +
     "#raf-hesap .rh-o b{display:block;font-size:14px}" +
     "#raf-hesap .rh-o span{display:block;font-size:12.5px;color:var(--mut)}" +
+    "#raf-hesap .rh-o span.ic{font-size:inherit;color:var(--ink)}" +
     "#raf-hesap .rh-o em{display:block;font-style:normal;font-weight:800;font-size:16px;margin-top:4px;color:var(--ink)}" +
     "#raf-hesap .rh-o.on{border-color:var(--a);background:#fff5ee}" +
     "#raf-hesap .rh-dv{border:1px solid var(--ln);border-radius:12px;padding:12px;margin-top:14px}" +
@@ -105,8 +106,8 @@
   st.textContent = css;
   document.head.appendChild(st);
 
-  function opt(arr, suf) { return arr.map(function (v) { return '<option value="' + v + '">' + v + suf + "</option>"; }).join(""); }
-  var duvarOpt = ""; for (var i2 = 1; i2 <= AYAR.enFazlaDuvar; i2++) duvarOpt += '<option value="' + i2 + '">' + i2 + " duvar</option>";
+  function opt(arr, suf) { return arr.map(function (v) { return '<option value="' + v + '">' + v + suf + "<\/option>"; }).join(""); }
+  var duvarOpt = ""; for (var i2 = 1; i2 <= AYAR.enFazlaDuvar; i2++) duvarOpt += '<option value="' + i2 + '">' + i2 + " duvar<\/option>";
   var profiller = Object.keys(AYAR.profilFiyati).map(Number);
   var MODLAR = [
     { id: "eko", ad: "En uygun fiyat", ac: "En az maliyetli dizilim." },
@@ -115,23 +116,23 @@
   ];
 
   R.innerHTML =
-    '<div class="rh-k"><h3>1. Duvarlar ve raf ölçüleri</h3>' +
-    '<div class="rh-g"><label class="rh-f">Kaç duvara raf kurulacak?<select id="rh-dn">' + duvarOpt + "</select></label></div>" +
-    '<div id="rh-dw"></div>' +
-    "</div>" +
-    '<div class="rh-k"><h3>2. Kurulum tipi</h3><div class="rh-s">' +
-    '<label class="rh-o"><input type="radio" name="rh-t" value="b" checked><div><b>Bitişik (ortak profilli)</b><span>Yan yana üniteler aradaki profilleri paylaşır, daha ekonomik.</span></div></label>' +
-    '<label class="rh-o"><input type="radio" name="rh-t" value="a"><div><b>Ayrı ayrı üniteler</b><span>Her ünite kendi 4 profiliyle kurulur.</span></div></label>' +
-    "</div></div>" +
-    '<div class="rh-k"><h3>3. Raf yerleşimi</h3>' +
-    '<div class="rh-s" id="rh-m"></div>' +
-    '<div id="rh-ws"></div>' +
-    '<p class="rh-n">Şematik görünüm · Ölçüler cm · Her duvarda ünite sayısını +/− ile değiştirebilirsiniz.</p></div>' +
-    '<div class="rh-k"><div class="rh-hd"><h3>4. Fiyat</h3><span class="rh-n" style="margin:0">Fiyatlara %' + AYAR.kdv * 100 + " KDV dahildir</span></div>" +
-    '<div class="rh-st"><div><b id="rh-s1"></b><span>Ünite</span></div><div><b id="rh-s2"></b><span>Raf tablası</span></div><div><b id="rh-s3"></b><span>Profil</span></div><div><b id="rh-s4"></b><span>Somun-cıvata</span></div></div>' +
-    '<table><thead><tr><th>Malzeme</th><th class="r hs">Adet × Fiyat</th><th class="r">Tutar</th></tr></thead><tbody id="rh-b"></tbody></table>' +
-    '<div class="rh-t"><div><div class="lb" id="rh-tl"></div><div class="big" id="rh-tt"></div><div class="lb">Montaj ve nakliye dahil değildir.</div></div>' +
-    '<button class="rh-wa" id="rh-wa">WhatsApp ile sipariş ver</button></div></div>';
+    '<div class="rh-k"><h3>1. Duvarlar ve raf ölçüleri<\/h3>' +
+    '<div class="rh-g"><label class="rh-f">Kaç duvara raf kurulacak?<select id="rh-dn">' + duvarOpt + "<\/select><\/label><\/div>" +
+    '<div id="rh-dw"><\/div>' +
+    "<\/div>" +
+    '<div class="rh-k"><h3>2. Kurulum tipi<\/h3><div class="rh-s">' +
+    '<label class="rh-o"><input type="radio" name="rh-t" value="b" checked><span class="ic"><b>Bitişik (ortak profilli)<\/b><span>Yan yana üniteler aradaki profilleri paylaşır, daha ekonomik.<\/span><\/span><\/label>' +
+    '<label class="rh-o"><input type="radio" name="rh-t" value="a"><span class="ic"><b>Ayrı ayrı üniteler<\/b><span>Her ünite kendi 4 profiliyle kurulur.<\/span><\/span><\/label>' +
+    "<\/div><\/div>" +
+    '<div class="rh-k"><h3>3. Raf yerleşimi<\/h3>' +
+    '<div class="rh-s" id="rh-m"><\/div>' +
+    '<div id="rh-ws"><\/div>' +
+    '<p class="rh-n">Şematik görünüm · Ölçüler cm · Her duvarda ünite sayısını +/− ile değiştirebilirsiniz.<\/p><\/div>' +
+    '<div class="rh-k"><div class="rh-hd"><h3>4. Fiyat<\/h3><span class="rh-n" style="margin:0">Fiyatlara %' + AYAR.kdv * 100 + " KDV dahildir<\/span><\/div>" +
+    '<div class="rh-st"><div><b id="rh-s1"><\/b><span>Ünite<\/span><\/div><div><b id="rh-s2"><\/b><span>Raf tablası<\/span><\/div><div><b id="rh-s3"><\/b><span>Profil<\/span><\/div><div><b id="rh-s4"><\/b><span>Somun-cıvata<\/span><\/div><\/div>' +
+    '<table><thead><tr><th scope="col">Malzeme<\/th><th scope="col" class="r hs">Adet × Fiyat<\/th><th scope="col" class="r">Tutar<\/th><\/tr><\/thead><tbody id="rh-b"><\/tbody><\/table>' +
+    '<div class="rh-t"><div><div class="lb" id="rh-tl"><\/div><div class="big" id="rh-tt"><\/div><div class="lb">Montaj ve nakliye dahil değildir.<\/div><\/div>' +
+    '<button type="button" class="rh-wa" id="rh-wa">WhatsApp ile sipariş ver<\/button><\/div><\/div>';
 
   function $(id) { return document.getElementById(id); }
   function tl(n) { return n.toLocaleString("tr-TR", { style: "currency", currency: "TRY", minimumFractionDigits: 2 }); }
@@ -214,10 +215,10 @@
     function rect(x, y, w, h, fill, extra) { return '<rect x="' + r(x) + '" y="' + r(y) + '" width="' + r(w) + '" height="' + r(h) + '" fill="' + fill + '"' + (extra || "") + "/>"; }
 
     s += "<defs>" +
-      '<linearGradient id="rh-gp' + id + '" x1="0" x2="1"><stop offset="0" stop-color="#7d8894"/><stop offset=".45" stop-color="#c9d1d8"/><stop offset="1" stop-color="#8b96a1"/></linearGradient>' +
-      '<linearGradient id="rh-gs' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eef2f5"/><stop offset="1" stop-color="#cfd7de"/></linearGradient>' +
-      '<linearGradient id="rh-gw' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbfbfb"/><stop offset="1" stop-color="#eeeeee"/></linearGradient>' +
-      "</defs>";
+      '<linearGradient id="rh-gp' + id + '" x1="0" x2="1"><stop offset="0" stop-color="#7d8894"/><stop offset=".45" stop-color="#c9d1d8"/><stop offset="1" stop-color="#8b96a1"/><\/linearGradient>' +
+      '<linearGradient id="rh-gs' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eef2f5"/><stop offset="1" stop-color="#cfd7de"/><\/linearGradient>' +
+      '<linearGradient id="rh-gw' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbfbfb"/><stop offset="1" stop-color="#eeeeee"/><\/linearGradient>' +
+      "<\/defs>";
     s += rect(L + ox, T - oy, Wd, H + oy, "url(#rh-gw" + id + ")", ' stroke="#e2e2e2"');
     s += poly([[L, floor], [L + Wd, floor], [L + Wd + ox, floor - oy], [L + ox, floor - oy]], "#e9e5df");
 
@@ -251,18 +252,18 @@
 
     var dimY = floor + fs * 1.4;
     units.forEach(function (u) {
-      s += '<text x="' + r(u.x + u.w / 2) + '" y="' + r(dimY) + '" text-anchor="middle" font-size="' + r(fs) + '" font-weight="700" fill="#1b1b1b">' + u.w + "</text>";
+      s += '<text x="' + r(u.x + u.w / 2) + '" y="' + r(dimY) + '" text-anchor="middle" font-size="' + r(fs) + '" font-weight="700" fill="#1b1b1b">' + u.w + "<\/text>";
     });
     var kalan = Wd - used;
-    if (units.length && kalan >= fs * 1.5) s += '<text x="' + r(x + kalan / 2) + '" y="' + r(dimY) + '" text-anchor="middle" font-size="' + r(fs * 0.75) + '" fill="#999">boş ' + cm(kalan) + "</text>";
+    if (units.length && kalan >= fs * 1.5) s += '<text x="' + r(x + kalan / 2) + '" y="' + r(dimY) + '" text-anchor="middle" font-size="' + r(fs * 0.75) + '" fill="#999">boş ' + cm(kalan) + "<\/text>";
     var dy2 = dimY + fs * 0.9;
     s += '<line x1="' + r(L) + '" x2="' + r(L + Wd) + '" y1="' + r(dy2) + '" y2="' + r(dy2) + '" stroke="#999" stroke-width="' + r(fs / 14) + '"/>';
-    s += '<text x="' + r(L + Wd / 2) + '" y="' + r(dy2 + fs * 1.05) + '" text-anchor="middle" font-size="' + r(fs * 0.8) + '" fill="#666">Duvar ' + cm(Wd) + " cm</text>";
+    s += '<text x="' + r(L + Wd / 2) + '" y="' + r(dy2 + fs * 1.05) + '" text-anchor="middle" font-size="' + r(fs * 0.8) + '" fill="#666">Duvar ' + cm(Wd) + " cm<\/text>";
     s += '<line x1="' + r(L - fs * 0.9) + '" x2="' + r(L - fs * 0.9) + '" y1="' + r(T) + '" y2="' + r(floor) + '" stroke="#e2701f" stroke-width="' + r(fs / 10) + '"/>';
-    s += '<text x="' + r(L - fs * 1.25) + '" y="' + r(T + H / 2) + '" text-anchor="middle" font-size="' + r(fs * 0.85) + '" font-weight="700" fill="#e2701f" transform="rotate(-90 ' + r(L - fs * 1.25) + " " + r(T + H / 2) + ')">' + H + " cm</text>";
+    s += '<text x="' + r(L - fs * 1.25) + '" y="' + r(T + H / 2) + '" text-anchor="middle" font-size="' + r(fs * 0.85) + '" font-weight="700" fill="#e2701f" transform="rotate(-90 ' + r(L - fs * 1.25) + " " + r(T + H / 2) + ')">' + H + " cm<\/text>";
     if (units.length) {
       var ex = units[units.length - 1].x + units[units.length - 1].w;
-      s += '<text x="' + r(Math.max(ex, L + Wd) + ox + fs * 0.4) + '" y="' + r(T - oy / 2 + fs * 0.3) + '" font-size="' + r(fs * 0.75) + '" fill="#e2701f" font-weight="700">' + D + " cm</text>";
+      s += '<text x="' + r(Math.max(ex, L + Wd) + ox + fs * 0.4) + '" y="' + r(T - oy / 2 + fs * 0.3) + '" font-size="' + r(fs * 0.75) + '" fill="#e2701f" font-weight="700">' + D + " cm<\/text>";
     }
     svg.setAttribute("viewBox", "0 0 " + r(L + W + ox + fs * 3.6) + " " + r(dy2 + fs * 1.6));
     svg.innerHTML = s;
@@ -270,17 +271,17 @@
 
   // Duvar ölçü kutuları (yalnızca duvar sayısı değişince yeniden çizilir)
   function sec(i, f, arr, suf, val) {
-    return '<select data-dw="' + i + '" data-f="' + f + '">' + arr.map(function (v) { return '<option value="' + v + '"' + (v === val ? " selected" : "") + ">" + v + suf + "</option>"; }).join("") + "</select>";
+    return '<select data-dw="' + i + '" data-f="' + f + '">' + arr.map(function (v) { return '<option value="' + v + '"' + (v === val ? " selected" : "") + ">" + v + suf + "<\/option>"; }).join("") + "<\/select>";
   }
   function duvarKutulari() {
     var katlar = []; for (var k = 2; k <= 10; k++) katlar.push(k);
     $("rh-dw").innerHTML = S.duvarlar.map(function (d, i) {
-      return '<div class="rh-dg"><h4>' + (i + 1) + '. Duvar</h4><div class="rh-g">' +
-        '<label class="rh-f">Duvar genişliği (cm)<input type="number" inputmode="numeric" min="0" data-dw="' + i + '" data-f="w" value="' + d.w + '"></label>' +
-        '<label class="rh-f">Raf derinliği' + sec(i, "d", AYAR.derinlikler, " cm", d.d) + "</label>" +
-        '<label class="rh-f">Raf yüksekliği' + sec(i, "p", profiller, " cm", d.p) + "</label>" +
-        '<label class="rh-f">Kat sayısı' + sec(i, "k", katlar, " kat", d.k) + "</label>" +
-        "</div></div>";
+      return '<div class="rh-dg"><h4>' + (i + 1) + '. Duvar<\/h4><div class="rh-g">' +
+        '<label class="rh-f">Duvar genişliği (cm)<input type="number" inputmode="numeric" min="0" data-dw="' + i + '" data-f="w" value="' + d.w + '"><\/label>' +
+        '<label class="rh-f">Raf derinliği' + sec(i, "d", AYAR.derinlikler, " cm", d.d) + "<\/label>" +
+        '<label class="rh-f">Raf yüksekliği' + sec(i, "p", profiller, " cm", d.p) + "<\/label>" +
+        '<label class="rh-f">Kat sayısı' + sec(i, "k", katlar, " kat", d.k) + "<\/label>" +
+        "<\/div><\/div>";
     }).join("");
   }
 
@@ -292,20 +293,20 @@
     // yerleşim seçenekleri, her birinin toplam fiyatıyla
     $("rh-m").innerHTML = MODLAR.map(function (m) {
       var t = toplam(S.duvarlar.map(function (d) { return { a: yerlestir(d, m.id), dv: d }; }));
-      return '<label class="rh-o' + (S.m === m.id ? " on" : "") + '"><input type="radio" name="rh-m" value="' + m.id + '"' + (S.m === m.id ? " checked" : "") + "><div><b>" + m.ad + "</b><span>" + m.ac + "</span><em>" + kd(t.ara) + "</em></div></label>";
+      return '<label class="rh-o' + (S.m === m.id ? " on" : "") + '"><input type="radio" name="rh-m" value="' + m.id + '"' + (S.m === m.id ? " checked" : "") + "><span class=\"ic\"><b>" + m.ad + "<\/b><span>" + m.ac + "<\/span><em>" + kd(t.ara) + "<\/em><\/span><\/label>";
     }).join("");
 
     // duvar çizimleri
     var ws = $("rh-ws");
     ws.innerHTML = S.duvarlar.map(function (d, i) {
       var a = d.adet, m = duvarMalzeme(a, d), kul = kullanilan(a), kalan = d.w - kul;
-      return '<div class="rh-dv"><div class="rh-dh"><h4>' + (i + 1) + ". Duvar · " + cm(d.w) + " cm · " + d.d + " cm derinlik · " + d.p + " cm · " + d.k + " kat</h4><span>" + m.n + " ünite · <strong>" + kd(m.tutar) + "</strong></span></div>" +
-        '<div class="rh-cz"><svg data-svg="' + i + '" role="img" aria-label="' + (i + 1) + '. duvar raf yerleşimi"></svg></div>' +
+      return '<div class="rh-dv"><div class="rh-dh"><h4>' + (i + 1) + ". Duvar · " + cm(d.w) + " cm · " + d.d + " cm derinlik · " + d.p + " cm · " + d.k + " kat<\/h4><span>" + m.n + " ünite · <strong>" + kd(m.tutar) + "<\/strong><\/span><\/div>" +
+        '<div class="rh-cz"><svg data-svg="' + i + '" role="img" aria-label="' + (i + 1) + '. duvar raf yerleşimi"><\/svg><\/div>' +
         '<div class="rh-u">' + G.map(function (w) {
-          return '<div><div><div class="w">' + d.d + "×" + w + ' cm</div><div class="c">' + a[w] + ' adet</div></div><div class="b"><button type="button" data-i="' + i + '" data-w="' + w + '" data-d="-1">−</button><button type="button" data-i="' + i + '" data-w="' + w + '" data-d="1">+</button></div></div>';
-        }).join("") + "</div>" +
-        '<p class="rh-n">Kurulum genişliği: <b>' + cm(kul) + " cm</b> (ünite başı " + cm(pay()) + " cm pay dahil) · " +
-        (kalan >= 0 ? "Boşluk: <b>" + cm(kalan) + " cm</b>" : '<span class="rh-w">Duvarı ' + cm(-kalan) + " cm aşıyor!</span>") + "</p></div>";
+          return '<div><div><div class="w">' + d.d + "×" + w + ' cm<\/div><div class="c">' + a[w] + ' adet<\/div><\/div><div class="b"><button type="button" data-i="' + i + '" data-w="' + w + '" data-d="-1">−<\/button><button type="button" data-i="' + i + '" data-w="' + w + '" data-d="1">+<\/button><\/div><\/div>';
+        }).join("") + "<\/div>" +
+        '<p class="rh-n">Kurulum genişliği: <b>' + cm(kul) + " cm<\/b> (ünite başı " + cm(pay()) + " cm pay dahil) · " +
+        (kalan >= 0 ? "Boşluk: <b>" + cm(kalan) + " cm<\/b>" : '<span class="rh-w">Duvarı ' + cm(-kalan) + " cm aşıyor!<\/span>") + "<\/p><\/div>";
     }).join("");
     S.duvarlar.forEach(function (d, i) { ciz(ws.querySelector('[data-svg="' + i + '"]'), d.adet, d, i); });
 
@@ -313,10 +314,10 @@
     var b = toplam(S.duvarlar.map(function (d) { return { a: d.adet, dv: d }; }));
     $("rh-s1").textContent = b.n; $("rh-s2").textContent = b.raf; $("rh-s3").textContent = b.prof; $("rh-s4").textContent = b.civ;
     var rows = b.satir.map(function (x) {
-      return "<tr><td>" + x.ad + (x.not ? "<br><small>" + x.not + "</small>" : "") + '</td><td class="r hs">' + x.adet + " × " + (x.fiyat ? kd(x.fiyat) : "dahil") + '</td><td class="r">' + (x.fiyat ? kd(x.adet * x.fiyat) : "Dahil") + "<br><small>" + x.adet + " adet</small></td></tr>";
+      return "<tr><td>" + x.ad + (x.not ? "<br><small>" + x.not + "<\/small>" : "") + '<\/td><td class="r hs">' + x.adet + " × " + (x.fiyat ? kd(x.fiyat) : "dahil") + '<\/td><td class="r">' + (x.fiyat ? kd(x.adet * x.fiyat) : "Dahil") + "<br><small>" + x.adet + " adet<\/small><\/td><\/tr>";
     }).join("");
-    rows += '<tr><td><b>Toplam (KDV dahil)</b></td><td class="hs"></td><td class="r"><b>' + kd(b.ara) + "</b></td></tr>";
-    if (!b.n) rows = '<tr><td colspan="3">Duvar genişliği en az ' + Math.min.apply(null, G) + " cm olmalı.</td></tr>";
+    rows += '<tr><td><b>Toplam (KDV dahil)<\/b><\/td><td class="hs"><\/td><td class="r"><b>' + kd(b.ara) + "<\/b><\/td><\/tr>";
+    if (!b.n) rows = '<tr><td colspan="3">Duvar genişliği en az ' + Math.min.apply(null, G) + " cm olmalı.<\/td><\/tr>";
     $("rh-b").innerHTML = rows;
     $("rh-tl").textContent = "Toplam (KDV dahil)";
     $("rh-tt").textContent = kd(b.ara);
@@ -434,6 +435,7 @@
     P + " .rk-o input{margin:3px 0 0;width:18px;height:18px;flex:0 0 auto;accent-color:var(--a)}",
     P + " .rk-o b{display:block;font-size:14px}",
     P + " .rk-o span{display:block;font-size:12.5px;color:var(--mut)}",
+    P + " .rk-o span.ic{font-size:inherit;color:var(--ink)}",
     P + " .rk-o em{display:block;font-style:normal;font-weight:800;font-size:16px;margin-top:4px;color:var(--ink)}",
     P + " .rk-o.on{border-color:var(--a);background:#fff5ee}",
     P + " .rk-dv{border:1px solid var(--ln);border-radius:12px;padding:12px;margin-top:14px}",
@@ -478,21 +480,21 @@
     { id: "az", ad: "Az boşluklu", ac: "Az boşluk bırakan dizilimler içinde en uygun fiyatlısı." },
     { id: "dolu", ad: "Duvarı tam doldur", ac: "En az boşluk kalan dizilim." }
   ];
-  var duvarOpt = ""; for (var i2 = 1; i2 <= AYAR.enFazlaDuvar; i2++) duvarOpt += '<option value="' + i2 + '">' + i2 + " duvar</option>";
+  var duvarOpt = ""; for (var i2 = 1; i2 <= AYAR.enFazlaDuvar; i2++) duvarOpt += '<option value="' + i2 + '">' + i2 + " duvar<\/option>";
 
   R.innerHTML =
-    '<div class="rk-k"><h3>1. Duvarlar ve raf ölçüleri</h3>' +
-    '<div class="rk-g"><label class="rk-f">Kaç duvara raf kurulacak?<select id="rk-dn">' + duvarOpt + "</select></label></div>" +
-    '<div id="rk-dw"></div></div>' +
-    '<div class="rk-k"><h3>2. Raf yerleşimi</h3>' +
-    '<div class="rk-s" id="rk-m"></div>' +
-    '<div id="rk-ws"></div>' +
-    '<p class="rk-n">Şematik görünüm · Ölçüler cm · Her duvarda göz (travers) sayısını +/− ile değiştirebilirsiniz.</p></div>' +
-    '<div class="rk-k"><div class="rk-hd"><h3>3. Fiyat</h3><span class="rk-n" style="margin:0">Fiyatlara %' + AYAR.kdv * 100 + " KDV dahildir</span></div>" +
-    '<div class="rk-st"><div><b id="rk-s1"></b><span>Göz</span></div><div><b id="rk-s2"></b><span>Ayak</span></div><div><b id="rk-s3"></b><span>Travers</span></div><div><b id="rk-s4"></b><span>Tabla</span></div></div>' +
-    '<table><thead><tr><th>Malzeme</th><th class="r hs">Adet × Fiyat</th><th class="r">Tutar</th></tr></thead><tbody id="rk-b"></tbody></table>' +
-    '<div class="rk-t"><div><div class="lb">Toplam (KDV dahil)</div><div class="big" id="rk-tt"></div><div class="lb">Montaj ve nakliye dahil değildir.</div></div>' +
-    '<button class="rk-wa" id="rk-wa">WhatsApp ile sipariş ver</button></div></div>';
+    '<div class="rk-k"><h3>1. Duvarlar ve raf ölçüleri<\/h3>' +
+    '<div class="rk-g"><label class="rk-f">Kaç duvara raf kurulacak?<select id="rk-dn">' + duvarOpt + "<\/select><\/label><\/div>" +
+    '<div id="rk-dw"><\/div><\/div>' +
+    '<div class="rk-k"><h3>2. Raf yerleşimi<\/h3>' +
+    '<div class="rk-s" id="rk-m"><\/div>' +
+    '<div id="rk-ws"><\/div>' +
+    '<p class="rk-n">Şematik görünüm · Ölçüler cm · Her duvarda göz (travers) sayısını +/− ile değiştirebilirsiniz.<\/p><\/div>' +
+    '<div class="rk-k"><div class="rk-hd"><h3>3. Fiyat<\/h3><span class="rk-n" style="margin:0">Fiyatlara %' + AYAR.kdv * 100 + " KDV dahildir<\/span><\/div>" +
+    '<div class="rk-st"><div><b id="rk-s1"><\/b><span>Göz<\/span><\/div><div><b id="rk-s2"><\/b><span>Ayak<\/span><\/div><div><b id="rk-s3"><\/b><span>Travers<\/span><\/div><div><b id="rk-s4"><\/b><span>Tabla<\/span><\/div><\/div>' +
+    '<table><thead><tr><th scope="col">Malzeme<\/th><th scope="col" class="r hs">Adet × Fiyat<\/th><th scope="col" class="r">Tutar<\/th><\/tr><\/thead><tbody id="rk-b"><\/tbody><\/table>' +
+    '<div class="rk-t"><div><div class="lb">Toplam (KDV dahil)<\/div><div class="big" id="rk-tt"><\/div><div class="lb">Montaj ve nakliye dahil değildir.<\/div><\/div>' +
+    '<button type="button" class="rk-wa" id="rk-wa">WhatsApp ile sipariş ver<\/button><\/div><\/div>';
 
   function $(id) { return document.getElementById(id); }
   function tl(n) { return n.toLocaleString("tr-TR", { style: "currency", currency: "TRY", minimumFractionDigits: 2 }); }
@@ -602,11 +604,11 @@
     function line(x1, y1, x2, y2, c, w) { return '<line x1="' + r(x1) + '" y1="' + r(y1) + '" x2="' + r(x2) + '" y2="' + r(y2) + '" stroke="' + c + '" stroke-width="' + w + '"/>'; }
 
     s += "<defs>" +
-      '<linearGradient id="rk-gp' + id + '" x1="0" x2="1"><stop offset="0" stop-color="' + RK.p1 + '"/><stop offset=".45" stop-color="' + RK.p2 + '"/><stop offset="1" stop-color="' + RK.p3 + '"/></linearGradient>' +
-      '<linearGradient id="rk-gb' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + RK.t1 + '"/><stop offset="1" stop-color="' + RK.t2 + '"/></linearGradient>' +
-      '<linearGradient id="rk-gs' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + RF.s1 + '"/><stop offset="1" stop-color="' + RF.s2 + '"/></linearGradient>' +
-      '<linearGradient id="rk-gw' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbfbfb"/><stop offset="1" stop-color="#eeeeee"/></linearGradient>' +
-      "</defs>";
+      '<linearGradient id="rk-gp' + id + '" x1="0" x2="1"><stop offset="0" stop-color="' + RK.p1 + '"/><stop offset=".45" stop-color="' + RK.p2 + '"/><stop offset="1" stop-color="' + RK.p3 + '"/><\/linearGradient>' +
+      '<linearGradient id="rk-gb' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + RK.t1 + '"/><stop offset="1" stop-color="' + RK.t2 + '"/><\/linearGradient>' +
+      '<linearGradient id="rk-gs' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + RF.s1 + '"/><stop offset="1" stop-color="' + RF.s2 + '"/><\/linearGradient>' +
+      '<linearGradient id="rk-gw' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbfbfb"/><stop offset="1" stop-color="#eeeeee"/><\/linearGradient>' +
+      "<\/defs>";
     s += rect(L0 + ox, T - oy, Wd, H + oy, "url(#rk-gw" + id + ")", ' stroke="#e2e2e2"');
     s += poly([[L0, floor], [L0 + Wd, floor], [L0 + Wd + ox, floor - oy], [L0 + ox, floor - oy]], "#e9e5df");
 
@@ -657,36 +659,36 @@
 
     // ölçüler
     var dimY = floor + fs * 1.4;
-    gozler.forEach(function (g) { s += '<text x="' + r(g.x + g.L / 2) + '" y="' + r(dimY) + '" text-anchor="middle" font-size="' + r(fs) + '" font-weight="700" fill="#1b1b1b">' + g.L + "</text>"; });
+    gozler.forEach(function (g) { s += '<text x="' + r(g.x + g.L / 2) + '" y="' + r(dimY) + '" text-anchor="middle" font-size="' + r(fs) + '" font-weight="700" fill="#1b1b1b">' + g.L + "<\/text>"; });
     var kalan = Wd - used;
-    if (gozler.length && kalan >= fs * 1.5) s += '<text x="' + r(L0 + used + kalan / 2) + '" y="' + r(dimY) + '" text-anchor="middle" font-size="' + r(fs * 0.75) + '" fill="#999">boş ' + cm(kalan) + "</text>";
+    if (gozler.length && kalan >= fs * 1.5) s += '<text x="' + r(L0 + used + kalan / 2) + '" y="' + r(dimY) + '" text-anchor="middle" font-size="' + r(fs * 0.75) + '" fill="#999">boş ' + cm(kalan) + "<\/text>";
     var dy2 = dimY + fs * 0.9;
     s += line(L0, dy2, L0 + Wd, dy2, "#999", r(fs / 14));
-    s += '<text x="' + r(L0 + Wd / 2) + '" y="' + r(dy2 + fs * 1.05) + '" text-anchor="middle" font-size="' + r(fs * 0.8) + '" fill="#666">Duvar ' + cm(Wd) + " cm</text>";
+    s += '<text x="' + r(L0 + Wd / 2) + '" y="' + r(dy2 + fs * 1.05) + '" text-anchor="middle" font-size="' + r(fs * 0.8) + '" fill="#666">Duvar ' + cm(Wd) + " cm<\/text>";
     s += line(L0 - fs * 0.9, T, L0 - fs * 0.9, floor, "#e2701f", r(fs / 10));
-    s += '<text x="' + r(L0 - fs * 1.25) + '" y="' + r(T + H / 2) + '" text-anchor="middle" font-size="' + r(fs * 0.85) + '" font-weight="700" fill="#e2701f" transform="rotate(-90 ' + r(L0 - fs * 1.25) + " " + r(T + H / 2) + ')">' + H + " cm</text>";
-    if (gozler.length) s += '<text x="' + r(Math.max(x, L0 + Wd) + ox + fs * 0.4) + '" y="' + r(T - oy / 2 + fs * 0.3) + '" font-size="' + r(fs * 0.75) + '" fill="#e2701f" font-weight="700">' + D + " cm</text>";
+    s += '<text x="' + r(L0 - fs * 1.25) + '" y="' + r(T + H / 2) + '" text-anchor="middle" font-size="' + r(fs * 0.85) + '" font-weight="700" fill="#e2701f" transform="rotate(-90 ' + r(L0 - fs * 1.25) + " " + r(T + H / 2) + ')">' + H + " cm<\/text>";
+    if (gozler.length) s += '<text x="' + r(Math.max(x, L0 + Wd) + ox + fs * 0.4) + '" y="' + r(T - oy / 2 + fs * 0.3) + '" font-size="' + r(fs * 0.75) + '" fill="#e2701f" font-weight="700">' + D + " cm<\/text>";
     svg.setAttribute("viewBox", "0 0 " + r(L0 + W + ox + fs * 3.6) + " " + r(dy2 + fs * 1.6));
     svg.innerHTML = s;
   }
 
   function sec(i, f, arr, suf, val) {
-    return '<select data-dw="' + i + '" data-f="' + f + '">' + arr.map(function (v) { return '<option value="' + v + '"' + (v === val ? " selected" : "") + ">" + v + suf + "</option>"; }).join("") + "</select>";
+    return '<select data-dw="' + i + '" data-f="' + f + '">' + arr.map(function (v) { return '<option value="' + v + '"' + (v === val ? " selected" : "") + ">" + v + suf + "<\/option>"; }).join("") + "<\/select>";
   }
   function sec2(i, f, nesne, val) {
-    return '<select data-dw="' + i + '" data-f="' + f + '">' + Object.keys(nesne).map(function (k) { return '<option value="' + k + '"' + (k === val ? " selected" : "") + ">" + nesne[k].ad + "</option>"; }).join("") + "</select>";
+    return '<select data-dw="' + i + '" data-f="' + f + '">' + Object.keys(nesne).map(function (k) { return '<option value="' + k + '"' + (k === val ? " selected" : "") + ">" + nesne[k].ad + "<\/option>"; }).join("") + "<\/select>";
   }
   function duvarKutulari() {
     var katlar = []; for (var k = 2; k <= 10; k++) katlar.push(k);
     $("rk-dw").innerHTML = S.duvarlar.map(function (d, i) {
-      return '<div class="rk-dg"><h4>' + (i + 1) + '. Duvar</h4><div class="rk-g">' +
-        '<label class="rk-f">Duvar genişliği (cm)<input type="number" inputmode="numeric" min="0" data-dw="' + i + '" data-f="w" value="' + d.w + '"></label>' +
-        '<label class="rk-f">Derinlik' + sec(i, "d", AYAR.derinlikler, " cm", d.d) + "</label>" +
-        '<label class="rk-f">Yükseklik' + sec(i, "h", AYAR.yukseklikler, " cm", d.h) + "</label>" +
-        '<label class="rk-f">Kat sayısı' + sec(i, "k", katlar, " kat", d.k) + "</label>" +
-        '<label class="rk-f">Renk' + sec2(i, "r", AYAR.renkler, d.r) + "</label>" +
-        '<label class="rk-f">Tabla malzemesi' + sec2(i, "t", AYAR.raflar, d.t) + "</label>" +
-        "</div></div>";
+      return '<div class="rk-dg"><h4>' + (i + 1) + '. Duvar<\/h4><div class="rk-g">' +
+        '<label class="rk-f">Duvar genişliği (cm)<input type="number" inputmode="numeric" min="0" data-dw="' + i + '" data-f="w" value="' + d.w + '"><\/label>' +
+        '<label class="rk-f">Derinlik' + sec(i, "d", AYAR.derinlikler, " cm", d.d) + "<\/label>" +
+        '<label class="rk-f">Yükseklik' + sec(i, "h", AYAR.yukseklikler, " cm", d.h) + "<\/label>" +
+        '<label class="rk-f">Kat sayısı' + sec(i, "k", katlar, " kat", d.k) + "<\/label>" +
+        '<label class="rk-f">Renk' + sec2(i, "r", AYAR.renkler, d.r) + "<\/label>" +
+        '<label class="rk-f">Tabla malzemesi' + sec2(i, "t", AYAR.raflar, d.t) + "<\/label>" +
+        "<\/div><\/div>";
     }).join("");
   }
   function sifirla() { S.duvarlar.forEach(function (d) { d.adet = null; }); }
@@ -696,29 +698,29 @@
 
     $("rk-m").innerHTML = MODLAR.map(function (m) {
       var t = toplam(S.duvarlar.map(function (d) { return { a: yerlestir(d, m.id), dv: d }; }));
-      return '<label class="rk-o' + (S.m === m.id ? " on" : "") + '"><input type="radio" name="rk-m" value="' + m.id + '"' + (S.m === m.id ? " checked" : "") + "><div><b>" + m.ad + "</b><span>" + m.ac + "</span><em>" + kd(t.ara) + "</em></div></label>";
+      return '<label class="rk-o' + (S.m === m.id ? " on" : "") + '"><input type="radio" name="rk-m" value="' + m.id + '"' + (S.m === m.id ? " checked" : "") + "><span class=\"ic\"><b>" + m.ad + "<\/b><span>" + m.ac + "<\/span><em>" + kd(t.ara) + "<\/em><\/span><\/label>";
     }).join("");
 
     var ws = $("rk-ws");
     ws.innerHTML = S.duvarlar.map(function (d, i) {
       var a = d.adet, m = duvarMalzeme(a, d), kul = kullanilan(a), kalan = d.w - kul;
-      return '<div class="rk-dv"><div class="rk-dh"><h4>' + (i + 1) + ". Duvar · " + cm(d.w) + " cm · " + d.d + " cm derinlik · " + d.h + " cm · " + d.k + " kat · " + AYAR.renkler[d.r].ad + " · " + AYAR.raflar[d.t].ad + "</h4><span>" + m.n + " göz · <strong>" + kd(m.tutar) + "</strong></span></div>" +
-        '<div class="rk-cz"><svg data-svg="' + i + '" role="img" aria-label="' + (i + 1) + '. duvar hafif rack yerleşimi"></svg></div>' +
+      return '<div class="rk-dv"><div class="rk-dh"><h4>' + (i + 1) + ". Duvar · " + cm(d.w) + " cm · " + d.d + " cm derinlik · " + d.h + " cm · " + d.k + " kat · " + AYAR.renkler[d.r].ad + " · " + AYAR.raflar[d.t].ad + "<\/h4><span>" + m.n + " göz · <strong>" + kd(m.tutar) + "<\/strong><\/span><\/div>" +
+        '<div class="rk-cz"><svg data-svg="' + i + '" role="img" aria-label="' + (i + 1) + '. duvar hafif rack yerleşimi"><\/svg><\/div>' +
         '<div class="rk-u">' + T_.map(function (L) {
-          return '<div><div><div class="w">' + L + ' cm göz</div><div class="c">' + a[L] + ' adet</div></div><div class="b"><button type="button" data-i="' + i + '" data-l="' + L + '" data-d="-1">−</button><button type="button" data-i="' + i + '" data-l="' + L + '" data-d="1">+</button></div></div>';
-        }).join("") + "</div>" +
-        '<p class="rk-n">Kurulum genişliği: <b>' + cm(kul) + " cm</b> (ayak başı " + cm(AYAR.ayakPayi) + " cm pay dahil) · " +
-        (kalan >= 0 ? "Boşluk: <b>" + cm(kalan) + " cm</b>" : '<span class="rk-w">Duvarı ' + cm(-kalan) + " cm aşıyor!</span>") + "</p></div>";
+          return '<div><div><div class="w">' + L + ' cm göz<\/div><div class="c">' + a[L] + ' adet<\/div><\/div><div class="b"><button type="button" data-i="' + i + '" data-l="' + L + '" data-d="-1">−<\/button><button type="button" data-i="' + i + '" data-l="' + L + '" data-d="1">+<\/button><\/div><\/div>';
+        }).join("") + "<\/div>" +
+        '<p class="rk-n">Kurulum genişliği: <b>' + cm(kul) + " cm<\/b> (ayak başı " + cm(AYAR.ayakPayi) + " cm pay dahil) · " +
+        (kalan >= 0 ? "Boşluk: <b>" + cm(kalan) + " cm<\/b>" : '<span class="rk-w">Duvarı ' + cm(-kalan) + " cm aşıyor!<\/span>") + "<\/p><\/div>";
     }).join("");
     S.duvarlar.forEach(function (d, i) { ciz(ws.querySelector('[data-svg="' + i + '"]'), d.adet, d, i); });
 
     var b = toplam(S.duvarlar.map(function (d) { return { a: d.adet, dv: d }; }));
     $("rk-s1").textContent = b.n; $("rk-s2").textContent = b.ayak; $("rk-s3").textContent = b.trav; $("rk-s4").textContent = b.raf;
     var rows = b.satir.map(function (x) {
-      return "<tr><td>" + x.ad + (x.not ? "<br><small>" + x.not + "</small>" : "") + '</td><td class="r hs">' + x.adet + " × " + kd(x.fiyat) + '</td><td class="r">' + kd(x.adet * x.fiyat) + "<br><small>" + x.adet + " adet</small></td></tr>";
+      return "<tr><td>" + x.ad + (x.not ? "<br><small>" + x.not + "<\/small>" : "") + '<\/td><td class="r hs">' + x.adet + " × " + kd(x.fiyat) + '<\/td><td class="r">' + kd(x.adet * x.fiyat) + "<br><small>" + x.adet + " adet<\/small><\/td><\/tr>";
     }).join("");
-    rows += '<tr><td><b>Toplam (KDV dahil)</b></td><td class="hs"></td><td class="r"><b>' + kd(b.ara) + "</b></td></tr>";
-    if (!b.n) rows = '<tr><td colspan="3">Duvar genişliği en az ' + Math.min.apply(null, T_) + " cm olmalı.</td></tr>";
+    rows += '<tr><td><b>Toplam (KDV dahil)<\/b><\/td><td class="hs"><\/td><td class="r"><b>' + kd(b.ara) + "<\/b><\/td><\/tr>";
+    if (!b.n) rows = '<tr><td colspan="3">Duvar genişliği en az ' + Math.min.apply(null, T_) + " cm olmalı.<\/td><\/tr>";
     $("rk-b").innerHTML = rows;
     $("rk-tt").textContent = kd(b.ara);
   }
@@ -834,6 +836,7 @@
     P + " .mk-o input{margin:3px 0 0;width:18px;height:18px;flex:0 0 auto;accent-color:var(--a)}",
     P + " .mk-o b{display:block;font-size:14px}",
     P + " .mk-o span{display:block;font-size:12.5px;color:var(--mut)}",
+    P + " .mk-o span.ic{font-size:inherit;color:var(--ink)}",
     P + " .mk-o em{display:block;font-style:normal;font-weight:800;font-size:16px;margin-top:4px;color:var(--ink)}",
     P + " .mk-o.on{border-color:var(--a);background:#fff5ee}",
     P + " .mk-rk{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}",
@@ -891,29 +894,29 @@
     { id: "az", ad: "Önerilen dizilim", ac: "Önce 97'lik üniteler; son ünitelerde 77 ve 67'liklerle tamamlanır." },
     { id: "dolu", ad: "Duvarı tam doldur", ac: "En az boşluk kalan dizilim." }
   ];
-  var ekstraOpt = '<option value="0">Ekstra raf yok</option>';
-  for (var e1 = 1; e1 <= AYAR.enFazlaEkstraRaf; e1++) ekstraOpt += '<option value="' + e1 + '">Her üniteye ' + e1 + " ekstra raf</option>";
+  var ekstraOpt = '<option value="0">Ekstra raf yok<\/option>';
+  for (var e1 = 1; e1 <= AYAR.enFazlaEkstraRaf; e1++) ekstraOpt += '<option value="' + e1 + '">Her üniteye ' + e1 + " ekstra raf<\/option>";
 
   R.innerHTML =
-    '<div class="mk-k"><h3>1. Oda, duvarlar ve kapı</h3>' +
+    '<div class="mk-k"><h3>1. Oda, duvarlar ve kapı<\/h3>' +
     '<div class="mk-g"><label class="mk-f">Raflar kaç duvara kurulacak?<select id="mk-dz">' +
-    DUZENLER.map(function (d) { return '<option value="' + d.n + '">' + d.ad + "</option>"; }).join("") + "</select></label></div>" +
-    '<div id="mk-dw"></div>' +
-    '<div class="mk-plan"><svg id="mk-plan" role="img" aria-label="Oda planı (üstten görünüm)"></svg></div>' +
-    '<p class="mk-n">Üstten görünüm. Köşelerde iki duvardan da raf derinliği (köşe rafı varsa ' + AYAR.kosePayi + " cm) pay düşülür. Kapı genişliği de duvardan düşülür.</p></div>" +
-    '<div class="mk-k"><h3>2. Renk ve raf seçenekleri</h3>' +
-    '<div class="mk-g"><div><div class="mk-n" style="margin:0">Raf rengi</div><div class="mk-rk" id="mk-renk"></div></div>' +
-    '<div><div class="mk-n" style="margin:0">Etiket (ön bant) rengi</div><div class="mk-rk" id="mk-etiket"></div></div></div>' +
-    '<div class="mk-g" style="margin-top:12px"><label class="mk-f">Ekstra raf (' + tl(AYAR.ekstraRafFiyati) + " / raf, köşe üniteleri dahil)" + '<select id="mk-ek">' + ekstraOpt + "</select></label></div></div>" +
-    '<div class="mk-k"><h3>3. Raf yerleşimi</h3>' +
-    '<div class="mk-s" id="mk-m"></div>' +
-    '<div id="mk-ws"></div>' +
-    '<p class="mk-n">Şematik görünüm · Ölçüler cm · Ünite sayısını +/− ile değiştirebilirsiniz.</p></div>' +
-    '<div class="mk-k"><div class="mk-hd"><h3>4. Fiyat</h3><span class="mk-n" style="margin:0">Fiyatlara KDV dahildir</span></div>' +
-    '<div class="mk-st"><div><b id="mk-s1"></b><span>Ünite (köşe dahil)</span></div><div><b id="mk-s2"></b><span>Ayak (son ayak dahil)</span></div><div><b id="mk-s3"></b><span>Raf (taban dahil)</span></div><div><b id="mk-s4"></b><span>Köşe rafı ünitesi</span></div></div>' +
-    '<table><thead><tr><th>Malzeme</th><th class="r hs">Adet × Fiyat</th><th class="r">Tutar</th></tr></thead><tbody id="mk-b"></tbody></table>' +
-    '<div class="mk-t"><div><div class="lb">Toplam (KDV dahil)</div><div class="big" id="mk-tt"></div><div class="lb">Montaj ve nakliye dahil değildir.</div></div>' +
-    '<button class="mk-wa" id="mk-wa">WhatsApp ile sipariş ver</button></div></div>';
+    DUZENLER.map(function (d) { return '<option value="' + d.n + '">' + d.ad + "<\/option>"; }).join("") + "<\/select><\/label><\/div>" +
+    '<div id="mk-dw"><\/div>' +
+    '<div class="mk-plan"><svg id="mk-plan" role="img" aria-label="Oda planı (üstten görünüm)"><\/svg><\/div>' +
+    '<p class="mk-n">Üstten görünüm. Köşelerde iki duvardan da raf derinliği (köşe rafı varsa ' + AYAR.kosePayi + " cm) pay düşülür. Kapı genişliği de duvardan düşülür.<\/p><\/div>" +
+    '<div class="mk-k"><h3>2. Renk ve raf seçenekleri<\/h3>' +
+    '<div class="mk-g"><div><div class="mk-n" style="margin:0">Raf rengi<\/div><div class="mk-rk" id="mk-renk"><\/div><\/div>' +
+    '<div><div class="mk-n" style="margin:0">Etiket (ön bant) rengi<\/div><div class="mk-rk" id="mk-etiket"><\/div><\/div><\/div>' +
+    '<div class="mk-g" style="margin-top:12px"><label class="mk-f">Ekstra raf (' + tl(AYAR.ekstraRafFiyati) + " / raf, köşe üniteleri dahil)" + '<select id="mk-ek">' + ekstraOpt + "<\/select><\/label><\/div><\/div>" +
+    '<div class="mk-k"><h3>3. Raf yerleşimi<\/h3>' +
+    '<div class="mk-s" id="mk-m"><\/div>' +
+    '<div id="mk-ws"><\/div>' +
+    '<p class="mk-n">Şematik görünüm · Ölçüler cm · Ünite sayısını +/− ile değiştirebilirsiniz.<\/p><\/div>' +
+    '<div class="mk-k"><div class="mk-hd"><h3>4. Fiyat<\/h3><span class="mk-n" style="margin:0">Fiyatlara KDV dahildir<\/span><\/div>' +
+    '<div class="mk-st"><div><b id="mk-s1"><\/b><span>Ünite (köşe dahil)<\/span><\/div><div><b id="mk-s2"><\/b><span>Ayak (son ayak dahil)<\/span><\/div><div><b id="mk-s3"><\/b><span>Raf (taban dahil)<\/span><\/div><div><b id="mk-s4"><\/b><span>Köşe rafı ünitesi<\/span><\/div><\/div>' +
+    '<table><thead><tr><th scope="col">Malzeme<\/th><th scope="col" class="r hs">Adet × Fiyat<\/th><th scope="col" class="r">Tutar<\/th><\/tr><\/thead><tbody id="mk-b"><\/tbody><\/table>' +
+    '<div class="mk-t"><div><div class="lb">Toplam (KDV dahil)<\/div><div class="big" id="mk-tt"><\/div><div class="lb">Montaj ve nakliye dahil değildir.<\/div><\/div>' +
+    '<button type="button" class="mk-wa" id="mk-wa">WhatsApp ile sipariş ver<\/button><\/div><\/div>';
 
   function $(id) { return document.getElementById(id); }
   function tl(n) { return n.toLocaleString("tr-TR", { style: "currency", currency: "TRY", minimumFractionDigits: 2 }); }
@@ -1119,7 +1122,7 @@
   function poly(pts, fill, extra) { return '<polygon points="' + pts.map(function (q) { return r1(q[0]) + "," + r1(q[1]); }).join(" ") + '" fill="' + fill + '"' + (extra || "") + "/>"; }
   function rect(x, y, w, h, fill, extra) { return '<rect x="' + r1(x) + '" y="' + r1(y) + '" width="' + r1(Math.max(0, w)) + '" height="' + r1(Math.max(0, h)) + '" fill="' + fill + '"' + (extra || "") + "/>"; }
   function line(x1, y1, x2, y2, c, w, extra) { return '<line x1="' + r1(x1) + '" y1="' + r1(y1) + '" x2="' + r1(x2) + '" y2="' + r1(y2) + '" stroke="' + c + '" stroke-width="' + w + '"' + (extra || "") + "/>"; }
-  function yazi(x, y, t, fs, renk, ek) { return '<text x="' + r1(x) + '" y="' + r1(y) + '" font-size="' + r1(fs) + '" fill="' + (renk || "#1b1b1b") + '"' + (ek || "") + ">" + t + "</text>"; }
+  function yazi(x, y, t, fs, renk, ek) { return '<text x="' + r1(x) + '" y="' + r1(y) + '" font-size="' + r1(fs) + '" fill="' + (renk || "#1b1b1b") + '"' + (ek || "") + ">" + t + "<\/text>"; }
   function RK() { return AYAR.renkler[S.renk]; }
   function ET() { return AYAR.etiketler[S.etiket].renk; }
   function etKenar() { return S.etiket === "beyaz" ? ' stroke="#b9bfc5" stroke-width=".6"' : ""; }
@@ -1134,7 +1137,7 @@
     if (n <= 2) maxY = Math.max(maxY, 80);
     if (n === 1 && S.kapi.duvar === 0) maxY = Math.max(maxY, S.kapi.g + 20);
     var span = Math.max(maxX - minX, maxY - minY, 200), fs = span / 26, kal = 6, pad = fs * 3.2;
-    var s = '<defs><pattern id="mk-tar" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#f1f1f1"/><line x1="0" y1="0" x2="0" y2="8" stroke="#c9c9c9" stroke-width="3"/></pattern></defs>';
+    var s = '<defs><pattern id="mk-tar" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#f1f1f1"/><line x1="0" y1="0" x2="0" y2="8" stroke="#c9c9c9" stroke-width="3"/><\/pattern><\/defs>';
     if (n === 4) s += poly(pts.slice(0, 4), "#fbfaf7");
     var ust = "";
     for (var k = 0; k < n; k++) {
@@ -1208,10 +1211,10 @@
     var L0 = fs * 2.6 + AYAR.kosePayi * kx, T = D * ky + fs * 1.2, floor = T + H, s = "";
     function pr(x, h, z) { return [L0 + x + (D - z) * kx, floor - h - (D - z) * ky]; }
     s += "<defs>" +
-      '<linearGradient id="mk-ga' + id + '" x1="0" x2="1"><stop offset="0" stop-color="' + rk.a1 + '"/><stop offset=".5" stop-color="' + rk.a2 + '"/><stop offset="1" stop-color="' + rk.a3 + '"/></linearGradient>' +
-      '<linearGradient id="mk-gr' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + rk.raf1 + '"/><stop offset="1" stop-color="' + rk.raf2 + '"/></linearGradient>' +
-      '<pattern id="mk-tr' + id + '" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#efefef"/><line x1="0" y1="0" x2="0" y2="8" stroke="#d2d2d2" stroke-width="3"/></pattern>' +
-      "</defs>";
+      '<linearGradient id="mk-ga' + id + '" x1="0" x2="1"><stop offset="0" stop-color="' + rk.a1 + '"/><stop offset=".5" stop-color="' + rk.a2 + '"/><stop offset="1" stop-color="' + rk.a3 + '"/><\/linearGradient>' +
+      '<linearGradient id="mk-gr' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + rk.raf1 + '"/><stop offset="1" stop-color="' + rk.raf2 + '"/><\/linearGradient>' +
+      '<pattern id="mk-tr' + id + '" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#efefef"/><line x1="0" y1="0" x2="0" y2="8" stroke="#d2d2d2" stroke-width="3"/><\/pattern>' +
+      "<\/defs>";
     var w0 = pr(0, H + 12, 0);
     s += rect(w0[0], w0[1], W, H + 12, "#f7f7f7", ' stroke="#e2e2e2"');
     s += poly([pr(0, 0, D), pr(W, 0, D), pr(W, 0, 0), pr(0, 0, 0)], "#e9e5df");
@@ -1294,38 +1297,38 @@
 
   // ---- giriş alanları
   function sec(i, f, arr, suf, val) {
-    return '<select data-dw="' + i + '" data-f="' + f + '">' + arr.map(function (v) { return '<option value="' + v + '"' + (v === val ? " selected" : "") + ">" + v + suf + "</option>"; }).join("") + "</select>";
+    return '<select data-dw="' + i + '" data-f="' + f + '">' + arr.map(function (v) { return '<option value="' + v + '"' + (v === val ? " selected" : "") + ">" + v + suf + "<\/option>"; }).join("") + "<\/select>";
   }
   function duvarKutulari() {
     var html = "";
     for (var i = 0; i < S.duzen; i++) {
       var d = S.duvarlar[i];
-      html += '<div class="mk-dg"><h4>' + (i + 1) + '. Duvar</h4><div class="mk-g">' +
-        '<label class="mk-f">Duvar uzunluğu (cm)<input type="number" inputmode="numeric" min="0" data-dw="' + i + '" data-f="w" value="' + d.w + '"></label>' +
-        '<label class="mk-f">Ayak derinliği' + sec(i, "d", AYAR.derinlikler, " cm", d.d) + "</label>" +
-        "</div></div>";
+      html += '<div class="mk-dg"><h4>' + (i + 1) + '. Duvar<\/h4><div class="mk-g">' +
+        '<label class="mk-f">Duvar uzunluğu (cm)<input type="number" inputmode="numeric" min="0" data-dw="' + i + '" data-f="w" value="' + d.w + '"><\/label>' +
+        '<label class="mk-f">Ayak derinliği' + sec(i, "d", AYAR.derinlikler, " cm", d.d) + "<\/label>" +
+        "<\/div><\/div>";
     }
-    var kapiOpt = '<option value="-1"' + (S.kapi.duvar < 0 ? " selected" : "") + ">Kapı yok / raf olmayan tarafta</option>";
-    for (var j = 0; j < S.duzen; j++) kapiOpt += '<option value="' + j + '"' + (S.kapi.duvar === j ? " selected" : "") + ">" + (j + 1) + ". duvarda</option>";
-    html += '<div class="mk-dg"><h4>Kapı</h4><div class="mk-g">' +
-      '<label class="mk-f">Kapı nerede?<select id="mk-kd">' + kapiOpt + "</select></label>" +
-      '<label class="mk-f">Kapı genişliği (cm)<input type="number" inputmode="numeric" min="0" id="mk-kg" value="' + S.kapi.g + '"></label>' +
-      '<label class="mk-f">Duvarın başından kapıya (cm)<input type="number" inputmode="numeric" min="0" id="mk-kx" value="' + S.kapi.x + '"></label>' +
-      '</div><p class="mk-n">Duvarın başı, plandaki ok yönüne göre duvarın ilk ucudur (1. duvarda sol uç). Kapı genişliği kadar alan duvardan düşülür. Kapı köşenin yanındaysa raflar tek parça kalır; kapı duvarın ortasındaysa raflar kapının iki yanına ayrı dizilir ve her dizinin kendi son ayağı olur.</p></div>';
+    var kapiOpt = '<option value="-1"' + (S.kapi.duvar < 0 ? " selected" : "") + ">Kapı yok / raf olmayan tarafta<\/option>";
+    for (var j = 0; j < S.duzen; j++) kapiOpt += '<option value="' + j + '"' + (S.kapi.duvar === j ? " selected" : "") + ">" + (j + 1) + ". duvarda<\/option>";
+    html += '<div class="mk-dg"><h4>Kapı<\/h4><div class="mk-g">' +
+      '<label class="mk-f">Kapı nerede?<select id="mk-kd">' + kapiOpt + "<\/select><\/label>" +
+      '<label class="mk-f">Kapı genişliği (cm)<input type="number" inputmode="numeric" min="0" id="mk-kg" value="' + S.kapi.g + '"><\/label>' +
+      '<label class="mk-f">Duvarın başından kapıya (cm)<input type="number" inputmode="numeric" min="0" id="mk-kx" value="' + S.kapi.x + '"><\/label>' +
+      '<\/div><p class="mk-n">Duvarın başı, plandaki ok yönüne göre duvarın ilk ucudur (1. duvarda sol uç). Kapı genişliği kadar alan duvardan düşülür. Kapı köşenin yanındaysa raflar tek parça kalır; kapı duvarın ortasındaysa raflar kapının iki yanına ayrı dizilir ve her dizinin kendi son ayağı olur.<\/p><\/div>';
     var koseHtml = "";
     for (var k = 0; k < S.duzen; k++) {
       if (!koseVar(k)) continue;
-      koseHtml += '<label class="mk-o' + (S.kose[k] ? " on" : "") + '"><input type="checkbox" data-kose="' + k + '"' + (S.kose[k] ? " checked" : "") + "><div><b>" + (k + 1) + ". ve " + (sonraki(k) + 1) + ". duvarın köşesine köşe rafı</b><span>İki duvardan da " + AYAR.kosePayi + " cm düşülür; köşeye çapraz yamuk raflar takılır.</span></div></label>";
+      koseHtml += '<label class="mk-o' + (S.kose[k] ? " on" : "") + '"><input type="checkbox" data-kose="' + k + '"' + (S.kose[k] ? " checked" : "") + "><span class=\"ic\"><b>" + (k + 1) + ". ve " + (sonraki(k) + 1) + ". duvarın köşesine köşe rafı<\/b><span>İki duvardan da " + AYAR.kosePayi + " cm düşülür; köşeye çapraz yamuk raflar takılır.<\/span><\/span><\/label>";
     }
-    if (koseHtml) html += '<div class="mk-dg"><h4>Köşe rafları</h4><div class="mk-s">' + koseHtml + "</div></div>";
+    if (koseHtml) html += '<div class="mk-dg"><h4>Köşe rafları<\/h4><div class="mk-s">' + koseHtml + "<\/div><\/div>";
     $("mk-dw").innerHTML = html;
   }
   function renkSecimleri() {
     $("mk-renk").innerHTML = Object.keys(AYAR.renkler).map(function (k) {
-      return '<label class="' + (S.renk === k ? "on" : "") + '"><input type="radio" name="mk-renk" value="' + k + '"' + (S.renk === k ? " checked" : "") + '><i style="background:' + AYAR.renkler[k].raf1 + '"></i>' + AYAR.renkler[k].ad + "</label>";
+      return '<label class="' + (S.renk === k ? "on" : "") + '"><input type="radio" name="mk-renk" value="' + k + '"' + (S.renk === k ? " checked" : "") + '><i style="background:' + AYAR.renkler[k].raf1 + '"><\/i>' + AYAR.renkler[k].ad + "<\/label>";
     }).join("");
     $("mk-etiket").innerHTML = Object.keys(AYAR.etiketler).map(function (k) {
-      return '<label class="' + (S.etiket === k ? "on" : "") + '"><input type="radio" name="mk-etiket" value="' + k + '"' + (S.etiket === k ? " checked" : "") + '><i style="background:' + AYAR.etiketler[k].renk + '"></i>' + AYAR.etiketler[k].ad + "</label>";
+      return '<label class="' + (S.etiket === k ? "on" : "") + '"><input type="radio" name="mk-etiket" value="' + k + '"' + (S.etiket === k ? " checked" : "") + '><i style="background:' + AYAR.etiketler[k].renk + '"><\/i>' + AYAR.etiketler[k].ad + "<\/label>";
     }).join("");
   }
   function sifirla() { S.yer = null; }
@@ -1337,36 +1340,36 @@
 
     $("mk-m").innerHTML = MODLAR.map(function (m) {
       var t = toplam(tumYerlesim(m.id));
-      return '<label class="mk-o' + (S.m === m.id ? " on" : "") + '"><input type="radio" name="mk-m" value="' + m.id + '"' + (S.m === m.id ? " checked" : "") + "><div><b>" + m.ad + "</b><span>" + m.ac + "</span><em>" + tl(t.ara) + "</em></div></label>";
+      return '<label class="mk-o' + (S.m === m.id ? " on" : "") + '"><input type="radio" name="mk-m" value="' + m.id + '"' + (S.m === m.id ? " checked" : "") + "><span class=\"ic\"><b>" + m.ad + "<\/b><span>" + m.ac + "<\/span><em>" + tl(t.ara) + "<\/em><\/span><\/label>";
     }).join("");
 
     var ws = $("mk-ws");
-    ws.innerHTML = uyari.map(function (u) { return '<p class="mk-n mk-w">' + u + "</p>"; }).join("") + yer.map(function (y, i) {
+    ws.innerHTML = uyari.map(function (u) { return '<p class="mk-n mk-w">' + u + "<\/p>"; }).join("") + yer.map(function (y, i) {
       var d = S.duvarlar[i], o = duvarOzet(i, y), bp = basPay(i), sp = sonPay(i);
       var payYazi = (bp || sp) ? "Köşe payı: " + [bp ? cm(bp) + " cm" : "", sp ? cm(sp) + " cm" : ""].filter(Boolean).join(" + ") + " · " : "";
-      var html = '<div class="mk-dv"><div class="mk-dh"><h4>' + (i + 1) + ". Duvar · " + cm(d.w) + " cm · " + d.d + " cm ayak" + (S.kapi.duvar === i ? " · kapı " + cm(S.kapi.g) + " cm" : "") + "</h4><span>" + o.n + " ünite</span></div>" +
-        '<div class="mk-cz"><svg data-svg="' + i + '" role="img" aria-label="' + (i + 1) + '. duvar market rafı yerleşimi"></svg></div>';
-      if (!y.length) html += '<p class="mk-n mk-w">Bu duvarda raf kurulacak alan kalmadı.</p>';
+      var html = '<div class="mk-dv"><div class="mk-dh"><h4>' + (i + 1) + ". Duvar · " + cm(d.w) + " cm · " + d.d + " cm ayak" + (S.kapi.duvar === i ? " · kapı " + cm(S.kapi.g) + " cm" : "") + "<\/h4><span>" + o.n + " ünite<\/span><\/div>" +
+        '<div class="mk-cz"><svg data-svg="' + i + '" role="img" aria-label="' + (i + 1) + '. duvar market rafı yerleşimi"><\/svg><\/div>';
+      if (!y.length) html += '<p class="mk-n mk-w">Bu duvarda raf kurulacak alan kalmadı.<\/p>';
       y.forEach(function (p, pi) {
         var uz = p.son - p.bas, kul = kaplanan(p.a), kalan = uz - kul;
-        if (y.length > 1 || p.kapiYani) html += '<div class="mk-pb">' + (p.kapiYani === "sol" ? "Kapının solu" : p.kapiYani === "sag" ? "Kapının sağı" : "Bölüm " + (pi + 1)) + " · " + cm(uz) + " cm</div>";
+        if (y.length > 1 || p.kapiYani) html += '<div class="mk-pb">' + (p.kapiYani === "sol" ? "Kapının solu" : p.kapiYani === "sag" ? "Kapının sağı" : "Bölüm " + (pi + 1)) + " · " + cm(uz) + " cm<\/div>";
         html += '<div class="mk-u">' + G.map(function (g) {
-          return '<div><div><div class="w">' + g + ' cm ünite</div><div class="c">' + p.a[g] + ' adet</div></div><div class="b"><button type="button" data-i="' + i + '" data-p="' + pi + '" data-g="' + g + '" data-d="-1">−</button><button type="button" data-i="' + i + '" data-p="' + pi + '" data-g="' + g + '" data-d="1">+</button></div></div>';
-        }).join("") + "</div>" +
-          '<p class="mk-n">' + (pi === 0 ? payYazi : "") + "Kullanılabilir: <b>" + cm(uz) + " cm</b> · Kurulum: <b>" + cm(kul) + " cm</b>" + (AYAR.ayakPayi ? " (ayak başı " + cm(AYAR.ayakPayi) + " cm pay dahil)" : "") + " · " +
-          (kalan >= 0 ? "Boşluk: <b>" + cm(kalan) + " cm</b>" : '<span class="mk-w">' + cm(-kalan) + " cm taşıyor!</span>") + "</p>";
+          return '<div><div><div class="w">' + g + ' cm ünite<\/div><div class="c">' + p.a[g] + ' adet<\/div><\/div><div class="b"><button type="button" data-i="' + i + '" data-p="' + pi + '" data-g="' + g + '" data-d="-1">−<\/button><button type="button" data-i="' + i + '" data-p="' + pi + '" data-g="' + g + '" data-d="1">+<\/button><\/div><\/div>';
+        }).join("") + "<\/div>" +
+          '<p class="mk-n">' + (pi === 0 ? payYazi : "") + "Kullanılabilir: <b>" + cm(uz) + " cm<\/b> · Kurulum: <b>" + cm(kul) + " cm<\/b>" + (AYAR.ayakPayi ? " (ayak başı " + cm(AYAR.ayakPayi) + " cm pay dahil)" : "") + " · " +
+          (kalan >= 0 ? "Boşluk: <b>" + cm(kalan) + " cm<\/b>" : '<span class="mk-w">' + cm(-kalan) + " cm taşıyor!<\/span>") + "<\/p>";
       });
-      return html + "</div>";
+      return html + "<\/div>";
     }).join("");
     yer.forEach(function (y, i) { ciz(ws.querySelector('[data-svg="' + i + '"]'), y, i, i); });
 
     var b = toplam(yer);
     $("mk-s1").textContent = b.unite; $("mk-s2").textContent = b.ayak; $("mk-s3").textContent = b.raf; $("mk-s4").textContent = b.kose;
     var rows = b.satir.map(function (x) {
-      return "<tr><td>" + x.ad + (x.not ? "<br><small>" + x.not + "</small>" : "") + '</td><td class="r hs">' + x.adet + " × " + tl(x.fiyat) + '</td><td class="r">' + tl(x.adet * x.fiyat) + "<br><small>" + x.adet + " adet</small></td></tr>";
+      return "<tr><td>" + x.ad + (x.not ? "<br><small>" + x.not + "<\/small>" : "") + '<\/td><td class="r hs">' + x.adet + " × " + tl(x.fiyat) + '<\/td><td class="r">' + tl(x.adet * x.fiyat) + "<br><small>" + x.adet + " adet<\/small><\/td><\/tr>";
     }).join("");
-    rows += '<tr><td><b>Toplam (KDV dahil)</b></td><td class="hs"></td><td class="r"><b>' + tl(b.ara) + "</b></td></tr>";
-    if (!b.unite) rows = '<tr><td colspan="3">Duvarlara ünite sığmıyor. Duvar ölçülerini kontrol edin.</td></tr>';
+    rows += '<tr><td><b>Toplam (KDV dahil)<\/b><\/td><td class="hs"><\/td><td class="r"><b>' + tl(b.ara) + "<\/b><\/td><\/tr>";
+    if (!b.unite) rows = '<tr><td colspan="3">Duvarlara ünite sığmıyor. Duvar ölçülerini kontrol edin.<\/td><\/tr>';
     $("mk-b").innerHTML = rows;
     $("mk-tt").textContent = tl(b.ara);
     return yer;

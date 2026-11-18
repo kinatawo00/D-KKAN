@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Çelik Raf Hesaplama</title>
-<style>body{margin:0;padding:16px;background:#f4f4f4;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}</style></head><body>
-<div id="raf-hesap">Raf hesaplayıcı yükleniyor...</div>
+<style>body{margin:0;padding:16px;background:#f4f4f4;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}</style></head><body><div id="raf-hesap">Raf hesaplayıcı yükleniyor...</div>
 <script>
 (function () {
   /* ======== FİYATLAR VE AYARLAR (buradan değiştirin) ======== */
@@ -46,6 +45,7 @@
     "#raf-hesap .rh-o input{margin:3px 0 0;width:18px;height:18px;flex:0 0 auto;accent-color:var(--a)}" +
     "#raf-hesap .rh-o b{display:block;font-size:14px}" +
     "#raf-hesap .rh-o span{display:block;font-size:12.5px;color:var(--mut)}" +
+    "#raf-hesap .rh-o span.ic{font-size:inherit;color:var(--ink)}" +
     "#raf-hesap .rh-o em{display:block;font-style:normal;font-weight:800;font-size:16px;margin-top:4px;color:var(--ink)}" +
     "#raf-hesap .rh-o.on{border-color:var(--a);background:#fff5ee}" +
     "#raf-hesap .rh-dv{border:1px solid var(--ln);border-radius:12px;padding:12px;margin-top:14px}" +
@@ -101,8 +101,8 @@
     '<div id="rh-dw"></div>' +
     "</div>" +
     '<div class="rh-k"><h3>2. Kurulum tipi</h3><div class="rh-s">' +
-    '<label class="rh-o"><input type="radio" name="rh-t" value="b" checked><div><b>Bitişik (ortak profilli)</b><span>Yan yana üniteler aradaki profilleri paylaşır, daha ekonomik.</span></div></label>' +
-    '<label class="rh-o"><input type="radio" name="rh-t" value="a"><div><b>Ayrı ayrı üniteler</b><span>Her ünite kendi 4 profiliyle kurulur.</span></div></label>' +
+    '<label class="rh-o"><input type="radio" name="rh-t" value="b" checked><span class="ic"><b>Bitişik (ortak profilli)</b><span>Yan yana üniteler aradaki profilleri paylaşır, daha ekonomik.</span></span></label>' +
+    '<label class="rh-o"><input type="radio" name="rh-t" value="a"><span class="ic"><b>Ayrı ayrı üniteler</b><span>Her ünite kendi 4 profiliyle kurulur.</span></span></label>' +
     "</div></div>" +
     '<div class="rh-k"><h3>3. Raf yerleşimi</h3>' +
     '<div class="rh-s" id="rh-m"></div>' +
@@ -110,9 +110,9 @@
     '<p class="rh-n">Şematik görünüm · Ölçüler cm · Her duvarda ünite sayısını +/− ile değiştirebilirsiniz.</p></div>' +
     '<div class="rh-k"><div class="rh-hd"><h3>4. Fiyat</h3><span class="rh-n" style="margin:0">Fiyatlara %' + AYAR.kdv * 100 + " KDV dahildir</span></div>" +
     '<div class="rh-st"><div><b id="rh-s1"></b><span>Ünite</span></div><div><b id="rh-s2"></b><span>Raf tablası</span></div><div><b id="rh-s3"></b><span>Profil</span></div><div><b id="rh-s4"></b><span>Somun-cıvata</span></div></div>' +
-    '<table><thead><tr><th>Malzeme</th><th class="r hs">Adet × Fiyat</th><th class="r">Tutar</th></tr></thead><tbody id="rh-b"></tbody></table>' +
+    '<table><thead><tr><th scope="col">Malzeme</th><th scope="col" class="r hs">Adet × Fiyat</th><th scope="col" class="r">Tutar</th></tr></thead><tbody id="rh-b"></tbody></table>' +
     '<div class="rh-t"><div><div class="lb" id="rh-tl"></div><div class="big" id="rh-tt"></div><div class="lb">Montaj ve nakliye dahil değildir.</div></div>' +
-    '<button class="rh-wa" id="rh-wa">WhatsApp ile sipariş ver</button></div></div>';
+    '<button type="button" class="rh-wa" id="rh-wa">WhatsApp ile sipariş ver</button></div></div>';
 
   function $(id) { return document.getElementById(id); }
   function tl(n) { return n.toLocaleString("tr-TR", { style: "currency", currency: "TRY", minimumFractionDigits: 2 }); }
@@ -273,7 +273,7 @@
     // yerleşim seçenekleri, her birinin toplam fiyatıyla
     $("rh-m").innerHTML = MODLAR.map(function (m) {
       var t = toplam(S.duvarlar.map(function (d) { return { a: yerlestir(d, m.id), dv: d }; }));
-      return '<label class="rh-o' + (S.m === m.id ? " on" : "") + '"><input type="radio" name="rh-m" value="' + m.id + '"' + (S.m === m.id ? " checked" : "") + "><div><b>" + m.ad + "</b><span>" + m.ac + "</span><em>" + kd(t.ara) + "</em></div></label>";
+      return '<label class="rh-o' + (S.m === m.id ? " on" : "") + '"><input type="radio" name="rh-m" value="' + m.id + '"' + (S.m === m.id ? " checked" : "") + "><span class=\"ic\"><b>" + m.ad + "</b><span>" + m.ac + "</span><em>" + kd(t.ara) + "</em></span></label>";
     }).join("");
 
     // duvar çizimleri
