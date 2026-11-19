@@ -51,3 +51,7 @@ Güncelleme adımları:
 Ticimax sayfa içeriğine `<script>` içeren kod kaydedilemiyorsa `script-yonetimi-yukleyici.txt` Script Yönetimi'ne (Tüm Sayfalar) eklenir.
 Yükleyici yalnızca `/raf-hesaplama` sayfasında çalışır: sayfadaki eski hesaplayıcıyı (`#raf-secim`) veya "Raf hesaplayıcı yükleniyor" yazısını yeni hesaplayıcıyla değiştirir; ikisi de yoksa içeriğin sonuna ekler.
 Güncellemede yükleyicideki `DOSYA` adresinin `@...` kısmı yeni commit kimliğiyle değiştirilir.
+
+## Fiyat listesi PDF
+`node fiyat-listesi/olustur.js` (önce `python3 birlestir.py`) üç raf sisteminin fiyat listesini `fiyat-listesi/acar-raf-fiyat-listesi.pdf` olarak üretir.
+Fiyatlar hesaplayıcı dosyalarındaki `AYAR` bölümlerinden okunur, görseller hesaplayıcıların kendi çizimleridir. Fiyat değişince betiği yeniden çalıştırmak yeterlidir.
