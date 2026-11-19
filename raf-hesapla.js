@@ -6,8 +6,8 @@
     kok.dataset.ok = "1";
     kok.innerHTML = "<div id=\"raf-secim\">\n  <h2 class=\"rs-bas\">Kendi Rafını Kendin Hesapla</h2>\n  <p class=\"rs-alt\">Hangi raf sistemini hesaplamak istiyorsunuz?</p>\n  <div class=\"rs-kartlar\">\n    <button type=\"button\" class=\"rs-kart\" data-sec=\"celik\">\n      <svg viewBox=\"0 0 120 90\" aria-hidden=\"true\"><rect x=\"14\" y=\"8\" width=\"5\" height=\"76\" fill=\"#8b96a1\"/><rect x=\"101\" y=\"8\" width=\"5\" height=\"76\" fill=\"#8b96a1\"/><g fill=\"#c9d1d8\" stroke=\"#8b96a1\"><rect x=\"14\" y=\"12\" width=\"92\" height=\"5\"/><rect x=\"14\" y=\"34\" width=\"92\" height=\"5\"/><rect x=\"14\" y=\"56\" width=\"92\" height=\"5\"/><rect x=\"14\" y=\"76\" width=\"92\" height=\"5\"/></g></svg>\n      <b>Çelik Raf Hesapla</b>\n      <span>Arşiv, depo ve ev için cıvatalı çelik raflar</span>\n    </button>\n    <button type=\"button\" class=\"rs-kart\" data-sec=\"rack\">\n      <svg viewBox=\"0 0 120 90\" aria-hidden=\"true\"><rect x=\"12\" y=\"6\" width=\"6\" height=\"78\" fill=\"#2a4fb8\"/><rect x=\"102\" y=\"6\" width=\"6\" height=\"78\" fill=\"#2a4fb8\"/><g fill=\"#f4f5f7\" stroke=\"#cdd2d8\"><rect x=\"18\" y=\"14\" width=\"84\" height=\"5\"/><rect x=\"18\" y=\"44\" width=\"84\" height=\"5\"/><rect x=\"18\" y=\"74\" width=\"84\" height=\"5\"/></g><g fill=\"#e2701f\"><rect x=\"18\" y=\"19\" width=\"84\" height=\"5\"/><rect x=\"18\" y=\"49\" width=\"84\" height=\"5\"/><rect x=\"18\" y=\"79\" width=\"84\" height=\"5\"/></g></svg>\n      <b>Hafif Rack Hesapla</b>\n      <span>Travers ve ayaklı, yüksek taşıma kapasiteli raflar</span>\n    </button>\n    <button type=\"button\" class=\"rs-kart\" data-sec=\"market\">\n      <svg viewBox=\"0 0 120 90\" aria-hidden=\"true\"><rect x=\"14\" y=\"4\" width=\"92\" height=\"74\" fill=\"#eceef0\"/><rect x=\"12\" y=\"4\" width=\"4\" height=\"82\" fill=\"#c9ced3\"/><rect x=\"104\" y=\"4\" width=\"4\" height=\"82\" fill=\"#c9ced3\"/><g fill=\"#e2701f\"><rect x=\"16\" y=\"20\" width=\"88\" height=\"4\"/><rect x=\"16\" y=\"38\" width=\"88\" height=\"4\"/><rect x=\"16\" y=\"56\" width=\"88\" height=\"4\"/><rect x=\"16\" y=\"74\" width=\"88\" height=\"10\"/></g><g fill=\"#fff\"><rect x=\"16\" y=\"17\" width=\"88\" height=\"3\"/><rect x=\"16\" y=\"35\" width=\"88\" height=\"3\"/><rect x=\"16\" y=\"53\" width=\"88\" height=\"3\"/><rect x=\"16\" y=\"71\" width=\"88\" height=\"3\"/></g></svg>\n      <b>Market Rafı Hesapla</b>\n      <span>Duvar tipi market rafları, köşe birleşimli oda planı</span>\n    </button>\n    <button type=\"button\" class=\"rs-kart\" data-sec=\"magaza\">\n      <svg viewBox=\"0 0 120 90\" aria-hidden=\"true\"><rect x=\"10\" y=\"84\" width=\"100\" height=\"3\" fill=\"#cfcfcf\"/><rect x=\"104\" y=\"4\" width=\"4\" height=\"80\" fill=\"#bbb\"/><g fill=\"#1f2023\"><rect x=\"30\" y=\"8\" width=\"5\" height=\"76\"/><rect x=\"35\" y=\"12\" width=\"69\" height=\"4\"/><rect x=\"35\" y=\"62\" width=\"69\" height=\"4\"/><rect x=\"72\" y=\"8\" width=\"5\" height=\"76\"/></g><g fill=\"#8a9097\"><rect x=\"31.5\" y=\"14\" width=\"1\" height=\"3\"/><rect x=\"31.5\" y=\"24\" width=\"1\" height=\"3\"/><rect x=\"31.5\" y=\"34\" width=\"1\" height=\"3\"/><rect x=\"31.5\" y=\"44\" width=\"1\" height=\"3\"/><rect x=\"31.5\" y=\"54\" width=\"1\" height=\"3\"/><rect x=\"31.5\" y=\"70\" width=\"1\" height=\"3\"/><rect x=\"73.5\" y=\"14\" width=\"1\" height=\"3\"/><rect x=\"73.5\" y=\"24\" width=\"1\" height=\"3\"/><rect x=\"73.5\" y=\"34\" width=\"1\" height=\"3\"/><rect x=\"73.5\" y=\"44\" width=\"1\" height=\"3\"/><rect x=\"73.5\" y=\"54\" width=\"1\" height=\"3\"/><rect x=\"73.5\" y=\"70\" width=\"1\" height=\"3\"/></g></svg>\n      <b>Mağaza Sistemleri</b>\n      <span>Bayan ve erkek giyim mağazaları için F dikme ve duvar sistemleri</span>\n    </button>\n  </div>\n  <div class=\"rs-ust\" hidden><button type=\"button\" class=\"rs-geri\">&larr; Raf tipini değiştir</button><span class=\"rs-secili\"></span></div>\n  <div class=\"rs-panel\" data-panel=\"celik\" hidden>\n<div id=\"raf-hesap\">Raf hesaplayıcı yükleniyor...</div>\n\n  </div>\n  <div class=\"rs-panel\" data-panel=\"rack\" hidden>\n<div id=\"rack-hesap\">Hafif rack hesaplayıcı yükleniyor...</div>\n\n  </div>\n  <div class=\"rs-panel\" data-panel=\"market\" hidden>\n<div id=\"market-hesap\">Market rafı hesaplayıcı yükleniyor...</div>\n\n  </div>\n  <div class=\"rs-panel\" data-panel=\"magaza\" hidden>\n<div id=\"magaza-hesap\">Mağaza sistemleri hesaplayıcı yükleniyor...</div>\n\n  </div>\n</div>";
 
-/* Fiyat teklifi PDF: hesaplayıcı sonucunu çizimler ve fiyat dökümüyle yazdırılabilir bir sayfada açar.
-   Tarayıcının yazdırma penceresinde "PDF olarak kaydet" seçilerek PDF alınır. */
+/* Fiyat teklifi PDF: hesaplayıcı sonucunu çizimler ve fiyat dökümüyle PDF dosyası olarak indirir (html2pdf).
+   Kütüphane yüklenemezse yedek olarak yazdırma penceresi açılır. */
 (function () {
   if (window.AcarRafTeklif) return;
   var FIRMA = {
@@ -18,67 +18,133 @@
   };
   function kacis(t) { return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 
-  // v: { urun, ozet: [satır], plan: svg, cizimler: [{ baslik, svg }], tablo: tablo HTML, toplam: metin }
-  window.AcarRafTeklif = function (v) {
-    var simdi = new Date();
-    var tarih = simdi.toLocaleDateString("tr-TR", { day: "2-digit", month: "long", year: "numeric" });
-    var no = "AR-" + simdi.getFullYear() + String(simdi.getMonth() + 1).padStart(2, "0") + String(simdi.getDate()).padStart(2, "0") +
-      "-" + String(simdi.getHours()).padStart(2, "0") + String(simdi.getMinutes()).padStart(2, "0");
-    var css =
-      "@page{size:A4;margin:14mm 13mm}" +
-      "*{box-sizing:border-box}" +
-      "body{margin:0;padding:16px;background:#e9e9e9;font-family:Arial,Helvetica,sans-serif;color:#1b1b1b;font-size:13px;line-height:1.45}" +
-      ".kagit{max-width:800px;margin:0 auto;background:#fff;padding:28px 30px;box-shadow:0 2px 12px rgba(0,0,0,.12)}" +
-      ".ust{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;border-bottom:3px solid #e2701f;padding-bottom:10px;margin-bottom:14px}" +
-      ".ust h1{margin:0;font-size:28px;letter-spacing:.04em}.ust h1 span{color:#e2701f}" +
-      ".ust .alt{font-size:15px;color:#555}" +
-      ".ust .sag{text-align:right;font-size:12px;color:#555}.ust .sag b{color:#1b1b1b;font-size:13px}" +
-      "h2{font-size:16px;margin:16px 0 8px}" +
-      ".ozet{margin:0;padding-left:18px}.ozet li{margin:2px 0}" +
-      "figure{margin:0 0 10px;background:#f6f6f6;border-radius:8px;padding:8px;page-break-inside:avoid;break-inside:avoid}" +
-      "figure svg{display:block;width:100%;height:auto;max-height:300px}" +
-      "figcaption{font-size:12px;font-weight:700;margin-bottom:4px}" +
-      "table{width:100%;border-collapse:collapse;font-size:12px;page-break-inside:avoid;break-inside:avoid}" +
-      "th{text-align:left;background:#2f3338;color:#fff;padding:6px;font-weight:600}" +
-      "td{padding:5px 6px;border-bottom:1px solid #e3e3e3;vertical-align:top}" +
-      "td small{color:#777}.r{text-align:right;white-space:nowrap}" +
-      ".toplam{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding:12px 14px;background:#fff5ee;border-radius:8px;font-size:18px;font-weight:800}" +
-      ".not{font-size:11px;color:#555;margin-top:10px}" +
-      ".alt-bilgi{margin-top:16px;border-top:1px solid #ddd;padding-top:8px;font-size:11px;color:#444}" +
-      ".arac{max-width:800px;margin:0 auto 12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;background:#fff;padding:10px 14px;border-radius:8px}" +
-      ".arac button{font:inherit;font-weight:700;background:#e2701f;color:#fff;border:0;border-radius:8px;padding:10px 18px;cursor:pointer}" +
-      ".arac span{font-size:12px;color:#555}" +
-      "@media print{body{background:#fff;padding:0}.kagit{box-shadow:none;padding:0;max-width:none}.arac{display:none}}";
-    var govde =
-      '<div class="arac"><span>Açılan pencerede <b>Hedef: PDF olarak kaydet</b> seçip kaydedin. Telefonda <b>Paylaş</b> veya <b>Yazdır</b> menüsünü kullanın.</span>' +
-      '<button type="button" onclick="window.print()">PDF olarak kaydet / Yazdır</button></div>' +
-      '<div class="kagit">' +
-      '<div class="ust"><div><h1>ACAR <span>RAF</span></h1><div class="alt">Fiyat Teklifi · ' + kacis(v.urun) + "</div></div>" +
+  var KUTUPHANE = "https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js";
+  var kutuphaneSozu = null;
+  function kutuphaneYukle() {
+    if (window.html2pdf) return Promise.resolve();
+    if (kutuphaneSozu) return kutuphaneSozu;
+    kutuphaneSozu = new Promise(function (tamam, hata) {
+      var s = document.createElement("script");
+      s.src = KUTUPHANE;
+      s.onload = function () { window.html2pdf ? tamam() : hata(new Error("html2pdf yok")); };
+      s.onerror = function () { kutuphaneSozu = null; hata(new Error("kütüphane yüklenemedi")); };
+      document.head.appendChild(s);
+    });
+    return kutuphaneSozu;
+  }
+
+  // teklif sayfasının stili; "K" ön ekiyle sitenin kendi stillerinden ayrılır
+  function teklifCss(K) {
+    return [
+      K + "{box-sizing:border-box;width:760px;background:#fff;color:#1b1b1b;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.45;padding:28px 34px;text-align:left}",
+      K + " *{box-sizing:border-box;font-family:inherit}",
+      K + " .ust{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;border-bottom:3px solid #e2701f;padding-bottom:10px;margin-bottom:14px}",
+      K + " h1{margin:0;font-size:28px;letter-spacing:.04em;color:#1b1b1b;font-weight:800}",
+      K + " h1 span{color:#e2701f}",
+      K + " .alt{font-size:15px;color:#555}",
+      K + " .sag{text-align:right;font-size:12px;color:#555}",
+      K + " .sag b{color:#1b1b1b;font-size:13px}",
+      K + " h2{font-size:16px;margin:16px 0 8px;color:#1b1b1b;font-weight:700}",
+      K + " ul{margin:0;padding-left:18px}",
+      K + " li{margin:2px 0}",
+      K + " figure{margin:0 0 10px;background:#f6f6f6;border-radius:8px;padding:8px}",
+      K + " figure svg," + K + " figure img{display:block;width:100%;height:auto;max-height:300px;object-fit:contain}",
+      K + " figcaption{font-size:12px;font-weight:700;margin-bottom:4px}",
+      K + " table{width:100%;border-collapse:collapse;font-size:12px;border:0;margin:0}",
+      K + " th{text-align:left;background:#2f3338;color:#fff;padding:6px;font-weight:600;border:0}",
+      K + " td{padding:5px 6px;border:0;border-bottom:1px solid #e3e3e3;vertical-align:top;background:#fff}",
+      K + " td small{color:#777}",
+      K + " .r{text-align:right;white-space:nowrap}",
+      K + " .toplam{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding:12px 14px;background:#fff5ee;border-radius:8px;font-size:18px;font-weight:800}",
+      K + " .not{font-size:11px;color:#555;margin:10px 0 0}",
+      K + " .alt-bilgi{margin-top:16px;border-top:1px solid #ddd;padding-top:8px;font-size:11px;color:#444}"
+    ].join("");
+  }
+
+  // v: { urun, ozet: [satır], plan: svg, cizimler: [{ baslik, svg }], tablo: tablo HTML, toplam: metin, etiket }
+  function teklifIcerik(v, no, tarih) {
+    return '<div class="ust"><div><h1>ACAR <span>RAF</span></h1><div class="alt">Fiyat Teklifi · ' + kacis(v.urun) + "</div></div>" +
       '<div class="sag"><b>' + tarih + "</b><br>Teklif no: " + no + "<br>Tel / WhatsApp: " + FIRMA.telefon + "<br>" + FIRMA.web + "</div></div>" +
-      "<h2>Kurulum özeti</h2><ul class=\"ozet\">" + v.ozet.map(function (s) { return "<li>" + kacis(s) + "</li>"; }).join("") + "</ul>" +
+      "<h2>Kurulum özeti</h2><ul>" + v.ozet.map(function (s) { return "<li>" + kacis(s) + "</li>"; }).join("") + "</ul>" +
       (v.plan ? "<h2>Oda planı</h2><figure>" + v.plan + "</figure>" : "") +
       (v.cizimler.length ? "<h2>Raf yerleşimi</h2>" + v.cizimler.map(function (c) { return "<figure><figcaption>" + kacis(c.baslik) + "</figcaption>" + c.svg + "</figure>"; }).join("") : "") +
       "<h2>Fiyat dökümü</h2>" + v.tablo +
       '<div class="toplam"><span>' + kacis(v.etiket || "Toplam (KDV dahil)") + "</span><span>" + kacis(v.toplam) + "</span></div>" +
       '<p class="not">Fiyatlara KDV dahildir. Montaj ve nakliye dahil değildir. Fiyatlar teklif tarihinde geçerlidir.</p>' +
-      '<div class="alt-bilgi">Sipariş ve bilgi için: <b>' + FIRMA.telefon + "</b> (telefon / WhatsApp) · " + FIRMA.adres + " · " + FIRMA.web + "</div>" +
-      "</div>";
+      '<div class="alt-bilgi">Sipariş ve bilgi için: <b>' + FIRMA.telefon + "</b> (telefon / WhatsApp) · " + FIRMA.adres + " · " + FIRMA.web + "</div>";
+  }
+
+  // yedek yöntem: yazdırma penceresi (PDF kütüphanesi yüklenemezse)
+  function yazdirmaPenceresi(icerik, no) {
     var w = window.open("", "_blank");
-    if (!w) { alert("PDF penceresi açılamadı. Lütfen tarayıcınızın açılır pencere engelini kapatıp tekrar deneyin."); return; }
+    if (!w) { alert("PDF hazırlanamadı. Lütfen tarayıcınızın açılır pencere engelini kapatıp tekrar deneyin."); return; }
     w.document.open();
-    w.document.write("<!DOCTYPE html><html lang=\"tr\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>Acar Raf Teklif " + no + "</title><style>" + css + "</style></head><body>" + govde + "</body></html>");
+    w.document.write("<!DOCTYPE html><html lang=\"tr\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>Acar Raf Teklif " + no + "</title><style>@page{size:A4;margin:12mm}body{margin:0}" + teklifCss(".art-teklif") + ".art-teklif{width:auto;max-width:800px;margin:0 auto}</style></head><body><div class=\"art-teklif\">" + icerik + "</div></body></html>");
     w.document.close();
     w.focus();
     setTimeout(function () { try { w.print(); } catch (e) {} }, 600);
+  }
+
+  window.AcarRafTeklif = function (v, dugme) {
+    var simdi = new Date();
+    var tarih = simdi.toLocaleDateString("tr-TR", { day: "2-digit", month: "long", year: "numeric" });
+    var no = "AR-" + simdi.getFullYear() + String(simdi.getMonth() + 1).padStart(2, "0") + String(simdi.getDate()).padStart(2, "0") +
+      "-" + String(simdi.getHours()).padStart(2, "0") + String(simdi.getMinutes()).padStart(2, "0");
+    var icerik = teklifIcerik(v, no, tarih);
+    var eskiYazi = dugme ? dugme.textContent : "";
+    if (dugme) { dugme.disabled = true; dugme.textContent = "PDF hazırlanıyor..."; }
+    function bitir() { if (dugme) { dugme.disabled = false; dugme.textContent = eskiYazi; } }
+    kutuphaneYukle().then(function () {
+      // teklifi ekran dışında oluştur, PDF'e çevir, indir
+      var kap = document.createElement("div");
+      kap.style.cssText = "position:absolute;left:0;top:0;width:760px;z-index:-1;pointer-events:none";
+      kap.innerHTML = "<div class=\"art-teklif\"><style>" + teklifCss(".art-teklif") + "</style>" + icerik + "</div>";
+      document.body.appendChild(kap);
+      var kaynak = kap.querySelector(".art-teklif");
+      return window.html2pdf().set({
+        margin: [8, 8, 10, 8],
+        filename: "Acar-Raf-Teklif-" + no + ".pdf",
+        image: { type: "jpeg", quality: 0.95 },
+        // sayfa aşağı kaydırılmışken boş görüntü alınmasın diye kaydırma sıfırlanır
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff", logging: false, scrollX: 0, scrollY: 0 },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        pagebreak: { mode: ["css", "legacy"], avoid: ["figure", "tr", ".toplam", ".ust", "h2"] }
+      }).from(kaynak).save().then(function () { kap.remove(); bitir(); }, function (e) { kap.remove(); throw e; });
+    }).catch(function () {
+      bitir();
+      yazdirmaPenceresi(icerik, no);
+    });
   };
 
   // hesaplayıcının ekrandaki sonucundan teklif verisini toplar
+  // SVG çizimini PNG resme çevirir (PDF kütüphanesi SVG yerine resmi güvenilir işler)
+  function svgResim(svg) {
+    return new Promise(function (tamam) {
+      var k = svg.cloneNode(true);
+      var vb = (k.getAttribute("viewBox") || "0 0 800 400").split(/[\s,]+/).map(Number);
+      var gen = 1600, yuk = Math.max(1, Math.round(gen * vb[3] / vb[2]));
+      k.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+      k.setAttribute("font-family", "Arial, Helvetica, sans-serif");
+      k.setAttribute("width", gen); k.setAttribute("height", yuk);
+      k.removeAttribute("style");
+      var metin = new XMLSerializer().serializeToString(k);
+      var img = new Image();
+      img.onload = function () {
+        var c = document.createElement("canvas"); c.width = gen; c.height = yuk;
+        var x = c.getContext("2d"); x.fillStyle = "#f6f6f6"; x.fillRect(0, 0, gen, yuk); x.drawImage(img, 0, 0, gen, yuk);
+        try { tamam('<img alt="" src="' + c.toDataURL("image/png") + '">'); } catch (e) { tamam(svg.outerHTML); }
+      };
+      img.onerror = function () { tamam(svg.outerHTML); };
+      img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(metin);
+    });
+  }
+
   window.AcarRafTeklifTopla = function (kok, urun, ozetMetni, secici) {
-    var svgAl = function (e) { var k = e.cloneNode(true); k.removeAttribute("style"); return k.outerHTML; };
-    var cizimler = [];
+    var dugme = document.activeElement && document.activeElement.tagName === "BUTTON" ? document.activeElement : null;
+    var parcalar = [];
     kok.querySelectorAll(secici.duvar).forEach(function (d) {
       var s = d.querySelector("svg"), h = d.querySelector("h4");
-      if (s) cizimler.push({ baslik: h ? h.textContent : "", svg: svgAl(s) });
+      if (s) parcalar.push({ baslik: h ? h.textContent : "", svg: s });
     });
     var plan = secici.plan ? kok.querySelector(secici.plan) : null;
     var tablo = kok.querySelector("table").cloneNode(true);
@@ -86,9 +152,13 @@
     var ozet = ozetMetni.split("\n").filter(function (s) {
       return s && !/^Merhaba/.test(s) && !/^Toplam/.test(s) && s.charAt(0) !== "•" && !/^https?:/.test(s);
     });
-    window.AcarRafTeklif({
-      urun: urun, ozet: ozet, plan: plan ? svgAl(plan) : "", cizimler: cizimler,
-      tablo: tablo.outerHTML, toplam: kok.querySelector(secici.toplam).textContent, etiket: secici.etiket
+    var toplam = kok.querySelector(secici.toplam).textContent;
+    Promise.all([plan ? svgResim(plan) : Promise.resolve("")].concat(parcalar.map(function (c) { return svgResim(c.svg); }))).then(function (resimler) {
+      window.AcarRafTeklif({
+        urun: urun, ozet: ozet, plan: resimler[0],
+        cizimler: parcalar.map(function (c, i) { return { baslik: c.baslik, svg: resimler[i + 1] }; }),
+        tablo: tablo.outerHTML, toplam: toplam, etiket: secici.etiket
+      }, dugme);
     });
   };
 })();

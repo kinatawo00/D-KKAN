@@ -57,7 +57,7 @@ Yükleyici dal adını kullandığı için güncellemelerde sitedeki kod değiş
 Fiyatlar hesaplayıcı dosyalarındaki `AYAR` bölümlerinden okunur, görseller hesaplayıcıların kendi çizimleridir. Fiyat değişince betiği yeniden çalıştırmak yeterlidir.
 
 ## PDF teklif
-Her hesaplayıcıda "PDF olarak indir" düğmesi vardır (`pdf-teklif-kodu.html`). Düğme, sonucu (özet, oda planı, raf çizimleri, fiyat dökümü) yazdırılabilir bir teklif sayfasında açar; tarayıcının yazdırma penceresinde "PDF olarak kaydet" seçilir.
+Her hesaplayıcıda "PDF olarak indir" düğmesi vardır (`pdf-teklif-kodu.html`). Düğme, sonucu (özet, oda planı, raf çizimleri, fiyat dökümü) doğrudan PDF dosyası olarak indirir (html2pdf.js 0.10.1, jsDelivr). Çizimler PDF'e konmadan önce PNG resme çevrilir. Kütüphane yüklenemezse yedek olarak yazdırma penceresi açılır.
 
 ## Mağaza sistemleri (giyim mağazaları)
 `magaza-kodu.html`: dördüncü grup. Boş oda (tek duvar, L, U, dört duvar), kapı ve tavan yüksekliği.
