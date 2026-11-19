@@ -2,7 +2,7 @@
 /* Kendi Rafını Kendin Hesapla: hesaplayıcıyı sadece /raf-hesaplama sayfasında yükler */
 (function () {
   var ADRES = "/raf-hesaplama";
-  var DOSYA = "https://cdn.jsdelivr.net/gh/kinatawo00/D-KKAN@ccr-0392e0ab-f5pjug/raf-hesapla.js";
+  var DOSYA = "https://cdn.jsdelivr.net/gh/kinatawo00/D-KKAN@ccr-0392e0ab-f5pjug/raf-hesapla.js?v=" + Math.floor(Date.now() / 600000);
   function calistir() {
     if (location.pathname.replace(/\/+$/, "").toLowerCase() !== ADRES) return;
     if (document.getElementById("raf-hesapla-uygulama")) return yukle();

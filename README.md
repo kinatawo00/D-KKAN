@@ -50,7 +50,7 @@ Yükleyici dal adını (`@ccr-0392e0ab-f5pjug`) kullandığı için sitedeki kod
 ### Sayfa içeriği kaydedilemezse: Script Yönetimi yükleyicisi
 Ticimax sayfa içeriğine `<script>` içeren kod kaydedilemiyorsa `script-yonetimi-yukleyici.txt` Script Yönetimi'ne (Tüm Sayfalar) eklenir.
 Yükleyici yalnızca `/raf-hesaplama` sayfasında çalışır: sayfadaki eski hesaplayıcıyı (`#raf-secim`) veya "Raf hesaplayıcı yükleniyor" yazısını yeni hesaplayıcıyla değiştirir; ikisi de yoksa içeriğin sonuna ekler.
-Yükleyici dal adını kullandığı için güncellemelerde sitedeki kod değişmez; yalnızca jsDelivr önbelleği temizlenir.
+Yükleyici dal adını kullandığı için güncellemelerde sitedeki kod değişmez; yalnızca jsDelivr önbelleği temizlenir. Adresin sonundaki `?v=` değeri 10 dakikada bir değişir; böylece tarayıcılar (jsDelivr 7 gün sakla dese de) en geç 10 dakika içinde yeni sürümü alır.
 
 ## Fiyat listesi PDF
 `node fiyat-listesi/olustur.js` (önce `python3 birlestir.py`) üç raf sisteminin fiyat listesini `fiyat-listesi/acar-raf-fiyat-listesi.pdf` olarak üretir.
