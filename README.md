@@ -44,14 +44,17 @@ Sayfa içeriğine yalnızca `sayfa-kodu.txt` dosyasındaki iki satır yapıştı
 
 Güncelleme adımları:
 1. Kaynak dosyaları düzenle, `python3 birlestir.py` çalıştır, değişiklikleri gönder (push).
-2. Yeni commit kimliğini al (`git rev-parse HEAD`).
-3. `sayfa-kodu.txt` içindeki adreste `@...` kısmını yeni commit kimliğiyle değiştir ve Ticimax'taki iki satırı güncelle.
+2. jsDelivr önbelleğini temizle: `curl https://purge.jsdelivr.net/gh/kinatawo00/D-KKAN@ccr-0392e0ab-f5pjug/raf-hesapla.js`
+Yükleyici dal adını (`@ccr-0392e0ab-f5pjug`) kullandığı için sitedeki kodu değiştirmek gerekmez.
 
 ### Sayfa içeriği kaydedilemezse: Script Yönetimi yükleyicisi
 Ticimax sayfa içeriğine `<script>` içeren kod kaydedilemiyorsa `script-yonetimi-yukleyici.txt` Script Yönetimi'ne (Tüm Sayfalar) eklenir.
 Yükleyici yalnızca `/raf-hesaplama` sayfasında çalışır: sayfadaki eski hesaplayıcıyı (`#raf-secim`) veya "Raf hesaplayıcı yükleniyor" yazısını yeni hesaplayıcıyla değiştirir; ikisi de yoksa içeriğin sonuna ekler.
-Güncellemede yükleyicideki `DOSYA` adresinin `@...` kısmı yeni commit kimliğiyle değiştirilir.
+Yükleyici dal adını kullandığı için güncellemelerde sitedeki kod değişmez; yalnızca jsDelivr önbelleği temizlenir.
 
 ## Fiyat listesi PDF
 `node fiyat-listesi/olustur.js` (önce `python3 birlestir.py`) üç raf sisteminin fiyat listesini `fiyat-listesi/acar-raf-fiyat-listesi.pdf` olarak üretir.
 Fiyatlar hesaplayıcı dosyalarındaki `AYAR` bölümlerinden okunur, görseller hesaplayıcıların kendi çizimleridir. Fiyat değişince betiği yeniden çalıştırmak yeterlidir.
+
+## PDF teklif
+Her hesaplayıcıda "PDF olarak indir" düğmesi vardır (`pdf-teklif-kodu.html`). Düğme, sonucu (özet, oda planı, raf çizimleri, fiyat dökümü) yazdırılabilir bir teklif sayfasında açar; tarayıcının yazdırma penceresinde "PDF olarak kaydet" seçilir.

@@ -1,0 +1,88 @@
+<script>
+/* Fiyat teklifi PDF: hesaplayıcı sonucunu çizimler ve fiyat dökümüyle yazdırılabilir bir sayfada açar.
+   Tarayıcının yazdırma penceresinde "PDF olarak kaydet" seçilerek PDF alınır. */
+(function () {
+  if (window.AcarRafTeklif) return;
+  var FIRMA = {
+    ad: "ACAR RAF",
+    telefon: "0537 660 53 48",
+    web: "www.acarraf.com",
+    adres: "Çınardere Mah., Ankara Cad. No:25, Pendik / İstanbul"
+  };
+  function kacis(t) { return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+
+  // v: { urun, ozet: [satır], plan: svg, cizimler: [{ baslik, svg }], tablo: tablo HTML, toplam: metin }
+  window.AcarRafTeklif = function (v) {
+    var simdi = new Date();
+    var tarih = simdi.toLocaleDateString("tr-TR", { day: "2-digit", month: "long", year: "numeric" });
+    var no = "AR-" + simdi.getFullYear() + String(simdi.getMonth() + 1).padStart(2, "0") + String(simdi.getDate()).padStart(2, "0") +
+      "-" + String(simdi.getHours()).padStart(2, "0") + String(simdi.getMinutes()).padStart(2, "0");
+    var css =
+      "@page{size:A4;margin:14mm 13mm}" +
+      "*{box-sizing:border-box}" +
+      "body{margin:0;padding:16px;background:#e9e9e9;font-family:Arial,Helvetica,sans-serif;color:#1b1b1b;font-size:13px;line-height:1.45}" +
+      ".kagit{max-width:800px;margin:0 auto;background:#fff;padding:28px 30px;box-shadow:0 2px 12px rgba(0,0,0,.12)}" +
+      ".ust{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;border-bottom:3px solid #e2701f;padding-bottom:10px;margin-bottom:14px}" +
+      ".ust h1{margin:0;font-size:28px;letter-spacing:.04em}.ust h1 span{color:#e2701f}" +
+      ".ust .alt{font-size:15px;color:#555}" +
+      ".ust .sag{text-align:right;font-size:12px;color:#555}.ust .sag b{color:#1b1b1b;font-size:13px}" +
+      "h2{font-size:16px;margin:16px 0 8px}" +
+      ".ozet{margin:0;padding-left:18px}.ozet li{margin:2px 0}" +
+      "figure{margin:0 0 10px;background:#f6f6f6;border-radius:8px;padding:8px;page-break-inside:avoid;break-inside:avoid}" +
+      "figure svg{display:block;width:100%;height:auto;max-height:300px}" +
+      "figcaption{font-size:12px;font-weight:700;margin-bottom:4px}" +
+      "table{width:100%;border-collapse:collapse;font-size:12px;page-break-inside:avoid;break-inside:avoid}" +
+      "th{text-align:left;background:#2f3338;color:#fff;padding:6px;font-weight:600}" +
+      "td{padding:5px 6px;border-bottom:1px solid #e3e3e3;vertical-align:top}" +
+      "td small{color:#777}.r{text-align:right;white-space:nowrap}" +
+      ".toplam{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding:12px 14px;background:#fff5ee;border-radius:8px;font-size:18px;font-weight:800}" +
+      ".not{font-size:11px;color:#555;margin-top:10px}" +
+      ".alt-bilgi{margin-top:16px;border-top:1px solid #ddd;padding-top:8px;font-size:11px;color:#444}" +
+      ".arac{max-width:800px;margin:0 auto 12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;background:#fff;padding:10px 14px;border-radius:8px}" +
+      ".arac button{font:inherit;font-weight:700;background:#e2701f;color:#fff;border:0;border-radius:8px;padding:10px 18px;cursor:pointer}" +
+      ".arac span{font-size:12px;color:#555}" +
+      "@media print{body{background:#fff;padding:0}.kagit{box-shadow:none;padding:0;max-width:none}.arac{display:none}}";
+    var govde =
+      '<div class="arac"><span>Açılan pencerede <b>Hedef: PDF olarak kaydet</b> seçip kaydedin. Telefonda <b>Paylaş</b> veya <b>Yazdır</b> menüsünü kullanın.</span>' +
+      '<button type="button" onclick="window.print()">PDF olarak kaydet / Yazdır</button></div>' +
+      '<div class="kagit">' +
+      '<div class="ust"><div><h1>ACAR <span>RAF</span></h1><div class="alt">Fiyat Teklifi · ' + kacis(v.urun) + "</div></div>" +
+      '<div class="sag"><b>' + tarih + "</b><br>Teklif no: " + no + "<br>Tel / WhatsApp: " + FIRMA.telefon + "<br>" + FIRMA.web + "</div></div>" +
+      "<h2>Kurulum özeti</h2><ul class=\"ozet\">" + v.ozet.map(function (s) { return "<li>" + kacis(s) + "</li>"; }).join("") + "</ul>" +
+      (v.plan ? "<h2>Oda planı</h2><figure>" + v.plan + "</figure>" : "") +
+      (v.cizimler.length ? "<h2>Raf yerleşimi</h2>" + v.cizimler.map(function (c) { return "<figure><figcaption>" + kacis(c.baslik) + "</figcaption>" + c.svg + "</figure>"; }).join("") : "") +
+      "<h2>Fiyat dökümü</h2>" + v.tablo +
+      '<div class="toplam"><span>Toplam (KDV dahil)</span><span>' + kacis(v.toplam) + "</span></div>" +
+      '<p class="not">Fiyatlara KDV dahildir. Montaj ve nakliye dahil değildir. Fiyatlar teklif tarihinde geçerlidir.</p>' +
+      '<div class="alt-bilgi">Sipariş ve bilgi için: <b>' + FIRMA.telefon + "</b> (telefon / WhatsApp) · " + FIRMA.adres + " · " + FIRMA.web + "</div>" +
+      "</div>";
+    var w = window.open("", "_blank");
+    if (!w) { alert("PDF penceresi açılamadı. Lütfen tarayıcınızın açılır pencere engelini kapatıp tekrar deneyin."); return; }
+    w.document.open();
+    w.document.write("<!DOCTYPE html><html lang=\"tr\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>Acar Raf Teklif " + no + "</title><style>" + css + "</style></head><body>" + govde + "</body></html>");
+    w.document.close();
+    w.focus();
+    setTimeout(function () { try { w.print(); } catch (e) {} }, 600);
+  };
+
+  // hesaplayıcının ekrandaki sonucundan teklif verisini toplar
+  window.AcarRafTeklifTopla = function (kok, urun, ozetMetni, secici) {
+    var svgAl = function (e) { var k = e.cloneNode(true); k.removeAttribute("style"); return k.outerHTML; };
+    var cizimler = [];
+    kok.querySelectorAll(secici.duvar).forEach(function (d) {
+      var s = d.querySelector("svg"), h = d.querySelector("h4");
+      if (s) cizimler.push({ baslik: h ? h.textContent : "", svg: svgAl(s) });
+    });
+    var plan = secici.plan ? kok.querySelector(secici.plan) : null;
+    var tablo = kok.querySelector("table").cloneNode(true);
+    tablo.removeAttribute("class");
+    var ozet = ozetMetni.split("\n").filter(function (s) {
+      return s && !/^Merhaba/.test(s) && !/^Toplam/.test(s) && s.charAt(0) !== "•" && !/^https?:/.test(s);
+    });
+    window.AcarRafTeklif({
+      urun: urun, ozet: ozet, plan: plan ? svgAl(plan) : "", cizimler: cizimler,
+      tablo: tablo.outerHTML, toplam: kok.querySelector(secici.toplam).textContent
+    });
+  };
+})();
+</script>

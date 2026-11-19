@@ -11,6 +11,7 @@ kod = (d / "secim-ekrani.html").read_text(encoding="utf-8")
 kod = kod.replace("<!--CELIK-->", (d / "raf-hesaplama-kodu.html").read_text(encoding="utf-8").strip())
 kod = kod.replace("<!--RACK-->", (d / "hafif-rack-kodu.html").read_text(encoding="utf-8").strip())
 kod = kod.replace("<!--MARKET-->", (d / "market-rafi-kodu.html").read_text(encoding="utf-8").strip())
+kod = kod.replace("<!--PDF-->", (d / "pdf-teklif-kodu.html").read_text(encoding="utf-8").strip())
 import re
 
 
