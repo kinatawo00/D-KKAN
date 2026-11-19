@@ -52,7 +52,7 @@
       (v.plan ? "<h2>Oda planı</h2><figure>" + v.plan + "</figure>" : "") +
       (v.cizimler.length ? "<h2>Raf yerleşimi</h2>" + v.cizimler.map(function (c) { return "<figure><figcaption>" + kacis(c.baslik) + "</figcaption>" + c.svg + "</figure>"; }).join("") : "") +
       "<h2>Fiyat dökümü</h2>" + v.tablo +
-      '<div class="toplam"><span>Toplam (KDV dahil)</span><span>' + kacis(v.toplam) + "</span></div>" +
+      '<div class="toplam"><span>' + kacis(v.etiket || "Toplam (KDV dahil)") + "</span><span>" + kacis(v.toplam) + "</span></div>" +
       '<p class="not">Fiyatlara KDV dahildir. Montaj ve nakliye dahil değildir. Fiyatlar teklif tarihinde geçerlidir.</p>' +
       '<div class="alt-bilgi">Sipariş ve bilgi için: <b>' + FIRMA.telefon + "</b> (telefon / WhatsApp) · " + FIRMA.adres + " · " + FIRMA.web + "</div>" +
       "</div>";
@@ -81,7 +81,7 @@
     });
     window.AcarRafTeklif({
       urun: urun, ozet: ozet, plan: plan ? svgAl(plan) : "", cizimler: cizimler,
-      tablo: tablo.outerHTML, toplam: kok.querySelector(secici.toplam).textContent
+      tablo: tablo.outerHTML, toplam: kok.querySelector(secici.toplam).textContent, etiket: secici.etiket
     });
   };
 })();

@@ -4,7 +4,7 @@
     var kok = document.getElementById("raf-hesapla-uygulama");
     if (!kok || kok.dataset.ok) return;
     kok.dataset.ok = "1";
-    kok.innerHTML = "<div id=\"raf-secim\">\n  <h2 class=\"rs-bas\">Kendi Rafını Kendin Hesapla</h2>\n  <p class=\"rs-alt\">Hangi raf sistemini hesaplamak istiyorsunuz?</p>\n  <div class=\"rs-kartlar\">\n    <button type=\"button\" class=\"rs-kart\" data-sec=\"celik\">\n      <svg viewBox=\"0 0 120 90\" aria-hidden=\"true\"><rect x=\"14\" y=\"8\" width=\"5\" height=\"76\" fill=\"#8b96a1\"/><rect x=\"101\" y=\"8\" width=\"5\" height=\"76\" fill=\"#8b96a1\"/><g fill=\"#c9d1d8\" stroke=\"#8b96a1\"><rect x=\"14\" y=\"12\" width=\"92\" height=\"5\"/><rect x=\"14\" y=\"34\" width=\"92\" height=\"5\"/><rect x=\"14\" y=\"56\" width=\"92\" height=\"5\"/><rect x=\"14\" y=\"76\" width=\"92\" height=\"5\"/></g></svg>\n      <b>Çelik Raf Hesapla</b>\n      <span>Arşiv, depo ve ev için cıvatalı çelik raflar</span>\n    </button>\n    <button type=\"button\" class=\"rs-kart\" data-sec=\"rack\">\n      <svg viewBox=\"0 0 120 90\" aria-hidden=\"true\"><rect x=\"12\" y=\"6\" width=\"6\" height=\"78\" fill=\"#2a4fb8\"/><rect x=\"102\" y=\"6\" width=\"6\" height=\"78\" fill=\"#2a4fb8\"/><g fill=\"#f4f5f7\" stroke=\"#cdd2d8\"><rect x=\"18\" y=\"14\" width=\"84\" height=\"5\"/><rect x=\"18\" y=\"44\" width=\"84\" height=\"5\"/><rect x=\"18\" y=\"74\" width=\"84\" height=\"5\"/></g><g fill=\"#e2701f\"><rect x=\"18\" y=\"19\" width=\"84\" height=\"5\"/><rect x=\"18\" y=\"49\" width=\"84\" height=\"5\"/><rect x=\"18\" y=\"79\" width=\"84\" height=\"5\"/></g></svg>\n      <b>Hafif Rack Hesapla</b>\n      <span>Travers ve ayaklı, yüksek taşıma kapasiteli raflar</span>\n    </button>\n    <button type=\"button\" class=\"rs-kart\" data-sec=\"market\">\n      <svg viewBox=\"0 0 120 90\" aria-hidden=\"true\"><rect x=\"14\" y=\"4\" width=\"92\" height=\"74\" fill=\"#eceef0\"/><rect x=\"12\" y=\"4\" width=\"4\" height=\"82\" fill=\"#c9ced3\"/><rect x=\"104\" y=\"4\" width=\"4\" height=\"82\" fill=\"#c9ced3\"/><g fill=\"#e2701f\"><rect x=\"16\" y=\"20\" width=\"88\" height=\"4\"/><rect x=\"16\" y=\"38\" width=\"88\" height=\"4\"/><rect x=\"16\" y=\"56\" width=\"88\" height=\"4\"/><rect x=\"16\" y=\"74\" width=\"88\" height=\"10\"/></g><g fill=\"#fff\"><rect x=\"16\" y=\"17\" width=\"88\" height=\"3\"/><rect x=\"16\" y=\"35\" width=\"88\" height=\"3\"/><rect x=\"16\" y=\"53\" width=\"88\" height=\"3\"/><rect x=\"16\" y=\"71\" width=\"88\" height=\"3\"/></g></svg>\n      <b>Market Rafı Hesapla</b>\n      <span>Duvar tipi market rafları, köşe birleşimli oda planı</span>\n    </button>\n  </div>\n  <div class=\"rs-ust\" hidden><button type=\"button\" class=\"rs-geri\">&larr; Raf tipini değiştir</button><span class=\"rs-secili\"></span></div>\n  <div class=\"rs-panel\" data-panel=\"celik\" hidden>\n<div id=\"raf-hesap\">Raf hesaplayıcı yükleniyor...</div>\n\n  </div>\n  <div class=\"rs-panel\" data-panel=\"rack\" hidden>\n<div id=\"rack-hesap\">Hafif rack hesaplayıcı yükleniyor...</div>\n\n  </div>\n  <div class=\"rs-panel\" data-panel=\"market\" hidden>\n<div id=\"market-hesap\">Market rafı hesaplayıcı yükleniyor...</div>\n\n  </div>\n</div>";
+    kok.innerHTML = "<div id=\"raf-secim\">\n  <h2 class=\"rs-bas\">Kendi Rafını Kendin Hesapla</h2>\n  <p class=\"rs-alt\">Hangi raf sistemini hesaplamak istiyorsunuz?</p>\n  <div class=\"rs-kartlar\">\n    <button type=\"button\" class=\"rs-kart\" data-sec=\"celik\">\n      <svg viewBox=\"0 0 120 90\" aria-hidden=\"true\"><rect x=\"14\" y=\"8\" width=\"5\" height=\"76\" fill=\"#8b96a1\"/><rect x=\"101\" y=\"8\" width=\"5\" height=\"76\" fill=\"#8b96a1\"/><g fill=\"#c9d1d8\" stroke=\"#8b96a1\"><rect x=\"14\" y=\"12\" width=\"92\" height=\"5\"/><rect x=\"14\" y=\"34\" width=\"92\" height=\"5\"/><rect x=\"14\" y=\"56\" width=\"92\" height=\"5\"/><rect x=\"14\" y=\"76\" width=\"92\" height=\"5\"/></g></svg>\n      <b>Çelik Raf Hesapla</b>\n      <span>Arşiv, depo ve ev için cıvatalı çelik raflar</span>\n    </button>\n    <button type=\"button\" class=\"rs-kart\" data-sec=\"rack\">\n      <svg viewBox=\"0 0 120 90\" aria-hidden=\"true\"><rect x=\"12\" y=\"6\" width=\"6\" height=\"78\" fill=\"#2a4fb8\"/><rect x=\"102\" y=\"6\" width=\"6\" height=\"78\" fill=\"#2a4fb8\"/><g fill=\"#f4f5f7\" stroke=\"#cdd2d8\"><rect x=\"18\" y=\"14\" width=\"84\" height=\"5\"/><rect x=\"18\" y=\"44\" width=\"84\" height=\"5\"/><rect x=\"18\" y=\"74\" width=\"84\" height=\"5\"/></g><g fill=\"#e2701f\"><rect x=\"18\" y=\"19\" width=\"84\" height=\"5\"/><rect x=\"18\" y=\"49\" width=\"84\" height=\"5\"/><rect x=\"18\" y=\"79\" width=\"84\" height=\"5\"/></g></svg>\n      <b>Hafif Rack Hesapla</b>\n      <span>Travers ve ayaklı, yüksek taşıma kapasiteli raflar</span>\n    </button>\n    <button type=\"button\" class=\"rs-kart\" data-sec=\"market\">\n      <svg viewBox=\"0 0 120 90\" aria-hidden=\"true\"><rect x=\"14\" y=\"4\" width=\"92\" height=\"74\" fill=\"#eceef0\"/><rect x=\"12\" y=\"4\" width=\"4\" height=\"82\" fill=\"#c9ced3\"/><rect x=\"104\" y=\"4\" width=\"4\" height=\"82\" fill=\"#c9ced3\"/><g fill=\"#e2701f\"><rect x=\"16\" y=\"20\" width=\"88\" height=\"4\"/><rect x=\"16\" y=\"38\" width=\"88\" height=\"4\"/><rect x=\"16\" y=\"56\" width=\"88\" height=\"4\"/><rect x=\"16\" y=\"74\" width=\"88\" height=\"10\"/></g><g fill=\"#fff\"><rect x=\"16\" y=\"17\" width=\"88\" height=\"3\"/><rect x=\"16\" y=\"35\" width=\"88\" height=\"3\"/><rect x=\"16\" y=\"53\" width=\"88\" height=\"3\"/><rect x=\"16\" y=\"71\" width=\"88\" height=\"3\"/></g></svg>\n      <b>Market Rafı Hesapla</b>\n      <span>Duvar tipi market rafları, köşe birleşimli oda planı</span>\n    </button>\n    <button type=\"button\" class=\"rs-kart\" data-sec=\"magaza\">\n      <svg viewBox=\"0 0 120 90\" aria-hidden=\"true\"><rect x=\"10\" y=\"84\" width=\"100\" height=\"3\" fill=\"#cfcfcf\"/><rect x=\"104\" y=\"4\" width=\"4\" height=\"80\" fill=\"#bbb\"/><g fill=\"#1f2023\"><rect x=\"30\" y=\"8\" width=\"5\" height=\"76\"/><rect x=\"35\" y=\"12\" width=\"69\" height=\"4\"/><rect x=\"35\" y=\"62\" width=\"69\" height=\"4\"/><rect x=\"72\" y=\"8\" width=\"5\" height=\"76\"/></g><g fill=\"#8a9097\"><rect x=\"31.5\" y=\"14\" width=\"1\" height=\"3\"/><rect x=\"31.5\" y=\"24\" width=\"1\" height=\"3\"/><rect x=\"31.5\" y=\"34\" width=\"1\" height=\"3\"/><rect x=\"31.5\" y=\"44\" width=\"1\" height=\"3\"/><rect x=\"31.5\" y=\"54\" width=\"1\" height=\"3\"/><rect x=\"31.5\" y=\"70\" width=\"1\" height=\"3\"/><rect x=\"73.5\" y=\"14\" width=\"1\" height=\"3\"/><rect x=\"73.5\" y=\"24\" width=\"1\" height=\"3\"/><rect x=\"73.5\" y=\"34\" width=\"1\" height=\"3\"/><rect x=\"73.5\" y=\"44\" width=\"1\" height=\"3\"/><rect x=\"73.5\" y=\"54\" width=\"1\" height=\"3\"/><rect x=\"73.5\" y=\"70\" width=\"1\" height=\"3\"/></g></svg>\n      <b>Mağaza Sistemleri</b>\n      <span>Bayan ve erkek giyim mağazaları için F dikme ve duvar sistemleri</span>\n    </button>\n  </div>\n  <div class=\"rs-ust\" hidden><button type=\"button\" class=\"rs-geri\">&larr; Raf tipini değiştir</button><span class=\"rs-secili\"></span></div>\n  <div class=\"rs-panel\" data-panel=\"celik\" hidden>\n<div id=\"raf-hesap\">Raf hesaplayıcı yükleniyor...</div>\n\n  </div>\n  <div class=\"rs-panel\" data-panel=\"rack\" hidden>\n<div id=\"rack-hesap\">Hafif rack hesaplayıcı yükleniyor...</div>\n\n  </div>\n  <div class=\"rs-panel\" data-panel=\"market\" hidden>\n<div id=\"market-hesap\">Market rafı hesaplayıcı yükleniyor...</div>\n\n  </div>\n  <div class=\"rs-panel\" data-panel=\"magaza\" hidden>\n<div id=\"magaza-hesap\">Mağaza sistemleri hesaplayıcı yükleniyor...</div>\n\n  </div>\n</div>";
 
 /* Fiyat teklifi PDF: hesaplayıcı sonucunu çizimler ve fiyat dökümüyle yazdırılabilir bir sayfada açar.
    Tarayıcının yazdırma penceresinde "PDF olarak kaydet" seçilerek PDF alınır. */
@@ -59,7 +59,7 @@
       (v.plan ? "<h2>Oda planı</h2><figure>" + v.plan + "</figure>" : "") +
       (v.cizimler.length ? "<h2>Raf yerleşimi</h2>" + v.cizimler.map(function (c) { return "<figure><figcaption>" + kacis(c.baslik) + "</figcaption>" + c.svg + "</figure>"; }).join("") : "") +
       "<h2>Fiyat dökümü</h2>" + v.tablo +
-      '<div class="toplam"><span>Toplam (KDV dahil)</span><span>' + kacis(v.toplam) + "</span></div>" +
+      '<div class="toplam"><span>' + kacis(v.etiket || "Toplam (KDV dahil)") + "</span><span>" + kacis(v.toplam) + "</span></div>" +
       '<p class="not">Fiyatlara KDV dahildir. Montaj ve nakliye dahil değildir. Fiyatlar teklif tarihinde geçerlidir.</p>' +
       '<div class="alt-bilgi">Sipariş ve bilgi için: <b>' + FIRMA.telefon + "</b> (telefon / WhatsApp) · " + FIRMA.adres + " · " + FIRMA.web + "</div>" +
       "</div>";
@@ -88,7 +88,7 @@
     });
     window.AcarRafTeklif({
       urun: urun, ozet: ozet, plan: plan ? svgAl(plan) : "", cizimler: cizimler,
-      tablo: tablo.outerHTML, toplam: kok.querySelector(secici.toplam).textContent
+      tablo: tablo.outerHTML, toplam: kok.querySelector(secici.toplam).textContent, etiket: secici.etiket
     });
   };
 })();
@@ -1534,6 +1534,354 @@
 
 
 (function () {
+  /* ======== AYARLAR (buradan değiştirin) ======== */
+  var AYAR = {
+    whatsapp: "905376605348",
+    profiller: [30, 40],                  // F dikme profil ölçüsü (mm): 30x30, 40x40
+    varsayilan: { boy: 200, profil: 30, kulak: 10, aralik: 120, kenar: 15, tavan: 300 },
+    kulakSayisi: 2,                       // her dikmede: biri en üstte, biri altta
+    altKulakOrani: 0.22,                  // alt kulağın dikme boyuna göre yüksekliği (çizim için)
+    kapiGenisligi: 100,
+    renk: { govde: "#1f2023", govde2: "#3a3c40", yan: "#121314", delik: "#8a9097" }   // siyah
+  };
+  /* ============================================== */
+
+  var R = document.getElementById("magaza-hesap");
+  if (!R || R.dataset.ok) return;
+  R.dataset.ok = "1";
+  var P = "#magaza-hesap";
+  var css = [
+    P + "{--a:#e2701f;--ink:#1b1b1b;--mut:#666;--ln:#e3e3e3;--bg:#f6f6f6;max-width:960px;margin:0 auto;color:var(--ink);font-family:inherit;font-size:15px;line-height:1.45;text-align:left}",
+    P + " *{box-sizing:border-box}",
+    P + " svg text{font-family:Arial,Helvetica,sans-serif}",
+    P + " .mg-k{background:#fff;border:1px solid var(--ln);border-radius:12px;padding:16px;margin:0 0 14px}",
+    P + " h3{font-size:17px;font-weight:700;margin:0 0 12px;padding:0;color:var(--ink)}",
+    P + " h4{font-size:15px;font-weight:700;margin:0;padding:0;color:var(--ink)}",
+    P + " .mg-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}",
+    P + " label.mg-f{display:block;font-size:13px;color:var(--mut);margin:0}",
+    P + " label.mg-f input," + P + " label.mg-f select{display:block;width:100%;height:46px;margin:6px 0 0;padding:0 12px;font:inherit;font-size:16px;color:var(--ink);background:#fff;border:1px solid #cfcfcf;border-radius:8px}",
+    P + " .mg-dg{border:1px solid var(--ln);border-radius:10px;padding:12px;margin-top:12px;background:#fcfcfc}",
+    P + " .mg-dg h4{margin:0 0 8px}",
+    P + " .mg-plan{background:var(--bg);border-radius:10px;padding:10px;margin-top:14px}",
+    P + " .mg-plan svg{display:block;width:100%;height:auto;max-height:460px}",
+    P + " .mg-dv{border:1px solid var(--ln);border-radius:12px;padding:12px;margin-top:14px}",
+    P + " .mg-dh{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px;margin-bottom:8px}",
+    P + " .mg-dh span{font-size:14px;color:var(--mut)}",
+    P + " .mg-cz{background:var(--bg);border-radius:8px;padding:8px}",
+    P + " .mg-cz svg{display:block;width:100%;height:auto}",
+    P + " .mg-n{font-size:13px;color:var(--mut);margin:8px 0 0}",
+    P + " .mg-pb{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;border:1px solid var(--ln);border-radius:10px;padding:8px 10px;margin-top:8px}",
+    P + " .mg-pb .c{font-size:15px;font-weight:700}",
+    P + " .mg-pb .b{display:flex;gap:6px}",
+    P + " .mg-st{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 12px}",
+    P + " .mg-st div{text-align:center;border:1px solid var(--ln);border-radius:10px;padding:8px 4px}",
+    P + " .mg-st b{display:block;font-size:20px}",
+    P + " .mg-st span{font-size:12px;color:var(--mut)}",
+    P + " button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid #cfcfcf;background:#fff;color:var(--ink);padding:4px 10px;min-height:36px;min-width:36px;margin:0;text-transform:none}",
+    P + " button:hover{border-color:var(--a)}",
+    P + " .mg-w{color:#c0392b;font-weight:600}",
+    P + " table{width:100%;border-collapse:collapse;font-size:14px;margin:0;border:0}",
+    P + " th{text-align:left;font-size:12px;font-weight:600;color:var(--mut);padding:8px 6px;border:0;border-bottom:1px solid var(--ln);background:none}",
+    P + " td{padding:9px 6px;border:0;border-bottom:1px solid var(--ln);vertical-align:top;background:none}",
+    P + " .r{text-align:right;white-space:nowrap}",
+    P + " td small{color:var(--mut)}",
+    P + " .mg-t{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding:14px;border-radius:10px;background:#fff5ee}",
+    P + " .mg-t .big{font-size:20px;font-weight:800;line-height:1.2}",
+    P + " .mg-t .lb{font-size:13px;color:var(--mut)}",
+    P + " .mg-wa{background:#25d366;border-color:#25d366;color:#fff;font-weight:700;padding:10px 18px}",
+    P + " .mg-pdf{background:#2f3338;border-color:#2f3338;color:#fff;font-weight:700;padding:10px 18px}",
+    P + " .mg-btn{display:flex;flex-wrap:wrap;gap:8px}",
+    "@media (max-width:640px){" + P + " .mg-st{grid-template-columns:repeat(2,1fr)}}"
+  ].join("");
+  var st = document.createElement("style");
+  st.textContent = css;
+  document.head.appendChild(st);
+
+  var DUZENLER = [
+    { n: 1, ad: "Tek duvar" },
+    { n: 2, ad: "L şeklinde (2 duvar)" },
+    { n: 3, ad: "U şeklinde (3 duvar)" },
+    { n: 4, ad: "Dört duvar (oda)" }
+  ];
+  var V = AYAR.varsayilan;
+
+  R.innerHTML =
+    '<div class="mg-k"><h3>1. Oda, duvarlar ve kapı</h3>' +
+    '<div class="mg-g"><label class="mg-f">Sistem kaç duvara kurulacak?<select id="mg-dz">' +
+    DUZENLER.map(function (d) { return '<option value="' + d.n + '">' + d.ad + "</option>"; }).join("") + "</select></label>" +
+    '<label class="mg-f">Tavan yüksekliği (cm)<input type="number" inputmode="numeric" min="0" id="mg-tv" value="' + V.tavan + '"></label></div>' +
+    '<div id="mg-dw"></div>' +
+    '<div class="mg-plan"><svg id="mg-plan" role="img" aria-label="Mağaza planı (üstten görünüm)"></svg></div>' +
+    '<p class="mg-n">Üstten görünüm. Kapı genişliği duvardan düşülür; dikmeler kapının iki yanına yerleştirilir.</p></div>' +
+    '<div class="mg-k"><h3>2. F dikme</h3><div class="mg-g">' +
+    '<label class="mg-f">Dikme boyu (cm)<input type="number" inputmode="numeric" min="0" id="mg-boy" value="' + V.boy + '"></label>' +
+    '<label class="mg-f">Profil<select id="mg-pr">' + AYAR.profiller.map(function (p) { return '<option value="' + p + '">' + p + "×" + p + " mm</option>"; }).join("") + "</select></label>" +
+    '<label class="mg-f">Kulak: duvara uzaklık (cm)<input type="number" inputmode="numeric" min="0" id="mg-ku" value="' + V.kulak + '"></label>' +
+    '<label class="mg-f">Dikmeler arası en fazla (cm)<input type="number" inputmode="numeric" min="0" id="mg-ar" value="' + V.aralik + '"></label>' +
+    '<label class="mg-f">Köşe ve kapıdan boşluk (cm)<input type="number" inputmode="numeric" min="0" id="mg-ke" value="' + V.kenar + '"></label>' +
+    '</div><p class="mg-n">Her dikmede duvara monte edilen ' + AYAR.kulakSayisi + ' kulak vardır: biri en üstte, biri altta. Dikmeler her duvara eşit aralıkla yerleştirilir; sayısını +/− ile değiştirebilirsiniz.</p></div>' +
+    '<div class="mg-k"><h3>3. Yerleşim</h3><div id="mg-ws"></div><p class="mg-n">Şematik görünüm · Ölçüler cm</p></div>' +
+    '<div class="mg-k"><h3>4. Malzeme listesi</h3>' +
+    '<div class="mg-st"><div><b id="mg-s1"></b><span>F dikme</span></div><div><b id="mg-s2"></b><span>Duvar kulağı</span></div><div><b id="mg-s3"></b><span>Toplam dikme boyu (m)</span></div><div><b id="mg-s4"></b><span>Duvar</span></div></div>' +
+    '<table><thead><tr><th scope="col">Malzeme</th><th scope="col" class="r">Ölçü</th><th scope="col" class="r">Adet</th></tr></thead><tbody id="mg-b"></tbody></table>' +
+    '<div class="mg-t"><div><div class="lb">Fiyat</div><div class="big" id="mg-tt">Fiyat için teklif alın</div><div class="lb">Ölçülerinize özel üretim; fiyat için bize yazın.</div></div>' +
+    '<div class="mg-btn"><button type="button" class="mg-pdf" id="mg-pdf">PDF olarak indir</button>' +
+    '<button type="button" class="mg-wa" id="mg-wa">WhatsApp ile teklif iste</button></div></div></div>';
+
+  function $(id) { return document.getElementById(id); }
+  function cm(n) { return (Math.round(n * 10) / 10).toLocaleString("tr-TR"); }
+
+  var S = {
+    duzen: 2, tavan: V.tavan, boy: V.boy, profil: V.profil, kulak: V.kulak, aralik: V.aralik, kenar: V.kenar,
+    kapi: { duvar: -1, x: 50, g: AYAR.kapiGenisligi },
+    duvarlar: [{ w: 400 }, { w: 300 }, { w: 400 }, { w: 300 }],
+    ozel: {}                                   // "duvar-parça" -> elle değiştirilen dikme sayısı
+  };
+
+  function onceki(i) { if (i > 0) return i - 1; return S.duzen === 4 ? 3 : -1; }
+  function sonraki(i) { if (i < S.duzen - 1) return i + 1; return S.duzen === 4 ? 0 : -1; }
+  function koseDerinligi() { return S.kulak + S.profil / 10; }   // komşu duvardaki dikmenin duvardan taşan kısmı
+
+  // duvarın dikme konabilecek parçaları (köşe ve kapı boşlukları düşülmüş)
+  function parcalar(i) {
+    var W = S.duvarlar[i].w, k = S.kenar;
+    var b = (onceki(i) >= 0 ? koseDerinligi() : 0) + k, e = W - (sonraki(i) >= 0 ? koseDerinligi() : 0) - k, sonuc = [];
+    if (S.kapi.duvar === i) {
+      var x0 = Math.max(0, Math.min(W, S.kapi.x)), x1 = Math.min(W, x0 + S.kapi.g);
+      if (x0 - k > b) sonuc.push({ bas: b, son: Math.min(x0 - k, e), yan: "sol" });
+      if (e > x1 + k) sonuc.push({ bas: Math.max(x1 + k, b), son: e, yan: "sag" });
+    } else if (e >= b) sonuc.push({ bas: b, son: e });
+    return sonuc.filter(function (p) { return p.son - p.bas >= 0; });
+  }
+  function otomatikSayi(uz) { return uz <= 0 ? 1 : Math.max(2, Math.ceil(uz / Math.max(20, S.aralik)) + 1); }
+  function dikmeler(i) {
+    return parcalar(i).map(function (p, pi) {
+      var anahtar = i + "-" + pi, n = S.ozel[anahtar] !== undefined ? S.ozel[anahtar] : otomatikSayi(p.son - p.bas);
+      var x = [];
+      for (var k = 0; k < n; k++) x.push(n === 1 ? (p.bas + p.son) / 2 : p.bas + (p.son - p.bas) * k / (n - 1));
+      return { bas: p.bas, son: p.son, yan: p.yan, n: n, x: x, aralik: n > 1 ? (p.son - p.bas) / (n - 1) : 0 };
+    });
+  }
+
+  function r1(n) { return Math.round(n * 10) / 10; }
+  function poly(pts, fill, extra) { return '<polygon points="' + pts.map(function (q) { return r1(q[0]) + "," + r1(q[1]); }).join(" ") + '" fill="' + fill + '"' + (extra || "") + "/>"; }
+  function rect(x, y, w, h, fill, extra) { return '<rect x="' + r1(x) + '" y="' + r1(y) + '" width="' + r1(Math.max(0, w)) + '" height="' + r1(Math.max(0, h)) + '" fill="' + fill + '"' + (extra || "") + "/>"; }
+  function line(x1, y1, x2, y2, c, w, extra) { return '<line x1="' + r1(x1) + '" y1="' + r1(y1) + '" x2="' + r1(x2) + '" y2="' + r1(y2) + '" stroke="' + c + '" stroke-width="' + w + '"' + (extra || "") + "/>"; }
+  function yazi(x, y, t, fs, renk, ek) { return '<text x="' + r1(x) + '" y="' + r1(y) + '" font-size="' + r1(fs) + '" fill="' + (renk || "#1b1b1b") + '"' + (ek || "") + ">" + t + "</text>"; }
+
+  // ---- PLAN (üstten): duvarlar saat yönünde, dikmeler odanın içine doğru
+  function planCiz(liste) {
+    var n = S.duzen, yon = [[1, 0], [0, 1], [-1, 0], [0, -1]], pts = [[0, 0]];
+    for (var i = 0; i < n; i++) { var w = S.duvarlar[i].w; pts.push([pts[i][0] + yon[i][0] * w, pts[i][1] + yon[i][1] * w]); }
+    var xs = pts.map(function (q) { return q[0]; }), ys = pts.map(function (q) { return q[1]; });
+    var minX = Math.min.apply(null, xs), maxX = Math.max.apply(null, xs), minY = Math.min.apply(null, ys), maxY = Math.max.apply(null, ys);
+    if (n <= 2) maxY = Math.max(maxY, 80);
+    if (S.kapi.duvar === 0 && n === 1) maxY = Math.max(maxY, S.kapi.g + 20);
+    var span = Math.max(maxX - minX, maxY - minY, 200), fs = span / 26, kal = 6, pad = fs * 3.2;
+    var boyut = Math.max(S.profil / 10, span / 90), s = "", ust = "";
+    if (n === 4) s += poly(pts.slice(0, 4), "#fbfaf7");
+    for (var k = 0; k < n; k++) {
+      var dv = S.duvarlar[k], d = yon[k], nr = [-d[1], d[0]], A = pts[k], B = pts[k + 1];
+      s += poly([A, B, [B[0] - nr[0] * kal, B[1] - nr[1] * kal], [A[0] - nr[0] * kal, A[1] - nr[1] * kal]], "#4a4f55");
+      liste[k].forEach(function (p) {
+        p.x.forEach(function (t) {
+          var w0 = [A[0] + d[0] * t, A[1] + d[1] * t];
+          var on = [w0[0] + nr[0] * S.kulak, w0[1] + nr[1] * S.kulak];
+          s += line(w0[0], w0[1], on[0], on[1], "#6b7178", Math.max(1.2, boyut / 3));
+          var c = [on[0] + nr[0] * boyut / 2, on[1] + nr[1] * boyut / 2];
+          s += rect(c[0] - boyut / 2, c[1] - boyut / 2, boyut, boyut, AYAR.renk.govde);
+        });
+      });
+      if (S.kapi.duvar === k) {
+        var x0 = Math.max(0, Math.min(dv.w, S.kapi.x)), g = Math.min(S.kapi.g, dv.w - x0);
+        var k0 = [A[0] + d[0] * x0, A[1] + d[1] * x0], k1 = [A[0] + d[0] * (x0 + g), A[1] + d[1] * (x0 + g)];
+        s += poly([k0, k1, [k1[0] - nr[0] * (kal + 1), k1[1] - nr[1] * (kal + 1)], [k0[0] - nr[0] * (kal + 1), k0[1] - nr[1] * (kal + 1)]], "#f6f6f6");
+        var uc = [k0[0] + nr[0] * g, k0[1] + nr[1] * g], sw = (d[0] * nr[1] - d[1] * nr[0]) > 0 ? 1 : 0;
+        ust += line(k0[0], k0[1], uc[0], uc[1], "#2b6cb0", 2.2);
+        ust += '<path d="M' + r1(uc[0]) + " " + r1(uc[1]) + " A " + r1(g) + " " + r1(g) + " 0 0 " + (1 - sw) + " " + r1(k1[0]) + " " + r1(k1[1]) + '" fill="none" stroke="#2b6cb0" stroke-width="1.2" stroke-dasharray="5 4"/>';
+        var km = [(k0[0] + k1[0]) / 2 + nr[0] * g * 0.35, (k0[1] + k1[1]) / 2 + nr[1] * g * 0.35];
+        ust += yazi(km[0], km[1], "Kapı " + cm(g), fs * 0.75, "#2b6cb0", ' text-anchor="middle" font-weight="700"');
+      }
+      var mx = (A[0] + B[0]) / 2 - nr[0] * (kal + fs * 1.1), my = (A[1] + B[1]) / 2 - nr[1] * (kal + fs * 1.1);
+      var dondur = d[0] === 0 ? ' transform="rotate(' + (d[1] > 0 ? 90 : -90) + " " + r1(mx) + " " + r1(my) + ')"' : "";
+      s += yazi(mx, my + fs * 0.35, (k + 1) + ". duvar · " + cm(dv.w) + " cm", fs, "#1b1b1b", ' text-anchor="middle" font-weight="700"' + dondur);
+    }
+    s += ust;
+    var svg = $("mg-plan");
+    svg.setAttribute("viewBox", [r1(minX - pad), r1(minY - pad), r1(maxX - minX + 2 * pad), r1(maxY - minY + 2 * pad)].join(" "));
+    svg.innerHTML = s;
+  }
+
+  // ---- DUVAR ÇİZİMİ (önden, derinlikli): F dikme ve kulakları
+  function ciz(svg, liste, i) {
+    var W = S.duvarlar[i].w, H = Math.max(S.tavan, S.boy), pf = S.profil / 10, ku = S.kulak, D = ku + pf;
+    var kx = 0.55, ky = 0.38, fs = Math.max(10, Math.min(W, 700) / 28), rk = AYAR.renk;
+    var L0 = fs * 2.8, T = D * ky + fs * 1.2, floor = T + H, s = "";
+    function pr(x, h, z) { return [L0 + x + (D - z) * kx, floor - h - (D - z) * ky]; }
+    s += rect(pr(0, H, 0)[0], pr(0, H, 0)[1], W, H, "#f7f7f7", ' stroke="#e2e2e2"');
+    s += poly([pr(0, 0, D), pr(W, 0, D), pr(W, 0, 0), pr(0, 0, 0)], "#e9e5df");
+    s += line(pr(0, S.tavan, 0)[0], pr(0, S.tavan, 0)[1], pr(W, S.tavan, 0)[0], pr(W, S.tavan, 0)[1], "#b9bfc5", 1.2, ' stroke-dasharray="6 4"');
+    s += yazi(pr(W, S.tavan, 0)[0] - 4, pr(W, S.tavan, 0)[1] - 4, "tavan " + cm(S.tavan) + " cm", fs * 0.65, "#999", ' text-anchor="end"');
+    if (S.kapi.duvar === i) {
+      var kx0 = Math.max(0, Math.min(W, S.kapi.x)), kg = Math.min(S.kapi.g, W - kx0), kh = Math.min(S.tavan, 210);
+      s += poly([pr(kx0, 0, 0), pr(kx0 + kg, 0, 0), pr(kx0 + kg, kh, 0), pr(kx0, kh, 0)], "#dce8f5", ' stroke="#2b6cb0" stroke-width="1.5"');
+      var km = pr(kx0 + kg / 2, kh * 0.8, 0);
+      s += yazi(km[0], km[1], "KAPI", fs * 0.75, "#2b6cb0", ' text-anchor="middle" font-weight="700"') + yazi(km[0], km[1] + fs * 0.9, cm(kg) + " cm", fs * 0.7, "#2b6cb0", ' text-anchor="middle" font-weight="700"');
+    }
+    var hUst = S.boy - 4, hAlt = Math.max(8, S.boy * AYAR.altKulakOrani);
+    var hepsi = [];
+    liste.forEach(function (p) { p.x.forEach(function (t) { hepsi.push(t); }); });
+    hepsi.forEach(function (t) {
+      var x0 = t - pf / 2;
+      // kulaklar: dikmeden duvara uzanan kısa profil ve duvar plakası
+      [hUst, hAlt].forEach(function (h) {
+        s += poly([pr(x0, h, ku), pr(x0 + pf, h, ku), pr(x0 + pf, h, 0), pr(x0, h, 0)], rk.govde2);
+        s += poly([pr(x0, h, ku), pr(x0, h, 0), pr(x0, h - 3, 0), pr(x0, h - 3, ku)], rk.yan);
+        var pl = pr(x0 + pf / 2, h + 3, 0); s += rect(pl[0] - 4, pl[1], 8, 8, "#2b2d30", ' rx="1.5"');
+      });
+      // dikme: ön yüz, yan yüz, çift delik sırası
+      s += poly([pr(x0 + pf, 0, D), pr(x0 + pf, 0, ku), pr(x0 + pf, S.boy, ku), pr(x0 + pf, S.boy, D)], rk.yan);
+      s += poly([pr(x0, 0, D), pr(x0 + pf, 0, D), pr(x0 + pf, S.boy, D), pr(x0, S.boy, D)], rk.govde);
+      for (var h = 6; h < S.boy - 4; h += 5) {
+        var hp = pr(x0, h, D);
+        s += rect(hp[0] + pf * 0.2, hp[1] - 2.6, Math.max(0.6, pf * 0.18), 2.6, rk.delik, ' rx=".3"');
+        s += rect(hp[0] + pf * 0.62, hp[1] - 2.6, Math.max(0.6, pf * 0.18), 2.6, rk.delik, ' rx=".3"');
+      }
+    });
+    // ölçüler: dikmeler arası, boy, duvar
+    var dimY = floor + fs * 1.3;
+    liste.forEach(function (p) {
+      for (var k = 1; k < p.x.length; k++) {
+        var a = pr(p.x[k - 1], 0, D)[0], b = pr(p.x[k], 0, D)[0];
+        s += line(a, dimY - fs * 0.9, b, dimY - fs * 0.9, "#e2701f", r1(fs / 14));
+        s += yazi((a + b) / 2, dimY, cm(p.x[k] - p.x[k - 1]), fs * 0.8, "#1b1b1b", ' text-anchor="middle" font-weight="700"');
+      }
+    });
+    var dy2 = dimY + fs * 1.0, z0 = pr(0, 0, D)[0], z1 = pr(W, 0, D)[0];
+    s += line(z0, dy2, z1, dy2, "#999", r1(fs / 14));
+    s += yazi((z0 + z1) / 2, dy2 + fs * 1.05, (i + 1) + ". duvar " + cm(W) + " cm", fs * 0.8, "#666", ' text-anchor="middle"');
+    if (hepsi.length) {
+      var hx = fs * 1.6, ht = pr(0, S.boy, D)[1];
+      s += line(hx, ht, hx, floor, "#e2701f", r1(fs / 10));
+      s += yazi(hx - fs * 0.35, (ht + floor) / 2, "dikme " + cm(S.boy) + " cm", fs * 0.8, "#e2701f", ' text-anchor="middle" font-weight="700" transform="rotate(-90 ' + r1(hx - fs * 0.35) + " " + r1((ht + floor) / 2) + ')"');
+    }
+    svg.setAttribute("viewBox", "0 0 " + r1(L0 + W + D * kx + fs * 2) + " " + r1(dy2 + fs * 1.6));
+    svg.innerHTML = s;
+  }
+
+  function duvarKutulari() {
+    var html = "";
+    for (var i = 0; i < S.duzen; i++) {
+      html += '<div class="mg-dg"><h4>' + (i + 1) + '. Duvar</h4><div class="mg-g">' +
+        '<label class="mg-f">Duvar uzunluğu (cm)<input type="number" inputmode="numeric" min="0" data-dw="' + i + '" value="' + S.duvarlar[i].w + '"></label></div></div>';
+    }
+    var kapiOpt = '<option value="-1"' + (S.kapi.duvar < 0 ? " selected" : "") + ">Kapı yok / sistem olmayan tarafta</option>";
+    for (var j = 0; j < S.duzen; j++) kapiOpt += '<option value="' + j + '"' + (S.kapi.duvar === j ? " selected" : "") + ">" + (j + 1) + ". duvarda</option>";
+    html += '<div class="mg-dg"><h4>Kapı</h4><div class="mg-g">' +
+      '<label class="mg-f">Kapı nerede?<select id="mg-kd">' + kapiOpt + "</select></label>" +
+      '<label class="mg-f">Kapı genişliği (cm)<input type="number" inputmode="numeric" min="0" id="mg-kg" value="' + S.kapi.g + '"></label>' +
+      '<label class="mg-f">Duvarın başından kapıya (cm)<input type="number" inputmode="numeric" min="0" id="mg-kx" value="' + S.kapi.x + '"></label>' +
+      '</div><p class="mg-n">Duvarın başı, plandaki ok yönüne göre duvarın ilk ucudur (1. duvarda sol uç).</p></div>';
+    $("mg-dw").innerHTML = html;
+  }
+
+  function hepsi() { var l = []; for (var i = 0; i < S.duzen; i++) l.push(dikmeler(i)); return l; }
+  function toplam(l) {
+    var n = 0; l.forEach(function (d) { d.forEach(function (p) { n += p.n; }); });
+    return { dikme: n, kulak: n * AYAR.kulakSayisi, metre: n * S.boy / 100 };
+  }
+
+  function guncelle() {
+    var l = hepsi();
+    planCiz(l);
+    var uyari = [];
+    if (S.boy > S.tavan) uyari.push("Dikme boyu tavan yüksekliğinden uzun.");
+    if (S.kapi.duvar >= 0 && S.kapi.x + S.kapi.g > S.duvarlar[S.kapi.duvar].w) uyari.push("Kapı duvarın dışına taşıyor; kapı konumunu ve genişliğini kontrol edin.");
+    var ws = $("mg-ws");
+    ws.innerHTML = uyari.map(function (u) { return '<p class="mg-n mg-w">' + u + "</p>"; }).join("") + l.map(function (d, i) {
+      var n = d.reduce(function (s, p) { return s + p.n; }, 0);
+      var html = '<div class="mg-dv"><div class="mg-dh"><h4>' + (i + 1) + ". Duvar · " + cm(S.duvarlar[i].w) + " cm" + (S.kapi.duvar === i ? " · kapı " + cm(S.kapi.g) + " cm" : "") + "</h4><span>" + n + " F dikme</span></div>" +
+        '<div class="mg-cz"><svg data-svg="' + i + '" role="img" aria-label="' + (i + 1) + '. duvar F dikme yerleşimi"></svg></div>';
+      if (!d.length) html += '<p class="mg-n mg-w">Bu duvarda dikme konacak alan kalmadı.</p>';
+      d.forEach(function (p, pi) {
+        html += '<div class="mg-pb"><div>' + (p.yan === "sol" ? "Kapının solu · " : p.yan === "sag" ? "Kapının sağı · " : "") +
+          '<span class="c">' + p.n + " dikme</span>" + (p.n > 1 ? " · aralık " + cm(p.aralik) + " cm" : "") + "</div>" +
+          '<div class="b"><button type="button" data-i="' + i + '" data-p="' + pi + '" data-d="-1" aria-label="Dikme azalt">−</button><button type="button" data-i="' + i + '" data-p="' + pi + '" data-d="1" aria-label="Dikme ekle">+</button></div></div>';
+      });
+      return html + "</div>";
+    }).join("");
+    l.forEach(function (d, i) { ciz(ws.querySelector('[data-svg="' + i + '"]'), d, i); });
+
+    var t = toplam(l);
+    $("mg-s1").textContent = t.dikme; $("mg-s2").textContent = t.kulak; $("mg-s3").textContent = cm(t.metre); $("mg-s4").textContent = S.duzen;
+    $("mg-b").innerHTML =
+      "<tr><td>F dikme<br><small>" + S.profil + "×" + S.profil + " mm profil, çift delikli</small></td><td class=\"r\">" + cm(S.boy) + " cm boy</td><td class=\"r\">" + t.dikme + "</td></tr>" +
+      "<tr><td>Duvar kulağı<br><small>Dikme başına " + AYAR.kulakSayisi + " adet (üst ve alt)</small></td><td class=\"r\">" + cm(S.kulak) + " cm</td><td class=\"r\">" + t.kulak + "</td></tr>" +
+      "<tr><td>Toplam dikme profili</td><td class=\"r\"></td><td class=\"r\">" + cm(t.metre) + " m</td></tr>";
+  }
+
+  function mesaj() {
+    var l = hepsi(), t = toplam(l);
+    var satirlar = ["Merhaba, mağaza sistemleri hesaplama sayfasından yazıyorum.",
+      "Düzen: " + DUZENLER[S.duzen - 1].ad + " · Tavan: " + cm(S.tavan) + " cm",
+      "F dikme: " + cm(S.boy) + " cm boy, " + S.profil + "×" + S.profil + " mm profil, kulak " + cm(S.kulak) + " cm"];
+    if (S.kapi.duvar >= 0) satirlar.push("Kapı: " + (S.kapi.duvar + 1) + ". duvarda, başından " + cm(S.kapi.x) + " cm, genişlik " + cm(S.kapi.g) + " cm");
+    l.forEach(function (d, i) {
+      satirlar.push((i + 1) + ". duvar (" + cm(S.duvarlar[i].w) + " cm): " + d.map(function (p) { return p.n + " dikme" + (p.n > 1 ? " (aralık " + cm(p.aralik) + " cm)" : ""); }).join(" + "));
+    });
+    satirlar.push("• F dikme: " + t.dikme + " adet");
+    satirlar.push("• Duvar kulağı: " + t.kulak + " adet");
+    satirlar.push("Fiyat teklifi rica ederim.");
+    return satirlar.join("\n");
+  }
+
+  // ---- olaylar
+  function sayi(v) { v = parseFloat(String(v).replace(",", ".")); return isNaN(v) ? 0 : Math.min(3000, Math.max(0, v)); }
+  $("mg-dz").value = S.duzen;
+  $("mg-dz").addEventListener("change", function (e) {
+    S.duzen = +e.target.value;
+    if (S.kapi.duvar >= S.duzen) S.kapi.duvar = -1;
+    S.ozel = {}; duvarKutulari(); guncelle();
+  });
+  [["mg-tv", "tavan"], ["mg-boy", "boy"], ["mg-ku", "kulak"], ["mg-ar", "aralik"], ["mg-ke", "kenar"]].forEach(function (a) {
+    $(a[0]).addEventListener("input", function (e) { S[a[1]] = sayi(e.target.value); if (a[1] === "aralik" || a[1] === "kenar") S.ozel = {}; guncelle(); });
+  });
+  $("mg-pr").addEventListener("change", function (e) { S.profil = +e.target.value; guncelle(); });
+  $("mg-dw").addEventListener("input", function (e) {
+    var t = e.target;
+    if (t.dataset.dw !== undefined) { S.duvarlar[+t.dataset.dw].w = sayi(t.value); S.ozel = {}; guncelle(); }
+    if (t.id === "mg-kg") { S.kapi.g = sayi(t.value); S.ozel = {}; guncelle(); }
+    if (t.id === "mg-kx") { S.kapi.x = sayi(t.value); S.ozel = {}; guncelle(); }
+  });
+  $("mg-dw").addEventListener("change", function (e) {
+    if (e.target.id !== "mg-kd") return;
+    S.kapi.duvar = +e.target.value;
+    if (S.kapi.duvar >= 0) {
+      var dw = S.duvarlar[S.kapi.duvar].w;
+      S.kapi.x = Math.max(0, Math.round((dw - S.kapi.g) / 2));
+      $("mg-kx").value = S.kapi.x;
+    }
+    S.ozel = {}; guncelle();
+  });
+  R.addEventListener("click", function (e) {
+    var bt = e.target.closest("button[data-p]");
+    if (!bt) return;
+    var i = +bt.dataset.i, pi = +bt.dataset.p, d = dikmeler(i)[pi];
+    S.ozel[i + "-" + pi] = Math.max(1, d.n + (+bt.dataset.d));
+    guncelle();
+  });
+  $("mg-pdf").addEventListener("click", function () {
+    if (!window.AcarRafTeklifTopla) { alert("PDF özelliği bu sayfada yüklenemedi."); return; }
+    window.AcarRafTeklifTopla(R, "Mağaza Sistemleri (F dikme)", mesaj(), { duvar: ".mg-dv", toplam: "#mg-tt", plan: "#mg-plan", etiket: "Fiyat" });
+  });
+  $("mg-wa").addEventListener("click", function () { window.open("https://wa.me/" + AYAR.whatsapp + "?text=" + encodeURIComponent(mesaj()), "_blank"); });
+
+  duvarKutulari();
+  guncelle();
+})();
+
+
+(function () {
   var K = document.getElementById("raf-secim");
   if (!K || K.dataset.ok) return;
   K.dataset.ok = "1";
@@ -1557,8 +1905,8 @@
   document.head.appendChild(st);
 
   var kartlar = K.querySelector(".rs-kartlar"), ust = K.querySelector(".rs-ust");
-  var ADLAR = { celik: "Çelik Raf Hesaplama", rack: "Hafif Rack Hesaplama", market: "Market Rafı Hesaplama" };
-  var HASH = { celik: "celik-raf", rack: "hafif-rack", market: "market-rafi" };
+  var ADLAR = { celik: "Çelik Raf Hesaplama", rack: "Hafif Rack Hesaplama", market: "Market Rafı Hesaplama", magaza: "Mağaza Sistemleri" };
+  var HASH = { celik: "celik-raf", rack: "hafif-rack", market: "market-rafi", magaza: "magaza-sistemleri" };
   function goster(sec, kaydir) {
     K.querySelectorAll(".rs-panel").forEach(function (p) { p.hidden = p.dataset.panel !== sec; });
     var acik = !!ADLAR[sec];

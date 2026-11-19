@@ -58,3 +58,9 @@ Fiyatlar hesaplayıcı dosyalarındaki `AYAR` bölümlerinden okunur, görseller
 
 ## PDF teklif
 Her hesaplayıcıda "PDF olarak indir" düğmesi vardır (`pdf-teklif-kodu.html`). Düğme, sonucu (özet, oda planı, raf çizimleri, fiyat dökümü) yazdırılabilir bir teklif sayfasında açar; tarayıcının yazdırma penceresinde "PDF olarak kaydet" seçilir.
+
+## Mağaza sistemleri (giyim mağazaları)
+`magaza-kodu.html`: dördüncü grup. Boş oda (tek duvar, L, U, dört duvar), kapı ve tavan yüksekliği.
+İlk ürün F dikme: boy serbest, profil 30×30 veya 40×40 mm, duvar kulağı uzunluğu (duvara uzaklık) serbest, dikme başına 2 kulak.
+Dikmeler her duvara köşe/kapı boşluğu bırakılarak en fazla verilen aralıkla eşit dağıtılır; sayısı +/− ile değiştirilebilir.
+Fiyat henüz tanımlı değil; malzeme listesi ve "Fiyat için teklif alın" gösterilir. Doğrudan link: `/raf-hesaplama#magaza-sistemleri`.
