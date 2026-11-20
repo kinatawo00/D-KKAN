@@ -61,6 +61,8 @@ Her hesaplayıcıda "PDF olarak indir" düğmesi vardır (`pdf-teklif-kodu.html`
 
 ## Mağaza sistemleri (giyim mağazaları)
 `magaza-kodu.html`: dördüncü grup. Boş oda (tek duvar, L, U, dört duvar), kapı ve tavan yüksekliği.
-İlk ürün F dikme: boy serbest, profil 30×30 veya 40×40 mm, duvar kulağı uzunluğu (duvara uzaklık) serbest, dikme başına 2 kulak.
-Dikmeler her duvara köşe/kapı boşluğu bırakılarak en fazla verilen aralıkla eşit dağıtılır; sayısı +/− ile değiştirilebilir.
-Fiyat henüz tanımlı değil; malzeme listesi ve "Fiyat için teklif alın" gösterilir. Doğrudan link: `/raf-hesaplama#magaza-sistemleri`.
+Bir sistem (bölme) iki F dikmenin arasıdır: 1 AB1 borusu + 1 baston (üstte), 1 UB1 borusu (altta), 1 raf + 2 raf kolu (UB1 borusunun biraz üstünde).
+Yan yana sistemler aradaki dikmeyi paylaşır: dikme = sistem + 1 (her dizi için). Sistem genişlikleri standart 60/90/120, istenirse 70/80/100.
+Fiyatlar (`AYAR.fiyat`, `AYAR.raflar`): dikme 1500, AB1 300, UB1 360, baston 120, raf kolu 60; raf 1,8 sunta 400, 3 cm sunta 600, MDF 520.
+Renk/kaplama yalnızca metal parçaları etkiler: siyah/beyaz/antrasit ×1, gold/bakır/krom boya ×1,5, gold/bakır kaplama ×1,8, rose kaplama ×2.
+Doğrudan link: `/raf-hesaplama#magaza-sistemleri`.
