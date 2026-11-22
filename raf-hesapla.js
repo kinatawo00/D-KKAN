@@ -1616,6 +1616,13 @@
       tum: [120, 100, 90, 80, 70, 60]
     },
     fiyat: { dikme: 1500, ab1: 300, ub1: 360, baston: 120, rafKolu: 60 },   // metal parçalar (siyah/beyaz/antrasit)
+    // Modeller: bir sistemdeki (iki dikme arası) parça adetleri. Dikmeler her modelde ortak: sistem + 1.
+    modeller: {
+      rafli:  { ad: "Raflı askı sistemi",  ac: "AB1 + baston, UB1, 1 raf",  parca: { ab1: 1, baston: 1, ub1: 1, raf: 1, rafKolu: 2 } },
+      rafsiz: { ad: "Rafsız askı sistemi", ac: "AB1 + baston, UB1",         parca: { ab1: 1, baston: 1, ub1: 1 } },
+      ub5:    { ad: "5 UB1 borulu sistem", ac: "5 adet UB1 borusu",         parca: { ub1: 5 } },
+      raf5:   { ad: "5 raflı sistem",      ac: "5 raf, 10 raf kolu",        parca: { raf: 5, rafKolu: 10 } }
+    },
     raflar: {
       sunta18: { ad: "1,8 cm sunta raf", fiyat: 400, kalinlik: 1.8, renk: "#e9e1d3", kenar: "#cbbfa8" },
       sunta30: { ad: "3 cm sunta raf", fiyat: 600, kalinlik: 3, renk: "#e9e1d3", kenar: "#cbbfa8" },
@@ -1663,6 +1670,13 @@
     P + " .mg-rk input{position:absolute;opacity:0;width:1px;height:1px}",
     P + " .mg-rk i{display:inline-block;width:20px;height:20px;border-radius:50%;border:1px solid #bbb}",
     P + " .mg-rk small{color:var(--mut);font-weight:400}",
+    P + " .mg-ms{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}",
+    P + " .mg-m{display:flex;flex-direction:column;align-items:center;gap:4px;border:2px solid var(--ln);border-radius:12px;padding:10px;cursor:pointer;margin:0;text-align:center}",
+    P + " .mg-m.on{border-color:var(--a);background:#fff5ee}",
+    P + " .mg-m input{position:absolute;opacity:0;width:1px;height:1px}",
+    P + " .mg-m svg{width:110px;height:84px;display:block}",
+    P + " .mg-m b{font-size:14px}",
+    P + " .mg-m span{font-size:12.5px;color:var(--mut)}",
     P + " .mg-plan{background:var(--bg);border-radius:10px;padding:10px;margin-top:14px}",
     P + " .mg-plan svg{display:block;width:100%;height:auto;max-height:460px}",
     P + " .mg-dv{border:1px solid var(--ln);border-radius:12px;padding:12px;margin-top:14px}",
@@ -1712,14 +1726,15 @@
   var KDV = AYAR.kdvDahil ? " (KDV dahil)" : " (KDV hariç)";
 
   R.innerHTML =
-    '<div class="mg-k"><h3>1. Oda, duvarlar ve kapı</h3>' +
+    '<div class="mg-k"><h3>1. Model seçin</h3><div class="mg-ms" id="mg-ms"></div><p class="mg-n">Seçtiğiniz model odanın bütün duvarlarına yerleştirilir.</p></div>' +
+    '<div class="mg-k"><h3>2. Oda, duvarlar ve kapı</h3>' +
     '<div class="mg-g"><label class="mg-f">Sistem kaç duvara kurulacak?<select id="mg-dz">' +
     DUZENLER.map(function (d) { return '<option value="' + d.n + '">' + d.ad + "</option>"; }).join("") + "</select></label>" +
     '<label class="mg-f">Tavan yüksekliği (cm)<input type="number" inputmode="numeric" min="0" id="mg-tv" value="' + V.tavan + '"></label></div>' +
     '<div id="mg-dw"></div>' +
     '<div class="mg-plan"><svg id="mg-plan" role="img" aria-label="Mağaza planı (üstten görünüm)"></svg></div>' +
     '<p class="mg-n">Üstten görünüm. Kapı genişliği duvardan düşülür; sistemler kapının iki yanına ayrı dizilir.</p></div>' +
-    '<div class="mg-k"><h3>2. Sistem seçenekleri</h3><div class="mg-g">' +
+    '<div class="mg-k"><h3>3. Sistem seçenekleri</h3><div class="mg-g">' +
     '<label class="mg-f">F dikme boyu (cm)<input type="number" inputmode="numeric" min="0" id="mg-boy" value="' + V.boy + '"></label>' +
     '<label class="mg-f">Dikme profili<select id="mg-pr">' + AYAR.profiller.map(function (p) { return '<option value="' + p + '">' + p + "×" + p + " mm</option>"; }).join("") + "</select></label>" +
     '<label class="mg-f">Kulak: duvara uzaklık (cm)<input type="number" inputmode="numeric" min="0" id="mg-ku" value="' + V.kulak + '"></label>' +
@@ -1727,10 +1742,10 @@
     '<label class="mg-f">Sistem genişlikleri<select id="mg-ol"><option value="standart">Standart: ' + AYAR.genislikler.standart.join(", ") + ' cm</option><option value="tum">Tümü: ' + AYAR.genislikler.tum.slice().reverse().join(", ") + " cm</option></select></label>" +
     '<label class="mg-f">Köşe ve kapıdan boşluk (cm)<input type="number" inputmode="numeric" min="0" id="mg-ke" value="' + V.kenar + '"></label>' +
     '</div><div class="mg-n" style="margin-top:12px">Renk / kaplama (dikme, AB1, UB1, baston ve raf kolları)</div><div class="mg-rk" id="mg-kp"></div>' +
-    '<p class="mg-n">Her sistemde: üstte 1 AB1 borusu ve 1 baston, altta 1 UB1 borusu, UB1 borusunun biraz üstünde 2 raf kolu ve 1 raf. Yan yana sistemler aradaki F dikmeyi paylaşır.</p></div>' +
-    '<div class="mg-k"><h3>3. Yerleşim</h3><div id="mg-ws"></div><p class="mg-n">Şematik görünüm · Ölçüler cm · Sistem sayısını genişliklere göre +/− ile değiştirebilirsiniz.</p></div>' +
-    '<div class="mg-k"><h3>4. Fiyat</h3>' +
-    '<div class="mg-st"><div><b id="mg-s1"></b><span>Sistem</span></div><div><b id="mg-s2"></b><span>F dikme</span></div><div><b id="mg-s3"></b><span>Raf</span></div><div><b id="mg-s4"></b><span>Baston</span></div></div>' +
+    '<p class="mg-n">Yan yana sistemler aradaki F dikmeyi paylaşır: dikme sayısı, sistem sayısından 1 fazladır.</p></div>' +
+    '<div class="mg-k"><h3>4. Yerleşim</h3><div id="mg-ws"></div><p class="mg-n">Şematik görünüm · Ölçüler cm · Sistem sayısını genişliklere göre +/− ile değiştirebilirsiniz.</p></div>' +
+    '<div class="mg-k"><h3>5. Fiyat</h3>' +
+    '<div class="mg-st"><div><b id="mg-s1"></b><span>Sistem</span></div><div><b id="mg-s2"></b><span>F dikme</span></div><div><b id="mg-s3"></b><span>Raf</span></div><div><b id="mg-s4"></b><span>Boru (AB1 + UB1)</span></div></div>' +
     '<table><thead><tr><th scope="col">Malzeme</th><th scope="col" class="r hs">Adet × Fiyat</th><th scope="col" class="r">Tutar</th></tr></thead><tbody id="mg-b"></tbody></table>' +
     '<div class="mg-t"><div><div class="lb">Toplam' + KDV + '</div><div class="big" id="mg-tt"></div><div class="lb">Montaj ve nakliye dahil değildir.</div></div>' +
     '<div class="mg-btn"><button type="button" class="mg-pdf" id="mg-pdf">PDF olarak indir</button>' +
@@ -1742,19 +1757,20 @@
 
   var S = {
     duzen: 2, tavan: V.tavan, boy: V.boy, profil: V.profil, kulak: V.kulak, kenar: V.kenar,
-    olcu: "standart", raf: "sunta18", kaplama: "siyah",
+    model: "rafli", olcu: "standart", raf: "sunta18", kaplama: "siyah",
     kapi: { duvar: -1, x: 50, g: AYAR.kapiGenisligi },
     duvarlar: [{ w: 400 }, { w: 300 }, { w: 400 }, { w: 300 }],
     yer: null                                  // [duvar][parça] -> {genişlik: adet}
   };
   function G() { return AYAR.genislikler[S.olcu]; }
+  function MP() { var pc = AYAR.modeller[S.model].parca; return { ab1: pc.ab1 || 0, baston: pc.baston || 0, ub1: pc.ub1 || 0, raf: pc.raf || 0, rafKolu: pc.rafKolu || 0 }; }
   function pf() { return S.profil / 10; }                         // dikme kalınlığı (cm)
   function onDerinlik() { return Math.max(O.ubKol, O.abKol + O.baston); }   // dikmeden öne en uzun çıkıntı
   function bos() { var z = {}; G().forEach(function (g) { z[g] = 0; }); return z; }
 
   function onceki(i) { if (i > 0) return i - 1; return S.duzen === 4 ? 3 : -1; }
   function sonraki(i) { if (i < S.duzen - 1) return i + 1; return S.duzen === 4 ? 0 : -1; }
-  function kosePayi() { return S.kulak + pf() + Math.max(O.ubKol, O.rafDerinlik); }   // komşu duvardaki sistemin köşedeki çıkıntısı (UB1 kolu / raf)
+  function kosePayi() { var m = MP(); return S.kulak + pf() + Math.max(m.ub1 ? O.ubKol : 0, m.raf ? O.rafDerinlik : 0, m.ab1 ? O.abKol : 0); }   // komşu duvardaki sistemin köşedeki çıkıntısı (UB1 kolu / raf)
 
   // duvarın sistem kurulabilecek parçaları (köşe ve kapı boşlukları düşülmüş)
   function parcalar(i) {
@@ -1839,15 +1855,16 @@
         G().forEach(function (g) { if (p.a[g]) sis[g] = (sis[g] || 0) + p.a[g]; });
       });
     });
-    var c = carpan(), kp = AYAR.kaplamalar[S.kaplama].ad, rf = AYAR.raflar[S.raf], F = AYAR.fiyat, satir = [];
+    var c = carpan(), kp = AYAR.kaplamalar[S.kaplama].ad, rf = AYAR.raflar[S.raf], F = AYAR.fiyat, satir = [], m = MP();
     if (dikme) satir.push({ ad: "F dikme", not: S.profil + "×" + S.profil + " mm, " + cm(S.boy) + " cm boy, kulak " + cm(S.kulak) + " cm · " + kp, adet: dikme, fiyat: F.dikme * c });
     var olc = G().slice().sort(function (a, b) { return a - b; });
-    olc.forEach(function (g) { if (sis[g]) satir.push({ ad: "AB1 borusu " + g + " cm", not: kp, adet: sis[g], fiyat: F.ab1 * c }); });
-    olc.forEach(function (g) { if (sis[g]) satir.push({ ad: "UB1 borusu " + g + " cm", not: kp, adet: sis[g], fiyat: F.ub1 * c }); });
-    if (n) satir.push({ ad: "Baston (düz, " + O.baston + " cm)", not: kp, adet: n, fiyat: F.baston * c });
-    if (n) satir.push({ ad: "Raf kolu", not: "sistem başına 2 adet · " + kp, adet: 2 * n, fiyat: F.rafKolu * c });
-    olc.forEach(function (g) { if (sis[g]) satir.push({ ad: rf.ad + " " + g + " cm", not: "", adet: sis[g], fiyat: rf.fiyat }); });
-    return { satir: satir, n: n, dikme: dikme, ara: satir.reduce(function (s, x) { return s + x.adet * x.fiyat; }, 0) };
+    var ek = function (adet) { return adet > 1 ? "sistem başına " + adet + " adet · " : ""; };
+    if (m.ab1) olc.forEach(function (g) { if (sis[g]) satir.push({ ad: "AB1 borusu " + g + " cm", not: ek(m.ab1) + kp, adet: sis[g] * m.ab1, fiyat: F.ab1 * c }); });
+    if (m.ub1) olc.forEach(function (g) { if (sis[g]) satir.push({ ad: "UB1 borusu " + g + " cm", not: ek(m.ub1) + kp, adet: sis[g] * m.ub1, fiyat: F.ub1 * c }); });
+    if (m.baston && n) satir.push({ ad: "Baston (düz, " + O.baston + " cm)", not: ek(m.baston) + kp, adet: n * m.baston, fiyat: F.baston * c });
+    if (m.rafKolu && n) satir.push({ ad: "Raf kolu", not: "sistem başına " + m.rafKolu + " adet · " + kp, adet: n * m.rafKolu, fiyat: F.rafKolu * c });
+    if (m.raf) olc.forEach(function (g) { if (sis[g]) satir.push({ ad: rf.ad + " " + g + " cm", not: m.raf > 1 ? "sistem başına " + m.raf + " adet" : "", adet: sis[g] * m.raf, fiyat: rf.fiyat }); });
+    return { satir: satir, n: n, dikme: dikme, raf: n * m.raf, boru: n * (m.ab1 + m.ub1), ara: satir.reduce(function (s, x) { return s + x.adet * x.fiyat; }, 0) };
   }
 
   // ---- çizim yardımcıları
@@ -1878,10 +1895,14 @@
         var kz = konumlar(p);
         kz.sistemler.forEach(function (u) {
           var a0 = u.x, a1 = u.x + u.g;
-          s += poly([P2(a0, z0), P2(a1, z0), P2(a1, z0 + O.rafDerinlik), P2(a0, z0 + O.rafDerinlik)], rf.renk, ' stroke="' + rf.kenar + '" stroke-width="1"');
-          s += line(P2(a0, z0 + O.ubKol)[0], P2(a0, z0 + O.ubKol)[1], P2(a1, z0 + O.ubKol)[0], P2(a1, z0 + O.ubKol)[1], mr[0], 2.4);
-          var m0 = P2((a0 + a1) / 2, z0 + O.abKol), m1 = P2((a0 + a1) / 2, z0 + O.abKol + O.baston);
-          s += line(m0[0], m0[1], m1[0], m1[1], mr[0], 2.4);
+          var m = MP();
+          if (m.raf) s += poly([P2(a0, z0), P2(a1, z0), P2(a1, z0 + O.rafDerinlik), P2(a0, z0 + O.rafDerinlik)], rf.renk, ' stroke="' + rf.kenar + '" stroke-width="1"');
+          if (m.ub1) s += line(P2(a0, z0 + O.ubKol)[0], P2(a0, z0 + O.ubKol)[1], P2(a1, z0 + O.ubKol)[0], P2(a1, z0 + O.ubKol)[1], mr[0], 2.4);
+          if (m.ab1) s += line(P2(a0, z0 + O.abKol)[0], P2(a0, z0 + O.abKol)[1], P2(a1, z0 + O.abKol)[0], P2(a1, z0 + O.abKol)[1], mr[0], 1.6);
+          if (m.baston) {
+            var m0 = P2((a0 + a1) / 2, z0 + O.abKol), m1 = P2((a0 + a1) / 2, z0 + O.abKol + O.baston);
+            s += line(m0[0], m0[1], m1[0], m1[1], mr[0], 2.4);
+          }
         });
         kz.dikmeler.forEach(function (x) {
           s += line(P2(x + pf() / 2, 0)[0], P2(x + pf() / 2, 0)[1], P2(x + pf() / 2, S.kulak)[0], P2(x + pf() / 2, S.kulak)[1], "#6b7178", 1.4);
@@ -1915,7 +1936,11 @@
     var kx = 0.55, ky = 0.38, fs = Math.max(10, Math.min(W, 700) / 28), mr = MR(), rf = AYAR.raflar[S.raf], kc = kenarCizgi();
     var L0 = fs * 2.8, T = D * ky + fs * 1.2, floor = T + H + D * ky * 0, s = "";
     function pr(x, h, z) { return [L0 + x + (D - z) * kx, floor - h - (D - z) * ky]; }
-    var hAB = Math.max(40, S.boy - 22), hUB = Math.round(S.boy * 0.42), hRaf = Math.min(hAB - 25, hUB + 32);
+    var hAB = Math.max(40, S.boy - 22), hUB = Math.round(S.boy * 0.42), hRaf = Math.min(hAB - 25, hUB + 32), m = MP();
+    // aynı parçadan birden çok varsa (5 UB1, 5 raf) dikme boyunca eşit aralıkla dizilir
+    function seviyeler(adet, alt, ust) { var l = []; for (var q = 0; q < adet; q++) l.push(adet === 1 ? ust : alt + (ust - alt) * q / (adet - 1)); return l; }
+    var ubH = m.ub1 === 1 ? [hUB] : seviyeler(m.ub1, Math.max(30, S.boy * 0.2), S.boy - 20);
+    var rafH = m.raf === 1 ? [hRaf] : seviyeler(m.raf, 12, S.boy - 25);
     s += "<defs>" +
       '<linearGradient id="mg-gm' + id + '" x1="0" x2="1"><stop offset="0" stop-color="' + mr[0] + '"/><stop offset=".5" stop-color="' + mr[1] + '"/><stop offset="1" stop-color="' + mr[0] + '"/></linearGradient>' +
       '<linearGradient id="mg-gy' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + mr[1] + '"/><stop offset="1" stop-color="' + mr[0] + '"/></linearGradient>' +
@@ -1960,21 +1985,25 @@
     }
     sistemler.forEach(function (u) {
       var x0 = u.x, x1 = u.x + u.g;
-      // raf kolları ve raf
-      [x0 + 2, x1 - 3].forEach(function (x) {
-        s += poly([pr(x, hRaf, z0), pr(x, hRaf, z0 + O.rafDerinlik - 3), pr(x, hRaf - 2, z0 + O.rafDerinlik - 3), pr(x, hRaf - 12, z0)], mr[0], kc);
+      // raf kolları ve raflar
+      if (m.raf) rafH.forEach(function (hR) {
+        [x0 + 2, x1 - 3].forEach(function (x) {
+          s += poly([pr(x, hR, z0), pr(x, hR, z0 + O.rafDerinlik - 3), pr(x, hR - 2, z0 + O.rafDerinlik - 3), pr(x, hR - 12, z0)], mr[0], kc);
+        });
+        var rk = rf.kalinlik;
+        s += poly([pr(x0, hR + rk, z0), pr(x1, hR + rk, z0), pr(x1, hR + rk, z0 + O.rafDerinlik), pr(x0, hR + rk, z0 + O.rafDerinlik)], rf.renk, ' stroke="' + rf.kenar + '" stroke-width=".5"');
+        s += poly([pr(x0, hR + rk, z0 + O.rafDerinlik), pr(x1, hR + rk, z0 + O.rafDerinlik), pr(x1, hR, z0 + O.rafDerinlik), pr(x0, hR, z0 + O.rafDerinlik)], rf.kenar);
       });
-      var rk = rf.kalinlik;
-      s += poly([pr(x0, hRaf + rk, z0), pr(x1, hRaf + rk, z0), pr(x1, hRaf + rk, z0 + O.rafDerinlik), pr(x0, hRaf + rk, z0 + O.rafDerinlik)], rf.renk, ' stroke="' + rf.kenar + '" stroke-width=".5"');
-      s += poly([pr(x0, hRaf + rk, z0 + O.rafDerinlik), pr(x1, hRaf + rk, z0 + O.rafDerinlik), pr(x1, hRaf, z0 + O.rafDerinlik), pr(x0, hRaf, z0 + O.rafDerinlik)], rf.kenar);
-      // UB1 (uzun kollu, altta) ve AB1 (kısa kollu, üstte)
-      boru(x0, x1, hUB, O.ubKol);
-      boru(x0, x1, hAB, O.abKol);
+      // UB1 (uzun kollu) ve AB1 (kısa kollu, üstte)
+      if (m.ub1) ubH.forEach(function (hU) { boru(x0, x1, hU, O.ubKol); });
+      if (m.ab1) boru(x0, x1, hAB, O.abKol);
       // baston: AB1 borusunun ortasından öne
-      var xm = (x0 + x1) / 2 - 1.5, za = z0 + O.abKol, zb = za + O.baston;
-      s += poly([pr(xm, hAB + 1.5, za), pr(xm, hAB + 1.5, zb), pr(xm, hAB - 1.5, zb), pr(xm, hAB - 1.5, za)], mr[2]);
-      s += poly([pr(xm, hAB + 1.5, za), pr(xm + 1, hAB + 1.5, za), pr(xm + 1, hAB + 1.5, zb), pr(xm, hAB + 1.5, zb)], mr[1]);
-      var uc = pr(xm, hAB + 3, zb); s += rect(uc[0] - 0.6, uc[1], 2.2, 6, mr[0], kc);
+      if (m.baston) {
+        var xm = (x0 + x1) / 2 - 1.5, za = z0 + O.abKol, zb = za + O.baston;
+        s += poly([pr(xm, hAB + 1.5, za), pr(xm, hAB + 1.5, zb), pr(xm, hAB - 1.5, zb), pr(xm, hAB - 1.5, za)], mr[2]);
+        s += poly([pr(xm, hAB + 1.5, za), pr(xm + 1, hAB + 1.5, za), pr(xm + 1, hAB + 1.5, zb), pr(xm, hAB + 1.5, zb)], mr[1]);
+        var uc = pr(xm, hAB + 3, zb); s += rect(uc[0] - 0.6, uc[1], 2.2, 6, mr[0], kc);
+      }
     });
     // ölçüler
     var dimY = floor + fs * 1.4;
@@ -2006,6 +2035,22 @@
       '<label class="mg-f">Duvarın başından kapıya (cm)<input type="number" inputmode="numeric" min="0" id="mg-kx" value="' + S.kapi.x + '"></label>' +
       '</div><p class="mg-n">Duvarın başı, plandaki ok yönüne göre duvarın ilk ucudur (1. duvarda sol uç).</p></div>';
     $("mg-dw").innerHTML = html;
+  }
+  function modelIkon(k) {
+    var p = AYAR.modeller[k].parca, s = '<rect x="18" y="6" width="5" height="76" fill="#1f2023"/><rect x="87" y="6" width="5" height="76" fill="#1f2023"/>';
+    var cizgi = function (y, c, h) { return '<rect x="23" y="' + y + '" width="64" height="' + h + '" fill="' + c + '"/>'; };
+    if (p.ab1) s += cizgi(14, "#1f2023", 3) + '<rect x="53" y="14" width="3" height="10" fill="#1f2023"/>';
+    if (p.ub1 === 1) s += cizgi(52, "#1f2023", 3);
+    if (p.ub1 > 1) for (var i = 0; i < p.ub1; i++) s += cizgi(14 + i * 15, "#1f2023", 3);
+    if (p.raf === 1) s += cizgi(38, "#d6c9b1", 4);
+    if (p.raf > 1) for (var j = 0; j < p.raf; j++) s += cizgi(12 + j * 16, "#d6c9b1", 4);
+    return '<svg viewBox="0 0 110 88" aria-hidden="true">' + s + "</svg>";
+  }
+  function modelSecimi() {
+    $("mg-ms").innerHTML = Object.keys(AYAR.modeller).map(function (k, i) {
+      var m = AYAR.modeller[k];
+      return '<label class="mg-m' + (S.model === k ? " on" : "") + '"><input type="radio" name="mg-md" value="' + k + '"' + (S.model === k ? " checked" : "") + ">" + modelIkon(k) + "<b>" + (i + 1) + ". " + m.ad + "</b><span>2 F dikme + " + m.ac + "</span></label>";
+    }).join("");
   }
   function kaplamaSecimi() {
     $("mg-kp").innerHTML = Object.keys(AYAR.kaplamalar).map(function (k) {
@@ -2042,7 +2087,7 @@
     yer.forEach(function (d, i) { ciz(ws.querySelector('[data-svg="' + i + '"]'), d, i, i); });
 
     var t = toplam(yer);
-    $("mg-s1").textContent = t.n; $("mg-s2").textContent = t.dikme; $("mg-s3").textContent = t.n; $("mg-s4").textContent = t.n;
+    $("mg-s1").textContent = t.n; $("mg-s2").textContent = t.dikme; $("mg-s3").textContent = t.raf; $("mg-s4").textContent = t.boru;
     var rows = t.satir.map(function (x) {
       return "<tr><td>" + x.ad + (x.not ? "<br><small>" + x.not + "</small>" : "") + '</td><td class="r hs">' + x.adet + " × " + tl(x.fiyat) + '</td><td class="r">' + tl(x.adet * x.fiyat) + "<br><small>" + x.adet + " adet</small></td></tr>";
     }).join("");
@@ -2055,6 +2100,7 @@
   function mesaj() {
     var yer = tumYerlesim(), t = toplam(yer);
     var satirlar = ["Merhaba, mağaza sistemleri hesaplama sayfasından yazıyorum.",
+      "Model: " + AYAR.modeller[S.model].ad + " (" + AYAR.modeller[S.model].ac + ")",
       "Düzen: " + DUZENLER[S.duzen - 1].ad + " · Tavan: " + cm(S.tavan) + " cm",
       "F dikme: " + cm(S.boy) + " cm boy, " + S.profil + "×" + S.profil + " mm profil, kulak " + cm(S.kulak) + " cm",
       "Renk / kaplama: " + AYAR.kaplamalar[S.kaplama].ad + " · Raf: " + AYAR.raflar[S.raf].ad];
@@ -2102,6 +2148,7 @@
   });
   R.addEventListener("change", function (e) {
     if (e.target.name === "mg-kp") { S.kaplama = e.target.value; kaplamaSecimi(); guncelle(); }
+    if (e.target.name === "mg-md") { S.model = e.target.value; modelSecimi(); sifirla(); guncelle(); }
   });
   R.addEventListener("click", function (e) {
     var bt = e.target.closest("button[data-g]");
@@ -2111,11 +2158,12 @@
   });
   $("mg-pdf").addEventListener("click", function () {
     if (!window.AcarRafTeklifTopla) { alert("PDF özelliği bu sayfada yüklenemedi."); return; }
-    window.AcarRafTeklifTopla(R, "Mağaza Sistemleri", mesaj(), { duvar: ".mg-dv", toplam: "#mg-tt", plan: "#mg-plan", etiket: "Toplam" + KDV });
+    window.AcarRafTeklifTopla(R, "Mağaza Sistemleri · " + AYAR.modeller[S.model].ad, mesaj(), { duvar: ".mg-dv", toplam: "#mg-tt", plan: "#mg-plan", etiket: "Toplam" + KDV });
   });
   $("mg-wa").addEventListener("click", function () { window.open("https://wa.me/" + AYAR.whatsapp + "?text=" + encodeURIComponent(mesaj()), "_blank"); });
 
   duvarKutulari();
+  modelSecimi();
   kaplamaSecimi();
   guncelle();
 })();
