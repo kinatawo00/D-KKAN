@@ -62,10 +62,10 @@ Her hesaplayıcıda "PDF olarak indir" düğmesi vardır (`pdf-teklif-kodu.html`
 ## Mağaza sistemleri (giyim mağazaları)
 `magaza-kodu.html`: dördüncü grup. Boş oda (tek duvar, L, U, dört duvar), kapı ve tavan yüksekliği.
 Bir sistem (bölme) iki F dikmenin arasıdır: 1 AB1 borusu + 1 baston (üstte), 1 UB1 borusu (altta), 1 raf + 2 raf kolu (UB1 borusunun biraz üstünde).
-Yan yana sistemler aradaki dikmeyi paylaşır: dikme = sistem + 1 (her dizi için). Sistem genişlikleri standart 60/90/120, istenirse 70/80/100.
+Yan yana sistemler aradaki dikmeyi paylaşır: dikme = sistem + 1 (her dizi için). Sistem (ünite) genişlikleri yalnızca 60 ve 90 cm.
 Fiyatlar (`AYAR.fiyat`, `AYAR.raflar`): dikme 1500, AB1 300, UB1 360, baston 120, raf kolu 60; raf 1,8 sunta 400, 3 cm sunta 600, MDF 520.
 Renk/kaplama yalnızca metal parçaları etkiler: siyah/beyaz/antrasit ×1, gold/bakır/krom boya ×1,5, gold/bakır kaplama ×1,8, rose kaplama ×2.
-Modeller (`AYAR.modeller`, sayfanın başında seçilir, oda seçilen modelle doldurulur):
+Modeller (`AYAR.modeller`). Sayfanın başındaki seçim bütün ünitelere uygulanır; sonra her ünitenin modeli ayrı seçilebilir (çizimde üniteye tıklayarak veya ünite listesinden):
 1. Raflı askı sistemi: AB1 + baston, UB1, 1 raf + 2 raf kolu
 2. Rafsız askı sistemi: AB1 + baston, UB1
 3. 5 UB1 borulu sistem: 5 UB1

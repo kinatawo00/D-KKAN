@@ -1611,10 +1611,7 @@
     whatsapp: "905376605348",
     kdvDahil: true,                       // fiyatlar KDV dahil mi (ekrandaki yazı için)
     profiller: [30, 40],                  // F dikme profili (mm)
-    genislikler: {
-      standart: [120, 90, 60],            // sistem (AB1 / UB1 / raf) genişlikleri, cm
-      tum: [120, 100, 90, 80, 70, 60]
-    },
+    genislikler: [90, 60],                // sistem (ünite) genişlikleri, cm
     fiyat: { dikme: 1500, ab1: 300, ub1: 360, baston: 120, rafKolu: 60 },   // metal parçalar (siyah/beyaz/antrasit)
     // Modeller: bir sistemdeki (iki dikme arası) parça adetleri. Dikmeler her modelde ortak: sistem + 1.
     modeller: {
@@ -1678,6 +1675,18 @@
     P + " .mg-m b{font-size:14px}",
     P + " .mg-m span{font-size:12.5px;color:var(--mut)}",
     P + " .mg-plan{background:var(--bg);border-radius:10px;padding:10px;margin-top:14px}",
+    P + " .mg-ul{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:8px}",
+    P + " .mg-un{display:flex;flex-direction:column;gap:4px;border:1px solid var(--ln);border-radius:10px;padding:8px 10px;margin:0;font-size:13px;color:var(--mut)}",
+    P + " .mg-un span{display:flex;align-items:center;gap:6px;font-weight:700;color:var(--ink)}",
+    P + " .mg-un i{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--a);color:#fff;font-style:normal;font-size:12px}",
+    P + " .mg-un select{width:100%;height:38px;padding:0 8px;font:inherit;font-size:14px;color:var(--ink);background:#fff;border:1px solid #cfcfcf;border-radius:8px;margin:0}",
+    P + " .mg-hit{cursor:pointer}",
+    P + " .mg-hit:hover{fill-opacity:.12}",
+    P + "{position:relative}",
+    P + " .mg-pop{position:absolute;z-index:20;background:#fff;border:1px solid #cfcfcf;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.16);padding:6px;min-width:230px}",
+    P + " .mg-pop b{display:block;font-size:13px;padding:6px 8px;color:var(--mut)}",
+    P + " .mg-pop button{display:block;width:100%;text-align:left;border:0;border-radius:8px;padding:8px 10px;min-height:38px;font-size:14px}",
+    P + " .mg-pop button:hover," + P + " .mg-pop button.on{background:#fff5ee;color:var(--a);font-weight:700}",
     P + " .mg-plan svg{display:block;width:100%;height:auto;max-height:460px}",
     P + " .mg-dv{border:1px solid var(--ln);border-radius:12px;padding:12px;margin-top:14px}",
     P + " .mg-dh{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px;margin-bottom:8px}",
@@ -1686,7 +1695,7 @@
     P + " .mg-cz svg{display:block;width:100%;height:auto}",
     P + " .mg-n{font-size:13px;color:var(--mut);margin:8px 0 0}",
     P + " .mg-pb{font-size:13px;font-weight:700;margin:10px 0 0}",
-    P + " .mg-u{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}",
+    P + " .mg-u{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:6px}",
     P + " .mg-u>div{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid var(--ln);border-radius:10px;padding:8px 10px}",
     P + " .mg-u .w{font-size:13px;color:var(--mut)}",
     P + " .mg-u .c{font-size:16px;font-weight:700}",
@@ -1709,7 +1718,7 @@
     P + " .mg-wa{background:#25d366;border-color:#25d366;color:#fff;font-weight:700;padding:10px 18px}",
     P + " .mg-pdf{background:#2f3338;border-color:#2f3338;color:#fff;font-weight:700;padding:10px 18px}",
     P + " .mg-btn{display:flex;flex-wrap:wrap;gap:8px}",
-    "@media (max-width:760px){" + P + " .mg-u{grid-template-columns:repeat(2,1fr)}}",
+    "@media (max-width:520px){" + P + " .mg-u{grid-template-columns:1fr}}",
     "@media (max-width:640px){" + P + " .mg-st{grid-template-columns:repeat(2,1fr)}" + P + " .hs{display:none}}"
   ].join("");
   var st = document.createElement("style");
@@ -1726,7 +1735,7 @@
   var KDV = AYAR.kdvDahil ? " (KDV dahil)" : " (KDV hariç)";
 
   R.innerHTML =
-    '<div class="mg-k"><h3>1. Model seçin</h3><div class="mg-ms" id="mg-ms"></div><p class="mg-n">Seçtiğiniz model odanın bütün duvarlarına yerleştirilir.</p></div>' +
+    '<div class="mg-k"><h3>1. Model seçin</h3><div class="mg-ms" id="mg-ms"></div><p class="mg-n">Seçtiğiniz model bütün ünitelere uygulanır. Sonra her ünitenin modelini ayrı ayrı değiştirebilirsiniz.</p></div>' +
     '<div class="mg-k"><h3>2. Oda, duvarlar ve kapı</h3>' +
     '<div class="mg-g"><label class="mg-f">Sistem kaç duvara kurulacak?<select id="mg-dz">' +
     DUZENLER.map(function (d) { return '<option value="' + d.n + '">' + d.ad + "</option>"; }).join("") + "</select></label>" +
@@ -1739,7 +1748,6 @@
     '<label class="mg-f">Dikme profili<select id="mg-pr">' + AYAR.profiller.map(function (p) { return '<option value="' + p + '">' + p + "×" + p + " mm</option>"; }).join("") + "</select></label>" +
     '<label class="mg-f">Kulak: duvara uzaklık (cm)<input type="number" inputmode="numeric" min="0" id="mg-ku" value="' + V.kulak + '"></label>' +
     '<label class="mg-f">Raf<select id="mg-rf">' + Object.keys(AYAR.raflar).map(function (k) { return '<option value="' + k + '">' + AYAR.raflar[k].ad + "</option>"; }).join("") + "</select></label>" +
-    '<label class="mg-f">Sistem genişlikleri<select id="mg-ol"><option value="standart">Standart: ' + AYAR.genislikler.standart.join(", ") + ' cm</option><option value="tum">Tümü: ' + AYAR.genislikler.tum.slice().reverse().join(", ") + " cm</option></select></label>" +
     '<label class="mg-f">Köşe ve kapıdan boşluk (cm)<input type="number" inputmode="numeric" min="0" id="mg-ke" value="' + V.kenar + '"></label>' +
     '</div><div class="mg-n" style="margin-top:12px">Renk / kaplama (dikme, AB1, UB1, baston ve raf kolları)</div><div class="mg-rk" id="mg-kp"></div>' +
     '<p class="mg-n">Yan yana sistemler aradaki F dikmeyi paylaşır: dikme sayısı, sistem sayısından 1 fazladır.</p></div>' +
@@ -1757,20 +1765,20 @@
 
   var S = {
     duzen: 2, tavan: V.tavan, boy: V.boy, profil: V.profil, kulak: V.kulak, kenar: V.kenar,
-    model: "rafli", olcu: "standart", raf: "sunta18", kaplama: "siyah",
+    model: "rafli", raf: "sunta18", kaplama: "siyah",
     kapi: { duvar: -1, x: 50, g: AYAR.kapiGenisligi },
     duvarlar: [{ w: 400 }, { w: 300 }, { w: 400 }, { w: 300 }],
-    yer: null                                  // [duvar][parça] -> {genişlik: adet}
+    yer: null                                  // [duvar][parça] -> [{ g: genişlik, m: model }] (soldan sağa üniteler)
   };
-  function G() { return AYAR.genislikler[S.olcu]; }
-  function MP() { var pc = AYAR.modeller[S.model].parca; return { ab1: pc.ab1 || 0, baston: pc.baston || 0, ub1: pc.ub1 || 0, raf: pc.raf || 0, rafKolu: pc.rafKolu || 0 }; }
+  function G() { return AYAR.genislikler; }
+  function MP(k) { var pc = AYAR.modeller[k || S.model].parca; return { ab1: pc.ab1 || 0, baston: pc.baston || 0, ub1: pc.ub1 || 0, raf: pc.raf || 0, rafKolu: pc.rafKolu || 0 }; }
   function pf() { return S.profil / 10; }                         // dikme kalınlığı (cm)
   function onDerinlik() { return Math.max(O.ubKol, O.abKol + O.baston); }   // dikmeden öne en uzun çıkıntı
   function bos() { var z = {}; G().forEach(function (g) { z[g] = 0; }); return z; }
 
   function onceki(i) { if (i > 0) return i - 1; return S.duzen === 4 ? 3 : -1; }
   function sonraki(i) { if (i < S.duzen - 1) return i + 1; return S.duzen === 4 ? 0 : -1; }
-  function kosePayi() { var m = MP(); return S.kulak + pf() + Math.max(m.ub1 ? O.ubKol : 0, m.raf ? O.rafDerinlik : 0, m.ab1 ? O.abKol : 0); }   // komşu duvardaki sistemin köşedeki çıkıntısı (UB1 kolu / raf)
+  function kosePayi() { return S.kulak + pf() + Math.max(O.ubKol, O.rafDerinlik); }   // komşu duvardaki sistemin köşedeki çıkıntısı   // komşu duvardaki sistemin köşedeki çıkıntısı (UB1 kolu / raf)
 
   // duvarın sistem kurulabilecek parçaları (köşe ve kapı boşlukları düşülmüş)
   function parcalar(i) {
@@ -1791,7 +1799,7 @@
   var onbellek = {};
   function yerlestir(L) {
     L = Math.floor(L);
-    var gs = G(), p = pf(), anahtar = [L, S.olcu, p].join("|");
+    var gs = G(), p = pf(), anahtar = [L, p].join("|");
     if (onbellek[anahtar]) return Object.assign({}, onbellek[anahtar]);
     var enKucuk = Math.min.apply(null, gs), maxN = Math.floor((L - p) / (enKucuk + p)), sonuc = bos();
     if (maxN >= 1) {
@@ -1823,48 +1831,59 @@
     return a;
   }
 
+  // sayılardan (ör. {90: 2, 60: 1}) büyükten küçüğe ünite listesi
+  function uniteListesi(a, model) {
+    var l = []; G().forEach(function (g) { for (var q = 0; q < (a[g] || 0); q++) l.push({ g: g, m: model }); });
+    return l;
+  }
+  function sayilar(u) { var a = bos(); u.forEach(function (x) { a[x.g] = (a[x.g] || 0) + 1; }); return a; }
   function tumYerlesim() {
     var y = [];
     for (var i = 0; i < S.duzen; i++) {
       y.push(parcalar(i).map(function (p, pi) {
-        var a = S.yer && S.yer[i] && S.yer[i][pi] ? S.yer[i][pi] : yerlestir(p.son - p.bas);
-        return { bas: p.bas, son: p.son, yan: p.yan, a: a };
+        var u = S.yer && S.yer[i] && S.yer[i][pi] ? S.yer[i][pi] : uniteListesi(yerlestir(p.son - p.bas), S.model);
+        return { bas: p.bas, son: p.son, yan: p.yan, u: u, a: sayilar(u) };
       }));
     }
     return y;
   }
-  // bir parçadaki sistem ve dikme konumları (büyükten küçüğe dizilir)
+  // bir parçadaki ünite ve dikme konumları (soldan sağa)
   function konumlar(p) {
-    var seq = []; G().forEach(function (g) { for (var q = 0; q < (p.a[g] || 0); q++) seq.push(g); });
     var x = p.bas, dikmeler = [], sistemler = [];
-    if (seq.length) {
+    if (p.u.length) {
       dikmeler.push(x); x += pf();
-      seq.forEach(function (g) { sistemler.push({ x: x, g: g }); x += g; dikmeler.push(x); x += pf(); });
+      p.u.forEach(function (u, k) { sistemler.push({ x: x, g: u.g, m: u.m, k: k }); x += u.g; dikmeler.push(x); x += pf(); });
     }
     return { dikmeler: dikmeler, sistemler: sistemler };
   }
 
   function carpan() { return AYAR.kaplamalar[S.kaplama].carpan; }
   function toplam(yer) {
-    var sis = {}, n = 0, dikme = 0;
+    var n = 0, dikme = 0, ad = { ab1: {}, ub1: {}, raf: {} }, baston = 0, kol = 0, modelSay = {};
     yer.forEach(function (d) {
       d.forEach(function (p) {
-        var k = sistemSay(p.a);
-        if (!k) return;
-        n += k; dikme += k + 1;
-        G().forEach(function (g) { if (p.a[g]) sis[g] = (sis[g] || 0) + p.a[g]; });
+        if (!p.u.length) return;
+        n += p.u.length; dikme += p.u.length + 1;
+        p.u.forEach(function (u) {
+          var m = MP(u.m);
+          modelSay[u.m] = (modelSay[u.m] || 0) + 1;
+          ["ab1", "ub1", "raf"].forEach(function (k) { if (m[k]) ad[k][u.g] = (ad[k][u.g] || 0) + m[k]; });
+          baston += m.baston; kol += m.rafKolu;
+        });
       });
     });
-    var c = carpan(), kp = AYAR.kaplamalar[S.kaplama].ad, rf = AYAR.raflar[S.raf], F = AYAR.fiyat, satir = [], m = MP();
-    if (dikme) satir.push({ ad: "F dikme", not: S.profil + "×" + S.profil + " mm, " + cm(S.boy) + " cm boy, kulak " + cm(S.kulak) + " cm · " + kp, adet: dikme, fiyat: F.dikme * c });
+    var c = carpan(), kp = AYAR.kaplamalar[S.kaplama].ad, rf = AYAR.raflar[S.raf], F = AYAR.fiyat, satir = [];
+    var dagilim = Object.keys(AYAR.modeller).filter(function (k) { return modelSay[k]; }).map(function (k) { return modelSay[k] + " × " + AYAR.modeller[k].ad; }).join(", ");
+    if (dikme) satir.push({ ad: "F dikme", not: S.profil + "×" + S.profil + " mm, " + cm(S.boy) + " cm boy, kulak " + cm(S.kulak) + " cm · " + kp + (dagilim ? "<br>Üniteler: " + dagilim : ""), adet: dikme, fiyat: F.dikme * c });
     var olc = G().slice().sort(function (a, b) { return a - b; });
-    var ek = function (adet) { return adet > 1 ? "sistem başına " + adet + " adet · " : ""; };
-    if (m.ab1) olc.forEach(function (g) { if (sis[g]) satir.push({ ad: "AB1 borusu " + g + " cm", not: ek(m.ab1) + kp, adet: sis[g] * m.ab1, fiyat: F.ab1 * c }); });
-    if (m.ub1) olc.forEach(function (g) { if (sis[g]) satir.push({ ad: "UB1 borusu " + g + " cm", not: ek(m.ub1) + kp, adet: sis[g] * m.ub1, fiyat: F.ub1 * c }); });
-    if (m.baston && n) satir.push({ ad: "Baston (düz, " + O.baston + " cm)", not: ek(m.baston) + kp, adet: n * m.baston, fiyat: F.baston * c });
-    if (m.rafKolu && n) satir.push({ ad: "Raf kolu", not: "sistem başına " + m.rafKolu + " adet · " + kp, adet: n * m.rafKolu, fiyat: F.rafKolu * c });
-    if (m.raf) olc.forEach(function (g) { if (sis[g]) satir.push({ ad: rf.ad + " " + g + " cm", not: m.raf > 1 ? "sistem başına " + m.raf + " adet" : "", adet: sis[g] * m.raf, fiyat: rf.fiyat }); });
-    return { satir: satir, n: n, dikme: dikme, raf: n * m.raf, boru: n * (m.ab1 + m.ub1), ara: satir.reduce(function (s, x) { return s + x.adet * x.fiyat; }, 0) };
+    olc.forEach(function (g) { if (ad.ab1[g]) satir.push({ ad: "AB1 borusu " + g + " cm", not: kp, adet: ad.ab1[g], fiyat: F.ab1 * c }); });
+    olc.forEach(function (g) { if (ad.ub1[g]) satir.push({ ad: "UB1 borusu " + g + " cm", not: kp, adet: ad.ub1[g], fiyat: F.ub1 * c }); });
+    if (baston) satir.push({ ad: "Baston (düz, " + O.baston + " cm)", not: kp, adet: baston, fiyat: F.baston * c });
+    if (kol) satir.push({ ad: "Raf kolu", not: "raf başına 2 adet · " + kp, adet: kol, fiyat: F.rafKolu * c });
+    olc.forEach(function (g) { if (ad.raf[g]) satir.push({ ad: rf.ad + " " + g + " cm", not: "", adet: ad.raf[g], fiyat: rf.fiyat }); });
+    var rafT = 0, boruT = 0;
+    olc.forEach(function (g) { rafT += ad.raf[g] || 0; boruT += (ad.ab1[g] || 0) + (ad.ub1[g] || 0); });
+    return { satir: satir, n: n, dikme: dikme, raf: rafT, boru: boruT, dagilim: dagilim, modelSay: modelSay, ara: satir.reduce(function (s, x) { return s + x.adet * x.fiyat; }, 0) };
   }
 
   // ---- çizim yardımcıları
@@ -1895,7 +1914,7 @@
         var kz = konumlar(p);
         kz.sistemler.forEach(function (u) {
           var a0 = u.x, a1 = u.x + u.g;
-          var m = MP();
+          var m = MP(u.m);
           if (m.raf) s += poly([P2(a0, z0), P2(a1, z0), P2(a1, z0 + O.rafDerinlik), P2(a0, z0 + O.rafDerinlik)], rf.renk, ' stroke="' + rf.kenar + '" stroke-width="1"');
           if (m.ub1) s += line(P2(a0, z0 + O.ubKol)[0], P2(a0, z0 + O.ubKol)[1], P2(a1, z0 + O.ubKol)[0], P2(a1, z0 + O.ubKol)[1], mr[0], 2.4);
           if (m.ab1) s += line(P2(a0, z0 + O.abKol)[0], P2(a0, z0 + O.abKol)[1], P2(a1, z0 + O.abKol)[0], P2(a1, z0 + O.abKol)[1], mr[0], 1.6);
@@ -1936,11 +1955,15 @@
     var kx = 0.55, ky = 0.38, fs = Math.max(10, Math.min(W, 700) / 28), mr = MR(), rf = AYAR.raflar[S.raf], kc = kenarCizgi();
     var L0 = fs * 2.8, T = D * ky + fs * 1.2, floor = T + H + D * ky * 0, s = "";
     function pr(x, h, z) { return [L0 + x + (D - z) * kx, floor - h - (D - z) * ky]; }
-    var hAB = Math.max(40, S.boy - 22), hUB = Math.round(S.boy * 0.42), hRaf = Math.min(hAB - 25, hUB + 32), m = MP();
+    var hAB = Math.max(40, S.boy - 22), hUB = Math.round(S.boy * 0.42), hRaf = Math.min(hAB - 25, hUB + 32);
     // aynı parçadan birden çok varsa (5 UB1, 5 raf) dikme boyunca eşit aralıkla dizilir
     function seviyeler(adet, alt, ust) { var l = []; for (var q = 0; q < adet; q++) l.push(adet === 1 ? ust : alt + (ust - alt) * q / (adet - 1)); return l; }
-    var ubH = m.ub1 === 1 ? [hUB] : seviyeler(m.ub1, Math.max(30, S.boy * 0.2), S.boy - 20);
-    var rafH = m.raf === 1 ? [hRaf] : seviyeler(m.raf, 12, S.boy - 25);
+    function yukseklikler(m) {
+      return {
+        ub: !m.ub1 ? [] : m.ub1 === 1 ? [hUB] : seviyeler(m.ub1, Math.max(30, S.boy * 0.2), S.boy - 20),
+        raf: !m.raf ? [] : m.raf === 1 ? [hRaf] : seviyeler(m.raf, 12, S.boy - 25)
+      };
+    }
     s += "<defs>" +
       '<linearGradient id="mg-gm' + id + '" x1="0" x2="1"><stop offset="0" stop-color="' + mr[0] + '"/><stop offset=".5" stop-color="' + mr[1] + '"/><stop offset="1" stop-color="' + mr[0] + '"/></linearGradient>' +
       '<linearGradient id="mg-gy' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + mr[1] + '"/><stop offset="1" stop-color="' + mr[0] + '"/></linearGradient>' +
@@ -1956,7 +1979,8 @@
       s += yazi(km[0], km[1], "KAPI", fs * 0.75, "#2b6cb0", ' text-anchor="middle" font-weight="700"') + yazi(km[0], km[1] + fs * 0.9, cm(kg) + " cm", fs * 0.7, "#2b6cb0", ' text-anchor="middle" font-weight="700"');
     }
     var sistemler = [], dikmeler = [];
-    y.forEach(function (pp) { var kz = konumlar(pp); sistemler = sistemler.concat(kz.sistemler); dikmeler = dikmeler.concat(kz.dikmeler); });
+    var sira = 0;
+    y.forEach(function (pp, pi) { var kz = konumlar(pp); kz.sistemler.forEach(function (u) { u.p = pi; u.no = ++sira; }); sistemler = sistemler.concat(kz.sistemler); dikmeler = dikmeler.concat(kz.dikmeler); });
     // kulaklar (duvara bağlantı)
     dikmeler.forEach(function (x) {
       [S.boy - 4, Math.max(8, S.boy * 0.12)].forEach(function (h) {
@@ -1984,7 +2008,7 @@
       s += poly([pr(x0, ust, zf), pr(x1, ust, zf), pr(x1, alt, zf), pr(x0, alt, zf)], "url(#mg-gy" + id + ")", kc);
     }
     sistemler.forEach(function (u) {
-      var x0 = u.x, x1 = u.x + u.g;
+      var x0 = u.x, x1 = u.x + u.g, m = MP(u.m), yk = yukseklikler(m), rafH = yk.raf, ubH = yk.ub;
       // raf kolları ve raflar
       if (m.raf) rafH.forEach(function (hR) {
         [x0 + 2, x1 - 3].forEach(function (x) {
@@ -2008,6 +2032,13 @@
     // ölçüler
     var dimY = floor + fs * 1.4;
     sistemler.forEach(function (u) { s += yazi(pr(u.x + u.g / 2, 0, D)[0], dimY, u.g, fs, "#1b1b1b", ' text-anchor="middle" font-weight="700"'); });
+    // üniteye tıklayınca model menüsü açılır: her ünitenin üstüne görünmez bir alan
+    sistemler.forEach(function (u) {
+      var a0 = pr(u.x, S.boy, D), a1 = pr(u.x + u.g, 0, z0);
+      s += '<rect class="mg-hit" data-i="' + i + '" data-p="' + u.p + '" data-u="' + u.k + '" x="' + r1(a0[0]) + '" y="' + r1(a0[1]) + '" width="' + r1(a1[0] - a0[0]) + '" height="' + r1(a1[1] - a0[1]) + '" fill="#e2701f" fill-opacity="0" rx="4"><title>' + u.g + " cm · " + AYAR.modeller[u.m].ad + " (değiştirmek için tıklayın)</title></rect>";
+      var no = pr(u.x + u.g / 2, S.boy + 6, z0);
+      s += '<circle cx="' + r1(no[0]) + '" cy="' + r1(no[1] - fs * 0.35) + '" r="' + r1(fs * 0.55) + '" fill="#e2701f"/>' + yazi(no[0], no[1], u.no, fs * 0.65, "#fff", ' text-anchor="middle" font-weight="700"');
+    });
     var dy2 = dimY + fs * 0.9, a = pr(0, 0, D)[0], b = pr(W, 0, D)[0];
     s += line(a, dy2, b, dy2, "#999", r1(fs / 14));
     s += yazi((a + b) / 2, dy2 + fs * 1.05, (i + 1) + ". duvar " + cm(W) + " cm", fs * 0.8, "#666", ' text-anchor="middle"');
@@ -2059,9 +2090,14 @@
     }).join("");
   }
 
+  function modelSec(i, pi, k, secili) {
+    return '<select data-i="' + i + '" data-p="' + pi + '" data-u="' + k + '" aria-label="Ünite modeli">' + Object.keys(AYAR.modeller).map(function (m, j) {
+      return '<option value="' + m + '"' + (m === secili ? " selected" : "") + ">" + (j + 1) + ". " + AYAR.modeller[m].ad + "</option>";
+    }).join("") + "</select>";
+  }
   function guncelle() {
     var yer = tumYerlesim();
-    if (!S.yer) S.yer = yer.map(function (d) { return d.map(function (p) { return Object.assign({}, p.a); }); });
+    if (!S.yer) S.yer = yer.map(function (d) { return d.map(function (p) { return p.u.map(function (u) { return { g: u.g, m: u.m }; }); }); });
     yer = tumYerlesim();
     planCiz(yer);
     var uyari = [];
@@ -2073,12 +2109,18 @@
       var html = '<div class="mg-dv"><div class="mg-dh"><h4>' + (i + 1) + ". Duvar · " + cm(S.duvarlar[i].w) + " cm" + (S.kapi.duvar === i ? " · kapı " + cm(S.kapi.g) + " cm" : "") + "</h4><span>" + n + " sistem</span></div>" +
         '<div class="mg-cz"><svg data-svg="' + i + '" role="img" aria-label="' + (i + 1) + '. duvar mağaza sistemi yerleşimi"></svg></div>';
       if (!d.length) html += '<p class="mg-n mg-w">Bu duvarda sistem kurulacak alan kalmadı.</p>';
+      else html += '<p class="mg-n">Bir ünitenin modelini değiştirmek için çizimde üniteye tıklayın ya da aşağıdaki listeden seçin.</p>';
+      var no = 0;
       d.forEach(function (p, pi) {
         var uz = p.son - p.bas, kul = kaplanan(p.a), kalan = uz - kul;
         if (d.length > 1 || p.yan) html += '<div class="mg-pb">' + (p.yan === "sol" ? "Kapının solu" : p.yan === "sag" ? "Kapının sağı" : "Bölüm " + (pi + 1)) + " · " + cm(uz) + " cm</div>";
         html += '<div class="mg-u">' + G().map(function (g) {
           return '<div><div><div class="w">' + g + ' cm sistem</div><div class="c">' + (p.a[g] || 0) + ' adet</div></div><div class="b"><button type="button" data-i="' + i + '" data-p="' + pi + '" data-g="' + g + '" data-d="-1" aria-label="' + g + ' cm sistem azalt">−</button><button type="button" data-i="' + i + '" data-p="' + pi + '" data-g="' + g + '" data-d="1" aria-label="' + g + ' cm sistem ekle">+</button></div></div>';
         }).join("") + "</div>" +
+          (p.u.length ? '<div class="mg-ul">' + p.u.map(function (u, k) {
+            no++;
+            return '<label class="mg-un"><span><i>' + no + "</i>" + u.g + " cm</span>" + modelSec(i, pi, k, u.m) + "</label>";
+          }).join("") + "</div>" : "") +
           '<p class="mg-n">Kullanılabilir: <b>' + cm(uz) + " cm</b> · Kurulum: <b>" + cm(kul) + " cm</b> (dikmeler dahil) · " +
           (kalan >= 0 ? "Boşluk: <b>" + cm(kalan) + " cm</b>" : '<span class="mg-w">' + cm(-kalan) + " cm taşıyor!</span>") + "</p>";
       });
@@ -2100,14 +2142,14 @@
   function mesaj() {
     var yer = tumYerlesim(), t = toplam(yer);
     var satirlar = ["Merhaba, mağaza sistemleri hesaplama sayfasından yazıyorum.",
-      "Model: " + AYAR.modeller[S.model].ad + " (" + AYAR.modeller[S.model].ac + ")",
+      "Üniteler: " + (t.dagilim || "-"),
       "Düzen: " + DUZENLER[S.duzen - 1].ad + " · Tavan: " + cm(S.tavan) + " cm",
       "F dikme: " + cm(S.boy) + " cm boy, " + S.profil + "×" + S.profil + " mm profil, kulak " + cm(S.kulak) + " cm",
       "Renk / kaplama: " + AYAR.kaplamalar[S.kaplama].ad + " · Raf: " + AYAR.raflar[S.raf].ad];
     if (S.kapi.duvar >= 0) satirlar.push("Kapı: " + (S.kapi.duvar + 1) + ". duvarda, başından " + cm(S.kapi.x) + " cm, genişlik " + cm(S.kapi.g) + " cm");
     yer.forEach(function (d, i) {
       var u = [];
-      d.forEach(function (p) { G().forEach(function (g) { if (p.a[g]) u.push(p.a[g] + " adet " + g + " cm"); }); });
+      d.forEach(function (p) { p.u.forEach(function (x) { u.push(x.g + " cm " + AYAR.modeller[x.m].ad); }); });
       satirlar.push((i + 1) + ". duvar (" + cm(S.duvarlar[i].w) + " cm): " + (u.join(", ") || "-"));
     });
     t.satir.forEach(function (x) { satirlar.push("• " + x.ad + ": " + x.adet + " adet"); });
@@ -2129,7 +2171,6 @@
   });
   $("mg-pr").addEventListener("change", function (e) { S.profil = +e.target.value; sifirla(); guncelle(); });
   $("mg-rf").addEventListener("change", function (e) { S.raf = e.target.value; guncelle(); });
-  $("mg-ol").addEventListener("change", function (e) { S.olcu = e.target.value; sifirla(); guncelle(); });
   $("mg-dw").addEventListener("input", function (e) {
     var t = e.target;
     if (t.dataset.dw !== undefined) { S.duvarlar[+t.dataset.dw].w = sayi(t.value); sifirla(); guncelle(); }
@@ -2148,17 +2189,51 @@
   });
   R.addEventListener("change", function (e) {
     if (e.target.name === "mg-kp") { S.kaplama = e.target.value; kaplamaSecimi(); guncelle(); }
-    if (e.target.name === "mg-md") { S.model = e.target.value; modelSecimi(); sifirla(); guncelle(); }
+    if (e.target.name === "mg-md") {
+      S.model = e.target.value; modelSecimi();
+      if (S.yer) S.yer.forEach(function (d) { d.forEach(function (u) { u.forEach(function (x) { x.m = S.model; }); }); });
+      guncelle();
+    }
+    if (e.target.tagName === "SELECT" && e.target.dataset.u !== undefined) {
+      S.yer[+e.target.dataset.i][+e.target.dataset.p][+e.target.dataset.u].m = e.target.value; guncelle();
+    }
   });
+  function menuKapat() { var m = R.querySelector(".mg-pop"); if (m) m.remove(); }
   R.addEventListener("click", function (e) {
+    var hit = e.target.closest(".mg-hit"), sec = e.target.closest(".mg-pop button");
+    if (sec) {
+      var pop = sec.closest(".mg-pop");
+      S.yer[+pop.dataset.i][+pop.dataset.p][+pop.dataset.u].m = sec.dataset.m;
+      menuKapat(); guncelle(); return;
+    }
+    menuKapat();
+    if (hit) {
+      var u = S.yer[+hit.dataset.i][+hit.dataset.p][+hit.dataset.u], kr = R.getBoundingClientRect();
+      var m = document.createElement("div");
+      m.className = "mg-pop";
+      m.dataset.i = hit.dataset.i; m.dataset.p = hit.dataset.p; m.dataset.u = hit.dataset.u;
+      m.innerHTML = "<b>" + u.g + " cm ünite · model seçin</b>" + Object.keys(AYAR.modeller).map(function (k, j) {
+        return '<button type="button" data-m="' + k + '"' + (k === u.m ? ' class="on"' : "") + ">" + (j + 1) + ". " + AYAR.modeller[k].ad + "</button>";
+      }).join("");
+      R.appendChild(m);
+      var x = e.clientX - kr.left, y = e.clientY - kr.top;
+      m.style.left = Math.max(0, Math.min(x, R.clientWidth - m.offsetWidth)) + "px";
+      m.style.top = y + 8 + "px";
+      return;
+    }
     var bt = e.target.closest("button[data-g]");
     if (!bt || !R.contains(bt)) return;
-    var a = S.yer[+bt.dataset.i][+bt.dataset.p], g = +bt.dataset.g;
-    a[g] = Math.max(0, (a[g] || 0) + (+bt.dataset.d)); guncelle();
+    var u = S.yer[+bt.dataset.i][+bt.dataset.p], g = +bt.dataset.g, son = -1;
+    u.forEach(function (x, k) { if (x.g === g) son = k; });
+    if (+bt.dataset.d > 0) {
+      var yer = son >= 0 ? son + 1 : (g === G()[0] ? 0 : u.length);   // büyükler başta kalsın
+      u.splice(yer, 0, { g: g, m: S.model });
+    } else if (son >= 0) u.splice(son, 1);
+    guncelle();
   });
   $("mg-pdf").addEventListener("click", function () {
     if (!window.AcarRafTeklifTopla) { alert("PDF özelliği bu sayfada yüklenemedi."); return; }
-    window.AcarRafTeklifTopla(R, "Mağaza Sistemleri · " + AYAR.modeller[S.model].ad, mesaj(), { duvar: ".mg-dv", toplam: "#mg-tt", plan: "#mg-plan", etiket: "Toplam" + KDV });
+    window.AcarRafTeklifTopla(R, "Mağaza Sistemleri", mesaj(), { duvar: ".mg-dv", toplam: "#mg-tt", plan: "#mg-plan", etiket: "Toplam" + KDV });
   });
   $("mg-wa").addEventListener("click", function () { window.open("https://wa.me/" + AYAR.whatsapp + "?text=" + encodeURIComponent(mesaj()), "_blank"); });
 
