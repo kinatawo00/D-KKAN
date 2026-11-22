@@ -1611,7 +1611,8 @@
     whatsapp: "905376605348",
     kdvDahil: true,                       // fiyatlar KDV dahil mi (ekrandaki yazı için)
     profiller: [30, 40],                  // F dikme profili (mm)
-    genislikler: [90, 60],                // sistem (ünite) genişlikleri, cm
+    genislikler: [60, 90],                // ünite genişlikleri, cm: 60 öncelikli, 90 tamamlayıcı
+    kosePayi: 50,                         // köşede: bir duvar tam ölçü, sonraki duvardan bu kadar (cm) düşülür
     fiyat: { dikme: 1500, ab1: 300, ub1: 360, baston: 120, rafKolu: 60 },   // metal parçalar (siyah/beyaz/antrasit)
     // Modeller: bir sistemdeki (iki dikme arası) parça adetleri. Dikmeler her modelde ortak: sistem + 1.
     modeller: {
@@ -1748,7 +1749,7 @@
     '<label class="mg-f">Dikme profili<select id="mg-pr">' + AYAR.profiller.map(function (p) { return '<option value="' + p + '">' + p + "×" + p + " mm</option>"; }).join("") + "</select></label>" +
     '<label class="mg-f">Kulak: duvara uzaklık (cm)<input type="number" inputmode="numeric" min="0" id="mg-ku" value="' + V.kulak + '"></label>' +
     '<label class="mg-f">Raf<select id="mg-rf">' + Object.keys(AYAR.raflar).map(function (k) { return '<option value="' + k + '">' + AYAR.raflar[k].ad + "</option>"; }).join("") + "</select></label>" +
-    '<label class="mg-f">Köşe ve kapıdan boşluk (cm)<input type="number" inputmode="numeric" min="0" id="mg-ke" value="' + V.kenar + '"></label>' +
+    '<label class="mg-f">Kapıdan boşluk (cm)<input type="number" inputmode="numeric" min="0" id="mg-ke" value="' + V.kenar + '"></label>' +
     '</div><div class="mg-n" style="margin-top:12px">Renk / kaplama (dikme, AB1, UB1, baston ve raf kolları)</div><div class="mg-rk" id="mg-kp"></div>' +
     '<p class="mg-n">Yan yana sistemler aradaki F dikmeyi paylaşır: dikme sayısı, sistem sayısından 1 fazladır.</p></div>' +
     '<div class="mg-k"><h3>4. Yerleşim</h3><div id="mg-ws"></div><p class="mg-n">Şematik görünüm · Ölçüler cm · Sistem sayısını genişliklere göre +/− ile değiştirebilirsiniz.</p></div>' +
@@ -1778,12 +1779,13 @@
 
   function onceki(i) { if (i > 0) return i - 1; return S.duzen === 4 ? 3 : -1; }
   function sonraki(i) { if (i < S.duzen - 1) return i + 1; return S.duzen === 4 ? 0 : -1; }
-  function kosePayi() { return S.kulak + pf() + Math.max(O.ubKol, O.rafDerinlik); }   // komşu duvardaki sistemin köşedeki çıkıntısı   // komşu duvardaki sistemin köşedeki çıkıntısı (UB1 kolu / raf)
+  function kosePayi() { return AYAR.kosePayi; }
 
   // duvarın sistem kurulabilecek parçaları (köşe ve kapı boşlukları düşülmüş)
   function parcalar(i) {
     var W = S.duvarlar[i].w, k = S.kenar;
-    var b = (onceki(i) >= 0 ? kosePayi() : 0) + k, e = W - (sonraki(i) >= 0 ? kosePayi() : 0) - k, sonuc = [];
+    // köşede önceki duvar tam ölçü kullanır, bu duvar köşe payı kadar sonra başlar; kapıdan "kenar" kadar boşluk bırakılır
+    var b = onceki(i) >= 0 ? kosePayi() : 0, e = W, sonuc = [];
     if (S.kapi.duvar === i) {
       var x0 = Math.max(0, Math.min(W, S.kapi.x)), x1 = Math.min(W, x0 + S.kapi.g);
       if (x0 - k > b) sonuc.push({ bas: b, son: Math.min(x0 - k, e), yan: "sol" });
@@ -1795,43 +1797,17 @@
   function sistemSay(a) { return G().reduce(function (s, g) { return s + (a[g] || 0); }, 0); }
   function kaplanan(a) { var n = sistemSay(a); return n ? G().reduce(function (s, g) { return s + (a[g] || 0) * g; }, 0) + (n + 1) * pf() : 0; }
 
-  // yerleşim: en az boşluk bırakan dizilime yakın olanlar içinde en az sistemli olanı seçer
-  var onbellek = {};
+  // yerleşim: önce 60 cm üniteler dizilir; kalan boşluk yetiyorsa bazı 60 cm üniteler 90 cm üniteye çevrilir (her biri +30 cm)
   function yerlestir(L) {
-    L = Math.floor(L);
-    var gs = G(), p = pf(), anahtar = [L, p].join("|");
-    if (onbellek[anahtar]) return Object.assign({}, onbellek[anahtar]);
-    var enKucuk = Math.min.apply(null, gs), maxN = Math.floor((L - p) / (enKucuk + p)), sonuc = bos();
-    if (maxN >= 1) {
-      var ulas = [new Int8Array(L + 1).fill(-1)]; ulas[0][0] = 99;
-      var adaylar = [];
-      for (var n = 1; n <= maxN; n++) {
-        var onc = ulas[n - 1], cur = new Int8Array(L + 1).fill(-1);
-        for (var s = enKucuk; s <= L; s++) for (var gi = 0; gi < gs.length; gi++) { if (s - gs[gi] >= 0 && onc[s - gs[gi]] !== -1) { cur[s] = gi; break; } }
-        ulas.push(cur);
-        for (var t = Math.floor(L - (n + 1) * p); t >= 0; t--) if (cur[t] !== -1) { adaylar.push({ n: n, s: t, bos: L - t - (n + 1) * p }); break; }
-      }
-      if (adaylar.length) {
-        var enAz = Math.min.apply(null, adaylar.map(function (c) { return c.bos; })), best = null;
-        adaylar.forEach(function (c) {
-          if (c.bos > enAz + AYAR.fiyatPayi) return;
-          if (!best || c.n < best.n || (c.n === best.n && c.bos < best.bos)) best = c;
-        });
-        sonuc = ayir(best.n, best.s, ulas, gs);
-      }
-    }
-    onbellek[anahtar] = sonuc;
-    return Object.assign({}, sonuc);
-  }
-  function ayir(n, s, ulas, gs) {
-    var a = bos(), i, j, k;
-    for (i = 0; i < gs.length; i++) if (gs[i] * n === s) { a[gs[i]] = n; return a; }
-    for (i = 0; i < gs.length; i++) for (j = i + 1; j < gs.length; j++) for (k = n - 1; k >= 1; k--) if (gs[i] * k + gs[j] * (n - k) === s) { a[gs[i]] = k; a[gs[j]] = n - k; return a; }
-    for (var m = n, t = s; m > 0; m--) { var g = gs[ulas[m][t]]; a[g]++; t -= g; }
+    var p = pf(), a = bos(), kucuk = G()[0], buyuk = G()[1], fark = buyuk - kucuk;
+    var n = Math.floor((L - p) / (kucuk + p));
+    if (n < 1) return a;
+    var kalan = L - p - n * (kucuk + p), k = Math.min(n, Math.floor(kalan / fark));
+    a[kucuk] = n - k; a[buyuk] = k;
     return a;
   }
 
-  // sayılardan (ör. {90: 2, 60: 1}) büyükten küçüğe ünite listesi
+  // sayılardan (ör. {60: 3, 90: 1}) ünite listesi: önce 60 cm, sonra 90 cm üniteler
   function uniteListesi(a, model) {
     var l = []; G().forEach(function (g) { for (var q = 0; q < (a[g] || 0); q++) l.push({ g: g, m: model }); });
     return l;
@@ -1972,6 +1948,13 @@
     s += poly([pr(0, 0, D), pr(W, 0, D), pr(W, 0, 0), pr(0, 0, 0)], "#e9e5df");
     s += line(pr(0, S.tavan, 0)[0], pr(0, S.tavan, 0)[1], pr(W, S.tavan, 0)[0], pr(W, S.tavan, 0)[1], "#b9bfc5", 1.2, ' stroke-dasharray="6 4"');
     s += yazi(pr(W, S.tavan, 0)[0] - 4, pr(W, S.tavan, 0)[1] - 4, "tavan " + cm(S.tavan) + " cm", fs * 0.65, "#999", ' text-anchor="end"');
+    // köşe payı: önceki duvar köşeye kadar tam kullanıldığı için bu duvarın başından düşülen alan
+    if (onceki(i) >= 0) {
+      var kp = Math.min(W, kosePayi());
+      s += poly([pr(0, 0, 0), pr(kp, 0, 0), pr(kp, S.boy, 0), pr(0, S.boy, 0)], "#eeeeee", ' stroke="#d6d6d6" stroke-dasharray="4 3"');
+      var kpm = pr(kp / 2, S.boy / 2, 0);
+      s += yazi(kpm[0], kpm[1], "köşe " + cm(kp) + " cm", fs * 0.7, "#999", ' text-anchor="middle" transform="rotate(-90 ' + r1(kpm[0]) + " " + r1(kpm[1]) + ')"');
+    }
     if (S.kapi.duvar === i) {
       var kx0 = Math.max(0, Math.min(W, S.kapi.x)), kg = Math.min(S.kapi.g, W - kx0), kh = Math.min(S.tavan, 210);
       s += poly([pr(kx0, 0, 0), pr(kx0 + kg, 0, 0), pr(kx0 + kg, kh, 0), pr(kx0, kh, 0)], "#dce8f5", ' stroke="#2b6cb0" stroke-width="1.5"');
