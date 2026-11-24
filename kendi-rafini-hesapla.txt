@@ -2090,10 +2090,15 @@
             s += poly([pr(xm, hA + 1.5, za), pr(xm, hA + 1.5, zb), pr(xm, hA - 1.5, zb), pr(xm, hA - 1.5, za)], mr[2]);
             s += poly([pr(xm, hA + 1.5, za), pr(xm + 1, hA + 1.5, za), pr(xm + 1, hA + 1.5, zb), pr(xm, hA + 1.5, zb)], mr[1]);
             var uc = pr(xm, hA + 3, zb); s += rect(uc[0] - 0.6, uc[1], 2.2, 6, mr[0], kc);
-          } else {                 // kanca: ince tel, 25 cm, ucu yukarı kıvrık
-            var zk = za + O.kanca, xk = xm + 1;
-            s += poly([pr(xk, hA + 0.6, za), pr(xk, hA + 0.6, zk), pr(xk, hA - 0.6, zk), pr(xk, hA - 0.6, za)], mr[2]);
-            s += poly([pr(xk, hA + 0.6, zk), pr(xk + 0.6, hA + 0.6, zk), pr(xk + 0.6, hA + 7, zk), pr(xk, hA + 7, zk)], mr[0], kc);
+          } else {                 // kanca: AB1 profilini üstten saran U kelepçe + öne uzanan ince tel, ucu yukarı kıvrık
+            var xk = xm, kg = 3, zk = za + O.kanca, dus = 3;
+            // kelepçe: profilin üstü ve önü (profil 3 cm yüksek, kelepçe biraz daha geniş)
+            s += poly([pr(xk, hA + 2, za - 2.5), pr(xk + kg, hA + 2, za - 2.5), pr(xk + kg, hA + 2, za + 0.6), pr(xk, hA + 2, za + 0.6)], mr[1], kc);
+            s += poly([pr(xk, hA + 2, za + 0.6), pr(xk + kg, hA + 2, za + 0.6), pr(xk + kg, hA - 2.2, za + 0.6), pr(xk, hA - 2.2, za + 0.6)], mr[0], kc);
+            // tel: kelepçenin önünden öne doğru hafif aşağı iner, uçta yukarı kıvrılır
+            var t0 = pr(xk + kg / 2, hA - 0.6, za + 0.6), t1 = pr(xk + kg / 2, hA - 0.6 - dus, zk), t2 = pr(xk + kg / 2, hA - dus + 2.6, zk + 3);
+            s += '<polyline points="' + [t0, t1, t2].map(function (q) { return r1(q[0]) + "," + r1(q[1]); }).join(" ") + '" fill="none" stroke="' + mr[0] + '" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>';
+            s += line(t0[0], t0[1] - 0.3, t1[0], t1[1] - 0.3, mr[1], 0.35, ' stroke-linecap="round"');
           }
         });
       });
