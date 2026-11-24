@@ -1649,7 +1649,10 @@
       rafli:  { ad: "Raflı askı sistemi",  ac: "AB1 + baston, UB1, 1 raf",  parca: { ab1: 1, baston: 1, ub1: 1, raf: 1, rafKolu: 2 } },
       rafsiz: { ad: "Rafsız askı sistemi", ac: "AB1 + baston, UB1",         parca: { ab1: 1, baston: 1, ub1: 1 } },
       ub5:    { ad: "5 UB1 borulu sistem", ac: "5 adet UB1 borusu",         parca: { ub1: 5 } },
-      raf5:   { ad: "5 raflı sistem",      ac: "5 raf, 10 raf kolu",        parca: { raf: 5, rafKolu: 10 } }
+      raf5:   { ad: "5 raflı sistem",      ac: "5 raf, 10 raf kolu",        parca: { raf: 5, rafKolu: 10 } },
+      ub2:    { ad: "2 UB1 borulu sistem", ac: "2 adet UB1 borusu",         parca: { ub1: 2 } },
+      ab2:    { ad: "2 AB1 bastonlu sistem", ac: "2 AB1, her birine 1 baston", parca: { ab1: 2, baston: 2 } },
+      ab5:    { ad: "5 AB1 bastonlu sistem", ac: "5 AB1, her birine 3 baston", parca: { ab1: 5, baston: 15 } }
     },
     raflar: {
       sunta18: { ad: "1,8 cm sunta raf", fiyat: 400, kalinlik: 1.8, renk: "#e9e1d3", kenar: "#cbbfa8" },
@@ -1924,8 +1927,10 @@
           if (m.raf) s += poly([P2(a0, z0), P2(a1, z0), P2(a1, z0 + O.rafDerinlik), P2(a0, z0 + O.rafDerinlik)], rf.renk, ' stroke="' + rf.kenar + '" stroke-width="1"');
           if (m.ub1) s += line(P2(a0, z0 + O.ubKol)[0], P2(a0, z0 + O.ubKol)[1], P2(a1, z0 + O.ubKol)[0], P2(a1, z0 + O.ubKol)[1], mr[0], 2.4);
           if (m.ab1) s += line(P2(a0, z0 + O.abKol)[0], P2(a0, z0 + O.abKol)[1], P2(a1, z0 + O.abKol)[0], P2(a1, z0 + O.abKol)[1], mr[0], 1.6);
-          if (m.baston) {
-            var m0 = P2((a0 + a1) / 2, z0 + O.abKol), m1 = P2((a0 + a1) / 2, z0 + O.abKol + O.baston);
+          var bAdet = m.ab1 ? Math.round(m.baston / m.ab1) : 0;
+          for (var bj = 0; bj < bAdet; bj++) {
+            var bx = a0 + (a1 - a0) * (bj + 1) / (bAdet + 1);
+            var m0 = P2(bx, z0 + O.abKol), m1 = P2(bx, z0 + O.abKol + O.baston);
             s += line(m0[0], m0[1], m1[0], m1[1], mr[0], 2.4);
           }
         });
@@ -1964,9 +1969,16 @@
     var hAB = Math.max(40, S.boy - 22), hUB = Math.round(S.boy * 0.42), hRaf = Math.min(hAB - 25, hUB + 32);
     // aynı parçadan birden çok varsa (5 UB1, 5 raf) dikme boyunca eşit aralıkla dizilir
     function seviyeler(adet, alt, ust) { var l = []; for (var q = 0; q < adet; q++) l.push(adet === 1 ? ust : alt + (ust - alt) * q / (adet - 1)); return l; }
+    function boruSeviye(adet, tek) {
+      if (!adet) return [];
+      if (adet === 1) return [tek];
+      if (adet === 2) return [hUB, hAB];                       // çift askı: alt ve üst
+      return seviyeler(adet, Math.max(30, S.boy * 0.2), S.boy - 20);
+    }
     function yukseklikler(m) {
       return {
-        ub: !m.ub1 ? [] : m.ub1 === 1 ? [hUB] : seviyeler(m.ub1, Math.max(30, S.boy * 0.2), S.boy - 20),
+        ub: boruSeviye(m.ub1, hUB),
+        ab: boruSeviye(m.ab1, hAB),
         raf: !m.raf ? [] : m.raf === 1 ? [hRaf] : seviyeler(m.raf, 12, S.boy - 25)
       };
     }
@@ -2033,14 +2045,17 @@
       });
       // UB1 (uzun kollu) ve AB1 (kısa kollu, üstte)
       if (m.ub1) ubH.forEach(function (hU) { boru(x0, x1, hU, O.ubKol); });
-      if (m.ab1) boru(x0, x1, hAB, O.abKol);
-      // baston: AB1 borusunun ortasından öne
-      if (m.baston) {
-        var xm = (x0 + x1) / 2 - 1.5, za = z0 + O.abKol, zb = za + O.baston;
-        s += poly([pr(xm, hAB + 1.5, za), pr(xm, hAB + 1.5, zb), pr(xm, hAB - 1.5, zb), pr(xm, hAB - 1.5, za)], mr[2]);
-        s += poly([pr(xm, hAB + 1.5, za), pr(xm + 1, hAB + 1.5, za), pr(xm + 1, hAB + 1.5, zb), pr(xm, hAB + 1.5, zb)], mr[1]);
-        var uc = pr(xm, hAB + 3, zb); s += rect(uc[0] - 0.6, uc[1], 2.2, 6, mr[0], kc);
-      }
+      // AB1 boruları ve üzerlerindeki bastonlar (AB1 boyunca eşit aralıkla öne doğru)
+      var bAdet = m.ab1 ? Math.round(m.baston / m.ab1) : 0;
+      yk.ab.forEach(function (hA) {
+        boru(x0, x1, hA, O.abKol);
+        for (var bj = 0; bj < bAdet; bj++) {
+          var xm = x0 + (x1 - x0) * (bj + 1) / (bAdet + 1) - 1.5, za = z0 + O.abKol, zb = za + O.baston;
+          s += poly([pr(xm, hA + 1.5, za), pr(xm, hA + 1.5, zb), pr(xm, hA - 1.5, zb), pr(xm, hA - 1.5, za)], mr[2]);
+          s += poly([pr(xm, hA + 1.5, za), pr(xm + 1, hA + 1.5, za), pr(xm + 1, hA + 1.5, zb), pr(xm, hA + 1.5, zb)], mr[1]);
+          var uc = pr(xm, hA + 3, zb); s += rect(uc[0] - 0.6, uc[1], 2.2, 6, mr[0], kc);
+        }
+      });
     });
     // ölçüler
     var dimY = floor + fs * 1.4;
@@ -2083,9 +2098,16 @@
   function modelIkon(k) {
     var p = AYAR.modeller[k].parca, s = '<rect x="18" y="6" width="5" height="76" fill="#1f2023"/><rect x="87" y="6" width="5" height="76" fill="#1f2023"/>';
     var cizgi = function (y, c, h) { return '<rect x="23" y="' + y + '" width="64" height="' + h + '" fill="' + c + '"/>'; };
-    if (p.ab1) s += cizgi(14, "#1f2023", 3) + '<rect x="53" y="14" width="3" height="10" fill="#1f2023"/>';
+    if (p.ab1) {
+      var abY = p.ab1 === 1 ? [14] : p.ab1 === 2 ? [14, 52] : [12, 27, 42, 57, 72], bA = Math.round(p.baston / p.ab1);
+      abY.forEach(function (y) {
+        s += cizgi(y, "#1f2023", 3);
+        for (var b = 0; b < bA; b++) s += '<rect x="' + Math.round(23 + 64 * (b + 1) / (bA + 1) - 1) + '" y="' + y + '" width="3" height="' + (p.ab1 > 2 ? 7 : 10) + '" fill="#1f2023"/>';
+      });
+    }
     if (p.ub1 === 1) s += cizgi(52, "#1f2023", 3);
-    if (p.ub1 > 1) for (var i = 0; i < p.ub1; i++) s += cizgi(14 + i * 15, "#1f2023", 3);
+    if (p.ub1 === 2) s += cizgi(14, "#1f2023", 3) + cizgi(52, "#1f2023", 3);
+    if (p.ub1 > 2) for (var i = 0; i < p.ub1; i++) s += cizgi(14 + i * 15, "#1f2023", 3);
     if (p.raf === 1) s += cizgi(38, "#d6c9b1", 4);
     if (p.raf > 1) for (var j = 0; j < p.raf; j++) s += cizgi(12 + j * 16, "#d6c9b1", 4);
     return '<svg viewBox="0 0 110 88" aria-hidden="true">' + s + "</svg>";

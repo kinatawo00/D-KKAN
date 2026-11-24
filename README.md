@@ -70,5 +70,8 @@ Modeller (`AYAR.modeller`). Sayfanın başındaki seçim bütün ünitelere uygu
 2. Rafsız askı sistemi: AB1 + baston, UB1
 3. 5 UB1 borulu sistem: 5 UB1
 4. 5 raflı sistem: 5 raf + 10 raf kolu
+5. 2 UB1 borulu sistem: 2 UB1
+6. 2 AB1 bastonlu sistem: 2 AB1 + 2 baston (her AB1 için 1)
+7. 5 AB1 bastonlu sistem: 5 AB1 + 15 baston (her AB1 için 3)
 Yeni model eklemek için `AYAR.modeller` içine parça adetleriyle bir satır eklemek yeterlidir.
 Doğrudan link: `/raf-hesaplama#magaza-sistemleri`.
