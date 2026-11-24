@@ -75,10 +75,49 @@ paket = (
     "  if (document.readyState === \"loading\") document.addEventListener(\"DOMContentLoaded\", baslat); else baslat();\n"
     "})();\n"
 )
-(d / "raf-hesapla.js").write_text(paket, encoding="utf-8")
+(d / "raf-hesapla-uygulama.js").write_text(paket, encoding="utf-8")
+
+# ---- raf-hesapla.js: sabit küçük yükleyici ----
+# jsDelivr dal adresini (@dal) uç sunucularında saatlerce eski sürümle önbelleğe alabiliyor. Bu yüzden sitenin
+# çağırdığı raf-hesapla.js hiç değişmeyen küçük bir dosyadır: GitHub'dan dalın son kayıt numarasını (commit) öğrenir
+# ve uygulamayı o kayda sabitlenmiş adresten (@<sha>) yükler; bu adres her zaman doğru sürümü verir.
+# GitHub'a ulaşılamazsa dal adresinden yükler.
+yukleyici = """/* Kendi Rafını Kendin Hesapla - acarraf.com yükleyicisi (birlestir.py ile üretilir, elle düzenlemeyin) */
+(function () {
+  if (window.AcarRafYukleyici) return;
+  window.AcarRafYukleyici = 1;
+  var DEPO = "kinatawo00/D-KKAN", DAL = "ccr-0392e0ab-f5pjug", DOSYA = "raf-hesapla-uygulama.js", ANAHTAR = "acarRafSurum";
+  var yuklendi = false, zaman;
+  function yukle(surum) {
+    if (yuklendi) return;
+    yuklendi = true;
+    clearTimeout(zaman);
+    var s = document.createElement("script");
+    s.src = "https://cdn.jsdelivr.net/gh/" + DEPO + "@" + surum + "/" + DOSYA + (surum === DAL ? "?v=" + Math.floor(Date.now() / 600000) : "");
+    document.head.appendChild(s);
+  }
+  try {
+    var k = JSON.parse(localStorage.getItem(ANAHTAR) || "null");
+    if (k && /^[0-9a-f]{40}$/.test(k.s) && Date.now() - k.t < 300000) return yukle(k.s);
+  } catch (e) {}
+  zaman = setTimeout(function () { yukle(DAL); }, 4000);
+  if (!window.fetch) return yukle(DAL);
+  fetch("https://api.github.com/repos/" + DEPO + "/commits/" + DAL, { headers: { Accept: "application/vnd.github.sha" } })
+    .then(function (r) { if (!r.ok) throw new Error("durum " + r.status); return r.text(); })
+    .then(function (sha) {
+      sha = sha.trim();
+      if (!/^[0-9a-f]{40}$/.test(sha)) throw new Error("geçersiz");
+      try { localStorage.setItem(ANAHTAR, JSON.stringify({ s: sha, t: Date.now() })); } catch (e) {}
+      yukle(sha);
+    })
+    .catch(function () { yukle(DAL); });
+})();
+"""
+(d / "raf-hesapla.js").write_text(yukleyici, encoding="utf-8")
 if shutil.which("node"):
-    sonuc = subprocess.run(["node", "--check", str(d / "raf-hesapla.js")], capture_output=True, text=True)
-    if sonuc.returncode != 0:
-        raise SystemExit("raf-hesapla.js sözdizimi hatası:\n" + sonuc.stderr)
-print("raf-hesapla.js oluşturuldu (" + str(len(paket.encode("utf-8"))) + " bayt)")
+    for ad in ["raf-hesapla-uygulama.js", "raf-hesapla.js"]:
+        sonuc = subprocess.run(["node", "--check", str(d / ad)], capture_output=True, text=True)
+        if sonuc.returncode != 0:
+            raise SystemExit(ad + " sözdizimi hatası:\n" + sonuc.stderr)
+print("raf-hesapla-uygulama.js oluşturuldu (" + str(len(paket.encode("utf-8"))) + " bayt) ve raf-hesapla.js yükleyicisi yazıldı")
 
