@@ -1643,7 +1643,7 @@
     profiller: [30, 40],                  // F dikme profili (mm)
     genislikler: [60, 90],                // ünite genişlikleri, cm: 60 öncelikli, 90 tamamlayıcı
     kosePayi: 50,                         // köşede: bir duvar tam ölçü, sonraki duvardan bu kadar (cm) düşülür
-    fiyat: { dikme: 1500, ab1: 300, ub1: 360, baston: 120, rafKolu: 60 },   // metal parçalar (siyah/beyaz/antrasit)
+    fiyat: { dikme: 1500, ab1: 300, ub1: 360, baston: 120, rafKolu: 60, kanca: 22 },   // metal parçalar (siyah/beyaz/antrasit); kanca: 25 adetlik paket 549,99 TL
     // Modeller: bir sistemdeki (iki dikme arası) parça adetleri. Dikmeler her modelde ortak: sistem + 1.
     modeller: {
       rafli:  { ad: "Raflı askı sistemi",  ac: "AB1 + baston, UB1, 1 raf",  parca: { ab1: 1, baston: 1, ub1: 1, raf: 1, rafKolu: 2 } },
@@ -1652,7 +1652,8 @@
       raf5:   { ad: "5 raflı sistem",      ac: "5 raf, 10 raf kolu",        parca: { raf: 5, rafKolu: 10 } },
       ub2:    { ad: "2 UB1 borulu sistem", ac: "2 adet UB1 borusu",         parca: { ub1: 2 } },
       ab2:    { ad: "2 AB1 bastonlu sistem", ac: "2 AB1, her birine 1 baston", parca: { ab1: 2, baston: 2 } },
-      ab5:    { ad: "5 AB1 bastonlu sistem", ac: "5 AB1, her birine 3 baston", parca: { ab1: 5, baston: 15 } }
+      ab5:    { ad: "5 AB1 bastonlu sistem", ac: "5 AB1, her birine 3 baston", parca: { ab1: 5, baston: 15 } },
+      ab5k:   { ad: "5 AB1 kancalı sistem", ac: "5 AB1, her birine 7 kanca", parca: { ab1: 5, kanca: 35 } }
     },
     raflar: {
       sunta18: { ad: "1,8 cm sunta raf", fiyat: 400, kalinlik: 1.8, renk: "#e9e1d3", kenar: "#cbbfa8" },
@@ -1671,7 +1672,7 @@
       bakirKaplama: { ad: "Bakır kaplama", carpan: 1.8, r: ["#b8702f", "#f0b27a", "#8a5222", "#4d2c12"] },
       roseKaplama:  { ad: "Rose kaplama",  carpan: 2,   r: ["#b56f78", "#ecb3ba", "#8a4f57", "#5a2e34"] }
     },
-    olcu: { abKol: 10, ubKol: 30, baston: 35, rafDerinlik: 30 },   // çizim ölçüleri (cm)
+    olcu: { abKol: 10, ubKol: 30, baston: 35, kanca: 25, rafDerinlik: 30 },   // çizim ölçüleri (cm)
     varsayilan: { boy: 200, profil: 30, kulak: 10, kenar: 15, tavan: 300 },
     kulakSayisi: 2,
     kapiGenisligi: 100,
@@ -1783,7 +1784,12 @@
     '<label class="mg-f">Kulak: duvara uzaklık (cm)<input type="number" inputmode="numeric" min="0" id="mg-ku" value="' + V.kulak + '"></label>' +
     '<label class="mg-f">Raf<select id="mg-rf">' + Object.keys(AYAR.raflar).map(function (k) { return '<option value="' + k + '">' + AYAR.raflar[k].ad + "</option>"; }).join("") + "</select></label>" +
     '<label class="mg-f">Kapıdan boşluk (cm)<input type="number" inputmode="numeric" min="0" id="mg-ke" value="' + V.kenar + '"></label>' +
-    '</div><div class="mg-n" style="margin-top:12px">Renk / kaplama (dikme, AB1, UB1, baston ve raf kolları)</div><div class="mg-rk" id="mg-kp"></div>' +
+    '</div><div class="mg-dg"><h4>Ekstralar (bütün ünitelere eklenir)</h4><div class="mg-g">' +
+    '<label class="mg-f">Ekstra baston (AB1 borulu her üniteye)<input type="number" inputmode="numeric" min="0" max="20" id="mg-eb" value="0"></label>' +
+    '<label class="mg-f">Ekstra kanca (AB1 borulu her üniteye)<input type="number" inputmode="numeric" min="0" max="20" id="mg-ek" value="0"></label>' +
+    '<label class="mg-f">En üste ekstra raf<select id="mg-ur"><option value="0">Yok</option><option value="1">Her üniteye 1 raf (2 raf kolu ile)</option></select></label>' +
+    '</div><p class="mg-n">Ekstra baston ve kancalar sadece AB1 borusu olan ünitelere eklenir. Ekstra raf, F dikmelerin en üstüne takılır.</p></div>' +
+    '<div class="mg-n" style="margin-top:12px">Renk / kaplama (dikme, AB1, UB1, baston, kanca ve raf kolları)</div><div class="mg-rk" id="mg-kp"></div>' +
     '<p class="mg-n">Yan yana sistemler aradaki F dikmeyi paylaşır: dikme sayısı, sistem sayısından 1 fazladır.</p></div>' +
     '<div class="mg-k"><h3>4. Yerleşim</h3><div id="mg-ws"></div><p class="mg-n">Şematik görünüm · Ölçüler cm · Sistem sayısını genişliklere göre +/− ile değiştirebilirsiniz.</p></div>' +
     '<div class="mg-k"><h3>5. Fiyat</h3>' +
@@ -1800,12 +1806,36 @@
   var S = {
     duzen: 2, tavan: V.tavan, boy: V.boy, profil: V.profil, kulak: V.kulak, kenar: V.kenar,
     model: "rafli", raf: "sunta18", kaplama: "siyah",
+    ekBaston: 0, ekKanca: 0, ustRaf: false,     // ekstralar: bütün ünitelere uygulanır
     kapi: { duvar: -1, x: 50, g: AYAR.kapiGenisligi },
     duvarlar: [{ w: 400 }, { w: 300 }, { w: 400 }, { w: 300 }],
     yer: null                                  // [duvar][parça] -> [{ g: genişlik, m: model }] (soldan sağa üniteler)
   };
   function G() { return AYAR.genislikler; }
-  function MP(k) { var pc = AYAR.modeller[k || S.model].parca; return { ab1: pc.ab1 || 0, baston: pc.baston || 0, ub1: pc.ub1 || 0, raf: pc.raf || 0, rafKolu: pc.rafKolu || 0 }; }
+  function MP(k) { var pc = AYAR.modeller[k || S.model].parca; return { ab1: pc.ab1 || 0, baston: pc.baston || 0, kanca: pc.kanca || 0, ub1: pc.ub1 || 0, raf: pc.raf || 0, rafKolu: pc.rafKolu || 0 }; }
+  // ekstralar dahil ünite parçaları: AB1 borulu ünitelere ekstra baston / kanca, istenirse her üniteye en üste 1 raf + 2 raf kolu
+  function UP(k) {
+    var m = MP(k);
+    if (m.ab1) { m.baston += S.ekBaston; m.kanca += S.ekKanca; }
+    if (S.ustRaf) { m.raf += 1; m.rafKolu += 2; }
+    return m;
+  }
+  // her AB1 borusundaki baston ve kanca sayısı (alttan üste); ekstralar en üstteki borudan başlayarak dağıtılır
+  function abDagit(k, ekstra) {
+    var b = MP(k), n = b.ab1, l = [], q;
+    for (q = 0; q < n; q++) l.push({ b: Math.floor(b.baston / n) + (q < b.baston % n ? 1 : 0), k: Math.floor(b.kanca / n) + (q < b.kanca % n ? 1 : 0) });
+    if (n && ekstra !== false) {
+      for (q = 0; q < S.ekBaston; q++) l[n - 1 - q % n].b++;
+      for (q = 0; q < S.ekKanca; q++) l[n - 1 - q % n].k++;
+    }
+    return l;
+  }
+  // bir borudaki baston ("b") ve kancaları ("k") boru boyunca eşit dağılacak sırayla dizer
+  function diz(b, k) {
+    var t = b + k, l = [];
+    for (var q = 0; q < t; q++) l.push(Math.floor((q + 1) * b / t) > Math.floor(q * b / t) ? "b" : "k");
+    return l;
+  }
   function pf() { return S.profil / 10; }                         // dikme kalınlığı (cm)
   function onDerinlik() { return Math.max(O.ubKol, O.abKol + O.baston); }   // dikmeden öne en uzun çıkıntı
   function bos() { var z = {}; G().forEach(function (g) { z[g] = 0; }); return z; }
@@ -1868,16 +1898,16 @@
 
   function carpan() { return AYAR.kaplamalar[S.kaplama].carpan; }
   function toplam(yer) {
-    var n = 0, dikme = 0, ad = { ab1: {}, ub1: {}, raf: {} }, baston = 0, kol = 0, modelSay = {};
+    var n = 0, dikme = 0, ad = { ab1: {}, ub1: {}, raf: {} }, baston = 0, kanca = 0, kol = 0, modelSay = {};
     yer.forEach(function (d) {
       d.forEach(function (p) {
         if (!p.u.length) return;
         n += p.u.length; dikme += p.u.length + 1;
         p.u.forEach(function (u) {
-          var m = MP(u.m);
+          var m = UP(u.m);
           modelSay[u.m] = (modelSay[u.m] || 0) + 1;
           ["ab1", "ub1", "raf"].forEach(function (k) { if (m[k]) ad[k][u.g] = (ad[k][u.g] || 0) + m[k]; });
-          baston += m.baston; kol += m.rafKolu;
+          baston += m.baston; kanca += m.kanca; kol += m.rafKolu;
         });
       });
     });
@@ -1888,6 +1918,7 @@
     olc.forEach(function (g) { if (ad.ab1[g]) satir.push({ ad: "AB1 borusu " + g + " cm", not: kp, adet: ad.ab1[g], fiyat: F.ab1 * c }); });
     olc.forEach(function (g) { if (ad.ub1[g]) satir.push({ ad: "UB1 borusu " + g + " cm", not: kp, adet: ad.ub1[g], fiyat: F.ub1 * c }); });
     if (baston) satir.push({ ad: "Baston (düz, " + O.baston + " cm)", not: kp, adet: baston, fiyat: F.baston * c });
+    if (kanca) satir.push({ ad: "Kanca (10x30 profil, AB1 için)", not: kp, adet: kanca, fiyat: F.kanca * c });
     if (kol) satir.push({ ad: "Raf kolu", not: "raf başına 2 adet · " + kp, adet: kol, fiyat: F.rafKolu * c });
     olc.forEach(function (g) { if (ad.raf[g]) satir.push({ ad: rf.ad + " " + g + " cm", not: "", adet: ad.raf[g], fiyat: rf.fiyat }); });
     var rafT = 0, boruT = 0;
@@ -1923,16 +1954,17 @@
         var kz = konumlar(p);
         kz.sistemler.forEach(function (u) {
           var a0 = u.x, a1 = u.x + u.g;
-          var m = MP(u.m);
+          var m = UP(u.m);
           if (m.raf) s += poly([P2(a0, z0), P2(a1, z0), P2(a1, z0 + O.rafDerinlik), P2(a0, z0 + O.rafDerinlik)], rf.renk, ' stroke="' + rf.kenar + '" stroke-width="1"');
           if (m.ub1) s += line(P2(a0, z0 + O.ubKol)[0], P2(a0, z0 + O.ubKol)[1], P2(a1, z0 + O.ubKol)[0], P2(a1, z0 + O.ubKol)[1], mr[0], 2.4);
           if (m.ab1) s += line(P2(a0, z0 + O.abKol)[0], P2(a0, z0 + O.abKol)[1], P2(a1, z0 + O.abKol)[0], P2(a1, z0 + O.abKol)[1], mr[0], 1.6);
-          var bAdet = m.ab1 ? Math.round(m.baston / m.ab1) : 0;
-          for (var bj = 0; bj < bAdet; bj++) {
-            var bx = a0 + (a1 - a0) * (bj + 1) / (bAdet + 1);
-            var m0 = P2(bx, z0 + O.abKol), m1 = P2(bx, z0 + O.abKol + O.baston);
-            s += line(m0[0], m0[1], m1[0], m1[1], mr[0], 2.4);
-          }
+          // üstten görünümde en çok parçası olan (en üstteki) AB1 borusunun baston ve kancaları
+          var ad0 = abDagit(u.m), ust = ad0.length ? ad0[ad0.length - 1] : null, tip = ust ? diz(ust.b, ust.k) : [];
+          tip.forEach(function (tp, bj) {
+            var bx = a0 + (a1 - a0) * (bj + 1) / (tip.length + 1);
+            var m0 = P2(bx, z0 + O.abKol), m1 = P2(bx, z0 + O.abKol + (tp === "b" ? O.baston : O.kanca));
+            s += line(m0[0], m0[1], m1[0], m1[1], mr[0], tp === "b" ? 2.4 : 1.2);
+          });
         });
         kz.dikmeler.forEach(function (x) {
           s += line(P2(x + pf() / 2, 0)[0], P2(x + pf() / 2, 0)[1], P2(x + pf() / 2, S.kulak)[0], P2(x + pf() / 2, S.kulak)[1], "#6b7178", 1.4);
@@ -2033,7 +2065,8 @@
       s += poly([pr(x0, ust, zf), pr(x1, ust, zf), pr(x1, alt, zf), pr(x0, alt, zf)], "url(#mg-gy" + id + ")", kc);
     }
     sistemler.forEach(function (u) {
-      var x0 = u.x, x1 = u.x + u.g, m = MP(u.m), yk = yukseklikler(m), rafH = yk.raf, ubH = yk.ub;
+      var x0 = u.x, x1 = u.x + u.g, m = MP(u.m), yk = yukseklikler(m), rafH = yk.raf.slice(), ubH = yk.ub;
+      if (S.ustRaf) { rafH.push(S.boy - 3); m.raf += 1; }        // isteğe bağlı: F dikmelerin en üstüne ekstra raf
       // raf kolları ve raflar
       if (m.raf) rafH.forEach(function (hR) {
         [x0 + 2, x1 - 3].forEach(function (x) {
@@ -2046,15 +2079,23 @@
       // UB1 (uzun kollu) ve AB1 (kısa kollu, üstte)
       if (m.ub1) ubH.forEach(function (hU) { boru(x0, x1, hU, O.ubKol); });
       // AB1 boruları ve üzerlerindeki bastonlar (AB1 boyunca eşit aralıkla öne doğru)
-      var bAdet = m.ab1 ? Math.round(m.baston / m.ab1) : 0;
-      yk.ab.forEach(function (hA) {
+      var dag = abDagit(u.m);
+      yk.ab.forEach(function (hA, ai) {
         boru(x0, x1, hA, O.abKol);
-        for (var bj = 0; bj < bAdet; bj++) {
-          var xm = x0 + (x1 - x0) * (bj + 1) / (bAdet + 1) - 1.5, za = z0 + O.abKol, zb = za + O.baston;
-          s += poly([pr(xm, hA + 1.5, za), pr(xm, hA + 1.5, zb), pr(xm, hA - 1.5, zb), pr(xm, hA - 1.5, za)], mr[2]);
-          s += poly([pr(xm, hA + 1.5, za), pr(xm + 1, hA + 1.5, za), pr(xm + 1, hA + 1.5, zb), pr(xm, hA + 1.5, zb)], mr[1]);
-          var uc = pr(xm, hA + 3, zb); s += rect(uc[0] - 0.6, uc[1], 2.2, 6, mr[0], kc);
-        }
+        var tip = diz(dag[ai].b, dag[ai].k), za = z0 + O.abKol;
+        tip.forEach(function (tp, bj) {
+          var xm = x0 + (x1 - x0) * (bj + 1) / (tip.length + 1) - 1.5;
+          if (tp === "b") {        // baston: düz, 35 cm, ucunda topuz
+            var zb = za + O.baston;
+            s += poly([pr(xm, hA + 1.5, za), pr(xm, hA + 1.5, zb), pr(xm, hA - 1.5, zb), pr(xm, hA - 1.5, za)], mr[2]);
+            s += poly([pr(xm, hA + 1.5, za), pr(xm + 1, hA + 1.5, za), pr(xm + 1, hA + 1.5, zb), pr(xm, hA + 1.5, zb)], mr[1]);
+            var uc = pr(xm, hA + 3, zb); s += rect(uc[0] - 0.6, uc[1], 2.2, 6, mr[0], kc);
+          } else {                 // kanca: ince tel, 25 cm, ucu yukarı kıvrık
+            var zk = za + O.kanca, xk = xm + 1;
+            s += poly([pr(xk, hA + 0.6, za), pr(xk, hA + 0.6, zk), pr(xk, hA - 0.6, zk), pr(xk, hA - 0.6, za)], mr[2]);
+            s += poly([pr(xk, hA + 0.6, zk), pr(xk + 0.6, hA + 0.6, zk), pr(xk + 0.6, hA + 7, zk), pr(xk, hA + 7, zk)], mr[0], kc);
+          }
+        });
       });
     });
     // ölçüler
@@ -2099,10 +2140,15 @@
     var p = AYAR.modeller[k].parca, s = '<rect x="18" y="6" width="5" height="76" fill="#1f2023"/><rect x="87" y="6" width="5" height="76" fill="#1f2023"/>';
     var cizgi = function (y, c, h) { return '<rect x="23" y="' + y + '" width="64" height="' + h + '" fill="' + c + '"/>'; };
     if (p.ab1) {
-      var abY = p.ab1 === 1 ? [14] : p.ab1 === 2 ? [14, 52] : [12, 27, 42, 57, 72], bA = Math.round(p.baston / p.ab1);
-      abY.forEach(function (y) {
+      var abY = p.ab1 === 1 ? [14] : p.ab1 === 2 ? [14, 52] : [12, 27, 42, 57, 72], dg = abDagit(k, false);
+      abY.forEach(function (y, ai) {
         s += cizgi(y, "#1f2023", 3);
-        for (var b = 0; b < bA; b++) s += '<rect x="' + Math.round(23 + 64 * (b + 1) / (bA + 1) - 1) + '" y="' + y + '" width="3" height="' + (p.ab1 > 2 ? 7 : 10) + '" fill="#1f2023"/>';
+        var tip = diz(dg[ai].b, dg[ai].k);
+        tip.forEach(function (tp, b) {
+          var x = Math.round(23 + 64 * (b + 1) / (tip.length + 1) - 1);
+          s += tp === "b" ? '<rect x="' + x + '" y="' + y + '" width="3" height="' + (p.ab1 > 2 ? 7 : 10) + '" fill="#1f2023"/>'
+            : '<rect x="' + (x + 1) + '" y="' + y + '" width="1.5" height="6" fill="#555"/>';
+        });
       });
     }
     if (p.ub1 === 1) s += cizgi(52, "#1f2023", 3);
@@ -2181,6 +2227,11 @@
       "Düzen: " + DUZENLER[S.duzen - 1].ad + " · Tavan: " + cm(S.tavan) + " cm",
       "F dikme: " + cm(S.boy) + " cm boy, " + S.profil + "×" + S.profil + " mm profil, kulak " + cm(S.kulak) + " cm",
       "Renk / kaplama: " + AYAR.kaplamalar[S.kaplama].ad + " · Raf: " + AYAR.raflar[S.raf].ad];
+    var ek = [];
+    if (S.ekBaston) ek.push("AB1 borulu her üniteye +" + S.ekBaston + " baston");
+    if (S.ekKanca) ek.push("AB1 borulu her üniteye +" + S.ekKanca + " kanca");
+    if (S.ustRaf) ek.push("her ünitenin en üstüne 1 raf");
+    if (ek.length) satirlar.push("Ekstralar: " + ek.join(", "));
     if (S.kapi.duvar >= 0) satirlar.push("Kapı: " + (S.kapi.duvar + 1) + ". duvarda, başından " + cm(S.kapi.x) + " cm, genişlik " + cm(S.kapi.g) + " cm");
     yer.forEach(function (d, i) {
       var u = [];
@@ -2204,6 +2255,9 @@
   [["mg-tv", "tavan"], ["mg-boy", "boy"], ["mg-ku", "kulak"], ["mg-ke", "kenar"]].forEach(function (a) {
     $(a[0]).addEventListener("input", function (e) { S[a[1]] = sayi(e.target.value); if (a[1] !== "tavan" && a[1] !== "boy") sifirla(); guncelle(); });
   });
+  $("mg-eb").addEventListener("input", function (e) { S.ekBaston = Math.min(20, Math.round(sayi(e.target.value))); guncelle(); });
+  $("mg-ek").addEventListener("input", function (e) { S.ekKanca = Math.min(20, Math.round(sayi(e.target.value))); guncelle(); });
+  $("mg-ur").addEventListener("change", function (e) { S.ustRaf = e.target.value === "1"; guncelle(); });
   $("mg-pr").addEventListener("change", function (e) { S.profil = +e.target.value; sifirla(); guncelle(); });
   $("mg-rf").addEventListener("change", function (e) { S.raf = e.target.value; guncelle(); });
   $("mg-dw").addEventListener("input", function (e) {
