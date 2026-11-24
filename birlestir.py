@@ -114,6 +114,8 @@ yukleyici = """/* Kendi Rafını Kendin Hesapla - acarraf.com yükleyicisi (birl
 })();
 """
 (d / "raf-hesapla.js").write_text(yukleyici, encoding="utf-8")
+# raf-yukle.js: aynı yükleyici yeni adla (Script Yönetimi bunu çağırır; eski adın jsDelivr önbelleği takılı kalmıştı)
+(d / "raf-yukle.js").write_text(yukleyici, encoding="utf-8")
 if shutil.which("node"):
     for ad in ["raf-hesapla-uygulama.js", "raf-hesapla.js"]:
         sonuc = subprocess.run(["node", "--check", str(d / ad)], capture_output=True, text=True)
