@@ -74,6 +74,7 @@ Modeller (`AYAR.modeller`). Sayfanın başındaki seçim bütün ünitelere uygu
 6. 2 AB1 bastonlu sistem: 2 AB1 + 2 baston (her AB1 için 1)
 7. 5 AB1 bastonlu sistem: 5 AB1 + 15 baston (her AB1 için 3)
 8. 5 AB1 kancalı sistem: 5 AB1 + 35 kanca (her AB1 için 7; 10x30 profil kancası)
+Dikme sistemi her duvar için ayrı seçilir (`AYAR.dikmeler`): F dikme (yerden başlar) veya C dikme (her zaman yerden 60 cm yüksekte; altına dolap / çekmece konabilir). Boy, profil (30x30 / 40x40) ve kulak mesafesi F ve C için ayrı girilir; renkler ortaktır. C dikme fiyatı henüz yok (`fiyat: null`). Sayfa sırası: duvarlar ve dikme sistemi, model, seçenekler, yerleşim, fiyat. Her duvarın üstünde "Bu duvarın bütün üniteleri" model seçimi vardır.
 Dekorlar (fiyatları henüz yok, `fiyat: null`: tabloda adet ve "Fiyat sorunuz" yazar, toplamın yanında "dekor fiyatı hariç" notu çıkar):
 - Arkaya çesan (`AYAR.cesanlar`): baklava çesan veya 5x5 (kare) çesan; her ünite ya da aralıklı (duvardaki 1., 3., 5. ... ünite).
 - Üste kubbe (`AYAR.kubbe`): dikmelerin üst ucuna takılan kemer; her ünite ya da aralıklı.
