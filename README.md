@@ -74,6 +74,7 @@ Modeller (`AYAR.modeller`). Sayfanın başındaki seçim bütün ünitelere uygu
 6. 2 AB1 bastonlu sistem: 2 AB1 + 2 baston (her AB1 için 1)
 7. 5 AB1 bastonlu sistem: 5 AB1 + 15 baston (her AB1 için 3)
 8. 5 AB1 kancalı sistem: 5 AB1 + 35 kanca (her AB1 için 7; 10x30 profil kancası)
+Arkaya baklava desen dekor panel (`AYAR.dekor`): yok / her ünitenin arkasına / aralıklı (duvardaki 1., 3., 5. ... ünite). Fiyatı henüz yok (`fiyat: null`): tabloda adet ve "Fiyat sorunuz" yazar, toplamın yanında "dekor panel fiyatı hariç" notu çıkar.
 Ekstralar (bütün ünitelere): AB1 borulu her üniteye ekstra baston ve/veya kanca (en üstteki AB1 borusundan başlayarak dağıtılır); istenirse her ünitenin en üstüne 1 raf + 2 raf kolu.
 Yeni model eklemek için `AYAR.modeller` içine parça adetleriyle bir satır eklemek yeterlidir.
 Doğrudan link: `/raf-hesaplama#magaza-sistemleri`.
