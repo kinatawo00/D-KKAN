@@ -1658,7 +1658,9 @@
     raflar: {
       sunta18: { ad: "1,8 cm sunta raf", fiyat: 400, kalinlik: 1.8, renk: "#e9e1d3", kenar: "#cbbfa8" },
       sunta30: { ad: "3 cm sunta raf", fiyat: 600, kalinlik: 3, renk: "#e9e1d3", kenar: "#cbbfa8" },
-      mdf:     { ad: "MDF raf", fiyat: 520, kalinlik: 1.8, renk: "#f4f1ec", kenar: "#d6d0c6" }    // 1,8 sunta + %30
+      mdf:     { ad: "1,8 cm MDF raf", fiyat: 520, kalinlik: 1.8, renk: "#f4f1ec", kenar: "#d6d0c6" },   // 1,8 sunta + %30
+      // siperli: ön kenarında yukarı kalkık siper (çizimde 3 cm); fiyatı henüz yok (null: "Fiyat sorunuz")
+      mdfSiper: { ad: "1,8 cm siperli MDF raf", fiyat: null, kalinlik: 1.8, siper: 3, renk: "#f4f1ec", kenar: "#d6d0c6" }
     },
     // metal parçaların (dikme, AB1, UB1, baston, raf kolu) rengi / kaplaması ve fiyat çarpanı
     kaplamalar: {
@@ -1729,6 +1731,9 @@
     P + " .mg-un i{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--a);color:#fff;font-style:normal;font-size:12px}",
     P + " .mg-un select{width:100%;height:38px;padding:0 8px;font:inherit;font-size:14px;color:var(--ink);background:#fff;border:1px solid #cfcfcf;border-radius:8px;margin:0}",
     P + " .mg-hit{cursor:pointer}",
+    P + " .mg-cz svg{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}",
+    P + " .mg-hit.mg-tas{fill-opacity:.28;cursor:grabbing}",
+    P + " .mg-hit.mg-hedef{fill-opacity:.18;stroke:#e2701f;stroke-width:2;stroke-dasharray:6 4}",
     P + " .mg-hit:hover{fill-opacity:.12}",
     P + "{position:relative}",
     P + " .mg-pop{position:absolute;z-index:20;background:#fff;border:1px solid #cfcfcf;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.16);padding:6px;min-width:230px}",
@@ -1907,7 +1912,11 @@
 
   // sayılardan (ör. {60: 3, 90: 1}) ünite listesi: önce 60 cm, sonra 90 cm üniteler
   function uniteListesi(a, model) {
-    var l = []; G().forEach(function (g) { for (var q = 0; q < (a[g] || 0); q++) l.push({ g: g, m: model }); });
+    var kucuk = G()[0], buyuk = G()[1], nk = a[kucuk] || 0, nb = a[buyuk] || 0, l = [], q;
+    function ekle(g, adet) { for (q = 0; q < adet; q++) l.push({ g: g, m: model }); }
+    // ör. 60-60-90-60-60: 60 cm üniteler iki yana eşit bölünebiliyorsa 90 cm üniteler ortada durur
+    if (nb && nk && nk % 2 === 0) { ekle(kucuk, nk / 2); ekle(buyuk, nb); ekle(kucuk, nk / 2); }
+    else { ekle(kucuk, nk); ekle(buyuk, nb); }   // ör. 60-60-60-90: ortalanamıyorsa 90 cm sonda
     return l;
   }
   function sayilar(u) { var a = bos(); u.forEach(function (x) { a[x.g] = (a[x.g] || 0) + 1; }); return a; }
@@ -2162,6 +2171,11 @@
         var rk = rf.kalinlik;
         s += poly([pr(x0, hR + rk, z0), pr(x1, hR + rk, z0), pr(x1, hR + rk, z0 + O.rafDerinlik), pr(x0, hR + rk, z0 + O.rafDerinlik)], rf.renk, ' stroke="' + rf.kenar + '" stroke-width=".5"');
         s += poly([pr(x0, hR + rk, z0 + O.rafDerinlik), pr(x1, hR + rk, z0 + O.rafDerinlik), pr(x1, hR, z0 + O.rafDerinlik), pr(x0, hR, z0 + O.rafDerinlik)], rf.kenar);
+        if (rf.siper) {        // siper: rafın ön kenarında yukarı kalkık şerit
+          var zs = z0 + O.rafDerinlik, hs = hR + rk + rf.siper;
+          s += poly([pr(x0, hs, zs - 1), pr(x1, hs, zs - 1), pr(x1, hs, zs), pr(x0, hs, zs)], rf.renk, ' stroke="' + rf.kenar + '" stroke-width=".4"');
+          s += poly([pr(x0, hs, zs), pr(x1, hs, zs), pr(x1, hR + rk, zs), pr(x0, hR + rk, zs)], rf.kenar);
+        }
       });
       // UB1 (uzun kollu) ve AB1 (kısa kollu, üstte)
       if (m.ub1) ubH.forEach(function (hU) { boru(x0, x1, hU, O.ubKol); });
@@ -2300,7 +2314,7 @@
         (n ? '<label class="mg-f" style="max-width:340px;margin-bottom:8px">Bu duvarın bütün üniteleri<select data-dm="' + i + '"><option value="">Model seçin...</option>' + Object.keys(AYAR.modeller).map(function (m, j) { return '<option value="' + m + '">' + (j + 1) + ". " + AYAR.modeller[m].ad + "</option>"; }).join("") + "</select></label>" : "") +
         '<div class="mg-cz"><svg data-svg="' + i + '" role="img" aria-label="' + (i + 1) + '. duvar mağaza sistemi yerleşimi"></svg></div>';
       if (!d.length) html += '<p class="mg-n mg-w">Bu duvarda sistem kurulacak alan kalmadı.</p>';
-      else html += '<p class="mg-n">Bir ünitenin modelini değiştirmek için çizimde üniteye tıklayın ya da aşağıdaki listeden seçin.</p>';
+      else html += '<p class="mg-n">Bir ünitenin modelini değiştirmek için çizimde üniteye tıklayın ya da aşağıdaki listeden seçin. Ünitenin yerini değiştirmek için üzerine basılı tutup sürükleyin.</p>';
       var no = 0;
       d.forEach(function (p, pi) {
         var uz = p.son - p.bas, kul = kaplanan(p.a), kalan = uz - kul;
@@ -2417,7 +2431,63 @@
     }
   });
   function menuKapat() { var m = R.querySelector(".mg-pop"); if (m) m.remove(); }
+  // ---- basılı tut + sürükle: ünite aynı duvar bölümünde başka bir sıraya taşınır
+  var SR = null, sonSurukleme = 0;
+  function srTemizle() {
+    if (!SR) return;
+    clearTimeout(SR.zaman);
+    R.querySelectorAll(".mg-tas, .mg-hedef").forEach(function (x) { x.classList.remove("mg-tas"); x.classList.remove("mg-hedef"); });
+    SR = null;
+  }
+  function hedefBul(e) {
+    var el = document.elementFromPoint(e.clientX, e.clientY), h = el && el.closest ? el.closest(".mg-hit") : null;
+    if (!h || h.dataset.i !== SR.h.dataset.i || h.dataset.p !== SR.h.dataset.p) return null;
+    return h;
+  }
+  R.addEventListener("pointerdown", function (e) {
+    var h = e.target.closest(".mg-hit");
+    if (!h || (e.pointerType === "mouse" && e.button !== 0)) return;
+    srTemizle();
+    SR = { h: h, x: e.clientX, y: e.clientY, aktif: false, hedef: null };
+    SR.zaman = setTimeout(function () {
+      if (!SR) return;
+      SR.aktif = true; menuKapat();
+      h.classList.add("mg-tas");
+      if (navigator.vibrate) try { navigator.vibrate(30); } catch (x) {}
+    }, 350);
+  });
+  R.addEventListener("pointermove", function (e) {
+    if (!SR) return;
+    if (!SR.aktif) {   // basılı tutma süresi dolmadan parmak kaydıysa sayfa kaydırılıyordur: sürükleme iptal
+      if (Math.abs(e.clientX - SR.x) + Math.abs(e.clientY - SR.y) > 10) srTemizle();
+      return;
+    }
+    e.preventDefault();
+    var h = hedefBul(e);
+    if (SR.hedef && SR.hedef !== h) SR.hedef.classList.remove("mg-hedef");
+    if (h && h !== SR.h) h.classList.add("mg-hedef");
+    SR.hedef = h && h !== SR.h ? h : null;
+  });
+  // dokunmatik ekranda sürüklerken sayfa kaymasın
+  R.addEventListener("touchmove", function (e) { if (SR && SR.aktif) e.preventDefault(); }, { passive: false });
+  R.addEventListener("contextmenu", function (e) { if (e.target.closest(".mg-hit")) e.preventDefault(); });
+  function srBitir(e) {
+    if (!SR) return;
+    if (SR.aktif) {
+      sonSurukleme = Date.now();
+      var h = SR.hedef || (e && e.type === "pointerup" ? hedefBul(e) : null);
+      if (h && h !== SR.h) {
+        var l = S.yer[+SR.h.dataset.i][+SR.h.dataset.p], u = l.splice(+SR.h.dataset.u, 1)[0];
+        l.splice(+h.dataset.u, 0, u);
+        srTemizle(); guncelle(); return;
+      }
+    }
+    srTemizle();
+  }
+  R.addEventListener("pointerup", srBitir);
+  R.addEventListener("pointercancel", srBitir);
   R.addEventListener("click", function (e) {
+    if (Date.now() - sonSurukleme < 500) return;   // sürükleme bittiğinde model menüsü açılmasın
     var hit = e.target.closest(".mg-hit"), sec = e.target.closest(".mg-pop button");
     if (sec) {
       var pop = sec.closest(".mg-pop");
@@ -2447,6 +2517,11 @@
       var yer = son >= 0 ? son + 1 : (g === G()[0] ? 0 : u.length);   // büyükler başta kalsın
       u.splice(yer, 0, { g: g, m: S.model });
     } else if (son >= 0) u.splice(son, 1);
+    // adet değişince dizilim yeniden simetrik kurulur (90 cm ortalanabiliyorsa ortada); ünitelerin modelleri korunur
+    var sira = {}; u.forEach(function (x) { (sira[x.g] = sira[x.g] || []).push(x.m); });
+    var yeni = uniteListesi(sayilar(u), S.model);
+    yeni.forEach(function (x) { if (sira[x.g] && sira[x.g].length) x.m = sira[x.g].shift(); });
+    u.length = 0; yeni.forEach(function (x) { u.push(x); });
     guncelle();
   });
   $("mg-pdf").addEventListener("click", function () {

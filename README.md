@@ -63,7 +63,7 @@ Her hesaplayıcıda "PDF olarak indir" düğmesi vardır (`pdf-teklif-kodu.html`
 `magaza-kodu.html`: dördüncü grup. Boş oda (tek duvar, L, U, dört duvar), kapı ve tavan yüksekliği.
 Bir sistem (bölme) iki F dikmenin arasıdır: 1 AB1 borusu + 1 baston (üstte), 1 UB1 borusu (altta), 1 raf + 2 raf kolu (UB1 borusunun biraz üstünde).
 Yan yana sistemler aradaki dikmeyi paylaşır: dikme = sistem + 1 (her dizi için). Ünite genişlikleri yalnızca 60 ve 90 cm: önce 60 cm üniteler dizilir, kalan boşluk yetiyorsa bazıları 90 cm üniteye çevrilir. Köşede bir duvar tam ölçü kullanılır, sonraki duvardan 50 cm düşülür (`AYAR.kosePayi`).
-Fiyatlar (`AYAR.fiyat`, `AYAR.raflar`): dikme 1500, AB1 300, UB1 360, baston 120, raf kolu 60, kanca 22 (25 adetlik paket 549,99 TL); raf 1,8 sunta 400, 3 cm sunta 600, MDF 520.
+Fiyatlar (`AYAR.fiyat`, `AYAR.raflar`): dikme 1500, AB1 300, UB1 360, baston 120, raf kolu 60, kanca 22 (25 adetlik paket 549,99 TL); raf 1,8 sunta 400, 3 cm sunta 600, 1,8 cm MDF 520, 1,8 cm siperli MDF (fiyatı henüz yok).
 Renk/kaplama yalnızca metal parçaları etkiler: siyah/beyaz/antrasit ×1, gold/bakır/krom boya ×1,5, gold/bakır kaplama ×1,8, rose kaplama ×2.
 Modeller (`AYAR.modeller`). Sayfanın başındaki seçim bütün ünitelere uygulanır; sonra her ünitenin modeli ayrı seçilebilir (çizimde üniteye tıklayarak veya ünite listesinden):
 1. Raflı askı sistemi: AB1 + baston, UB1, 1 raf + 2 raf kolu
@@ -74,6 +74,7 @@ Modeller (`AYAR.modeller`). Sayfanın başındaki seçim bütün ünitelere uygu
 6. 2 AB1 bastonlu sistem: 2 AB1 + 2 baston (her AB1 için 1)
 7. 5 AB1 bastonlu sistem: 5 AB1 + 15 baston (her AB1 için 3)
 8. 5 AB1 kancalı sistem: 5 AB1 + 35 kanca (her AB1 için 7; 10x30 profil kancası)
+Dizilim: 60 cm ünite sayısı çiftse 90 cm üniteler ortaya konur (ör. 60-60-90-60-60), değilse sona (ör. 60-60-60-90); +/− ile adet değişince de bu kural uygulanır. Çizimde üniteye basılı tutup sürükleyerek aynı duvar bölümünde yeri değiştirilebilir (fare ve dokunmatik).
 Dikme sistemi her duvar için ayrı seçilir (`AYAR.dikmeler`): F dikme (yerden başlar) veya C dikme (her zaman yerden 60 cm yüksekte; altına dolap / çekmece konabilir). Boy, profil (30x30 / 40x40) ve kulak mesafesi F ve C için ayrı girilir; renkler ortaktır. C dikme fiyatı henüz yok (`fiyat: null`). Sayfa sırası: duvarlar ve dikme sistemi, model, seçenekler, yerleşim, fiyat. Her duvarın üstünde "Bu duvarın bütün üniteleri" model seçimi vardır.
 Dekorlar (fiyatları henüz yok, `fiyat: null`: tabloda adet ve "Fiyat sorunuz" yazar, toplamın yanında "dekor fiyatı hariç" notu çıkar):
 - Arkaya çesan (`AYAR.cesanlar`): baklava çesan veya 5x5 (kare) çesan; her ünite ya da aralıklı (duvardaki 1., 3., 5. ... ünite).
