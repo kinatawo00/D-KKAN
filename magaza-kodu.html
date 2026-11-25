@@ -56,6 +56,13 @@
       antrasit: { ad: "Antrasit", renk: "#4a4f55", kenar: "#30343a" }
     },
     // kapının olduğu duvara raf sistemi kurulmaz; kapının iki yanına podyum ve cansız manken çizilir (şimdilik sadece görsel, fiyata girmez)
+    // duvardaki kolon, girinti ve diğer engeller. kolon / engel: önüne sistem kurulmaz (duvar ikiye bölünür);
+    // girinti: duvarın geriye çekildiği bölüm, içine ayrı sistem kurulabilir
+    engelTipleri: {
+      kolon:   { ad: "Kolon / çıkıntı", g: 40, d: 30 },
+      girinti: { ad: "Girinti (niş)",   g: 120, d: 30 },
+      engel:   { ad: "Diğer engel (radyatör, pano vb.)", g: 80, d: 15, h: 70 }
+    },
     podyum: { yukseklik: 15, derinlik: 50, enAz: 60, mankenAralik: 80 },
     olcu: { abKol: 10, ubKol: 30, baston: 35, kanca: 25, rafDerinlik: 30 },   // çizim ölçüleri (cm)
     varsayilan: { boy: 200, profil: 30, kulak: 10, kenar: 15, tavan: 300 },
@@ -107,6 +114,9 @@
     P + " .mg-un i{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--a);color:#fff;font-style:normal;font-size:12px}",
     P + " .mg-un select{width:100%;height:38px;padding:0 8px;font:inherit;font-size:14px;color:var(--ink);background:#fff;border:1px solid #cfcfcf;border-radius:8px;margin:0}",
     P + " .mg-hit{cursor:pointer}",
+    P + " .mg-eg{border-top:1px dashed var(--ln);padding-top:10px;margin-top:10px}",
+    P + " .mg-eg .mg-sil{margin-top:8px;color:#c0392b}",
+    P + " .mg-ekle{margin-top:10px;font-weight:700;color:var(--a);border-color:var(--a);padding:8px 14px}",
     P + " .mg-cz svg{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}",
     P + " .mg-hit.mg-tas{fill-opacity:.28;cursor:grabbing}",
     P + " .mg-hit.mg-hedef{fill-opacity:.18;stroke:#e2701f;stroke-width:2;stroke-dasharray:6 4}",
@@ -213,6 +223,7 @@
     ekBaston: 0, ekKanca: 0, ustRaf: false,
     cesan: "yok", cesanYer: "hepsi", kubbe: "yok",   // dekorlar: cesan yok/baklava/kare, yer ve kubbe: hepsi/aralikli     // ekstralar: bütün ünitelere uygulanır
     kapi: { duvar: -1, x: 50, g: AYAR.kapiGenisligi },
+    engeller: [],                              // [{ duvar, tip, x: duvarın başından, g: genişlik, d: derinlik, h: yükseklik (diğer engel) }]
     duvarlar: [{ w: 400, tip: "F" }, { w: 300, tip: "F" }, { w: 400, tip: "F" }, { w: 300, tip: "F" }],
     dikme: { F: { boy: AYAR.dikmeler.F.boy, profil: V.profil, kulak: AYAR.dikmeler.F.kulak }, C: { boy: AYAR.dikmeler.C.boy, profil: V.profil, kulak: AYAR.dikmeler.C.kulak } },
     taban: 0, tip: "F",
@@ -274,16 +285,44 @@
       return { bas: Math.max(q.bas, onceki(i) >= 0 ? 60 : 0), son: q.son };
     }).filter(function (q) { return q.son - q.bas >= AYAR.podyum.enAz; });
   }
+  function duvarEngelleri(i) {
+    var W = S.duvarlar[i].w;
+    return S.engeller.filter(function (e) { return e.duvar === i && e.g > 0; }).map(function (e) {
+      var x = Math.max(0, Math.min(W, e.x));
+      return { tip: e.tip, x: x, g: Math.min(e.g, W - x), d: e.d, h: e.h };
+    }).filter(function (e) { return e.g > 0; });
+  }
   function duvarParcalari(i) {
     var W = S.duvarlar[i].w, k = S.kenar;
     // köşede önceki duvar tam ölçü kullanır, bu duvar köşe payı kadar sonra başlar; kapıdan "kenar" kadar boşluk bırakılır
-    var b = onceki(i) >= 0 ? kosePayi() : 0, e = W, sonuc = [];
+    var b = onceki(i) >= 0 ? kosePayi() : 0, l = W > b ? [{ bas: b, son: W, zk: 0 }] : [];
+    function cikar(s, e) {           // [s, e] aralığına sistem kurulmaz
+      var y = [];
+      l.forEach(function (q) {
+        if (e <= q.bas || s >= q.son) { y.push(q); return; }
+        if (s > q.bas) y.push({ bas: q.bas, son: s, zk: q.zk, ad: q.ad });
+        if (e < q.son) y.push({ bas: e, son: q.son, zk: q.zk, ad: q.ad });
+      });
+      l = y;
+    }
+    function bol(s, e, zk, ad) {     // [s, e] aralığı ayrı bölüm olur (girinti içi)
+      var y = [];
+      l.forEach(function (q) {
+        if (e <= q.bas || s >= q.son) { y.push(q); return; }
+        if (s > q.bas) y.push({ bas: q.bas, son: s, zk: q.zk });
+        y.push({ bas: Math.max(s, q.bas), son: Math.min(e, q.son), zk: zk, ad: ad });
+        if (e < q.son) y.push({ bas: e, son: q.son, zk: q.zk });
+      });
+      l = y;
+    }
     if (S.kapi.duvar === i) {
       var x0 = Math.max(0, Math.min(W, S.kapi.x)), x1 = Math.min(W, x0 + S.kapi.g);
-      if (x0 - k > b) sonuc.push({ bas: b, son: Math.min(x0 - k, e), yan: "sol" });
-      if (e > x1 + k) sonuc.push({ bas: Math.max(x1 + k, b), son: e, yan: "sag" });
-    } else if (e > b) sonuc.push({ bas: b, son: e });
-    return sonuc.filter(function (p) { return p.son - p.bas > 0; });
+      cikar(x0 - k, x1 + k);
+    }
+    duvarEngelleri(i).forEach(function (e) {
+      if (e.tip === "girinti") bol(e.x, e.x + e.g, -e.d, "Girinti içi"); else cikar(e.x, e.x + e.g);
+    });
+    return l.filter(function (p) { return p.son - p.bas > 0; });
   }
 
   function sistemSay(a) { return G().reduce(function (s, g) { return s + (a[g] || 0); }, 0); }
@@ -315,7 +354,7 @@
       aktif(i);
       y.push(parcalar(i).map(function (p, pi) {
         var u = S.yer && S.yer[i] && S.yer[i][pi] ? S.yer[i][pi] : uniteListesi(yerlestir(p.son - p.bas), S.model);
-        return { bas: p.bas, son: p.son, yan: p.yan, u: u, a: sayilar(u) };
+        return { bas: p.bas, son: p.son, zk: p.zk || 0, ad: p.ad, u: u, a: sayilar(u) };
       }));
     }
     return y;
@@ -403,7 +442,8 @@
     var minX = Math.min.apply(null, xs), maxX = Math.max.apply(null, xs), minY = Math.min.apply(null, ys), maxY = Math.max.apply(null, ys);
     if (n <= 2) maxY = Math.max(maxY, 100);
     if (S.kapi.duvar === 0 && n === 1) maxY = Math.max(maxY, S.kapi.g + 20);
-    var span = Math.max(maxX - minX, maxY - minY, 200), fs = span / 26, kal = 6, pad = fs * 3.2, s = "", ust = "";
+    var gMax = S.engeller.reduce(function (m, e) { return e.tip === "girinti" && e.duvar < n ? Math.max(m, e.d) : m; }, 0);
+    var span = Math.max(maxX - minX, maxY - minY, 200), fs = span / 26, kal = 6, pad = fs * 3.2 + gMax, s = "", ust = "";
     var z0;
     if (n === 4) s += poly(pts.slice(0, 4), "#fbfaf7");
     for (var k = 0; k < n; k++) {
@@ -411,8 +451,22 @@
       var dv = S.duvarlar[k], d = yon[k], nr = [-d[1], d[0]], A = pts[k], B = pts[k + 1];
       var P2 = (function (A, d, nr) { return function (t, z) { return [A[0] + d[0] * t + nr[0] * z, A[1] + d[1] * t + nr[1] * z]; }; })(A, d, nr);
       s += poly([A, B, [B[0] - nr[0] * kal, B[1] - nr[1] * kal], [A[0] - nr[0] * kal, A[1] - nr[1] * kal]], "#4a4f55");
-      var dsr = 0;
+      var dsr = 0, P2d = P2;
+      duvarEngelleri(k).forEach(function (e) {
+        var a = e.x, b = e.x + e.g;
+        if (e.tip === "girinti") {   // duvar geriye çekilir: duvar kalınlığı oraya taşınır
+          var zemin = n === 4 ? "#fbfaf7" : "#f6f6f6";
+          s += poly([P2d(a, 0.5), P2d(b, 0.5), P2d(b, -kal - 0.5), P2d(a, -kal - 0.5)], zemin);
+          s += poly([P2d(a, 0), P2d(b, 0), P2d(b, -e.d), P2d(a, -e.d)], zemin);
+          s += poly([P2d(a - kal, -e.d), P2d(b + kal, -e.d), P2d(b + kal, -e.d - kal), P2d(a - kal, -e.d - kal)], "#4a4f55");
+          s += poly([P2d(a - kal, 0), P2d(a, 0), P2d(a, -e.d), P2d(a - kal, -e.d)], "#4a4f55");
+          s += poly([P2d(b, 0), P2d(b + kal, 0), P2d(b + kal, -e.d), P2d(b, -e.d)], "#4a4f55");
+        } else {
+          s += poly([P2d(a, 0), P2d(b, 0), P2d(b, e.d), P2d(a, e.d)], e.tip === "kolon" ? "#8d9399" : "#b9c6cc", ' stroke="#5b6167" stroke-width="1"');
+        }
+      });
       yer[k].forEach(function (p) {
+        var P2 = function (t2, z) { return P2d(t2, z + (p.zk || 0)); };   // girinti içindeki sistemler geride
         var kz = konumlar(p);
         kz.sistemler.forEach(function (u) {
           var a0 = u.x, a1 = u.x + u.g;
@@ -455,7 +509,8 @@
         var km = [(k0[0] + k1[0]) / 2 + nr[0] * g * 0.35, (k0[1] + k1[1]) / 2 + nr[1] * g * 0.35];
         ust += yazi(km[0], km[1], "Kapı " + cm(g), fs * 0.75, "#2b6cb0", ' text-anchor="middle" font-weight="700"');
       }
-      var mx = (A[0] + B[0]) / 2 - nr[0] * (kal + fs * 1.1), my = (A[1] + B[1]) / 2 - nr[1] * (kal + fs * 1.1);
+      var gd = duvarEngelleri(k).reduce(function (m, e) { return e.tip === "girinti" ? Math.max(m, e.d + kal) : m; }, 0);
+      var mx = (A[0] + B[0]) / 2 - nr[0] * (kal + gd + fs * 1.1), my = (A[1] + B[1]) / 2 - nr[1] * (kal + gd + fs * 1.1);
       var dondur = d[0] === 0 ? ' transform="rotate(' + (d[1] > 0 ? 90 : -90) + " " + r1(mx) + " " + r1(my) + ')"' : "";
       s += yazi(mx, my + fs * 0.35, (k + 1) + ". duvar · " + cm(dv.w) + " cm", fs, "#1b1b1b", ' text-anchor="middle" font-weight="700"' + dondur);
     }
@@ -468,7 +523,7 @@
   // ---- DUVAR ÇİZİMİ (önden, derinlikli): F dikme, AB1 + baston, UB1, raf
   function ciz(svg, y, i, id) {
     aktif(i);
-    var W = S.duvarlar[i].w, H = Math.max(S.tavan, S.taban + S.boy + (S.kubbe !== "yok" ? 65 : 0)), p = pf(), z0 = S.kulak + p, D = Math.max(z0 + onDerinlik(), S.kapi.duvar === i ? AYAR.podyum.derinlik + 5 : 0);
+    var W = S.duvarlar[i].w, H = Math.max(S.tavan, S.taban + S.boy + (S.kubbe !== "yok" ? 65 : 0)), p = pf(), z0 = S.kulak + p, D = Math.max(z0 + onDerinlik(), S.kapi.duvar === i ? AYAR.podyum.derinlik + 5 : 0, duvarEngelleri(i).reduce(function (m, e) { return e.tip === "girinti" ? m : Math.max(m, e.d + 5); }, 0));
     var kx = 0.55, ky = 0.38, fs = Math.max(10, Math.min(W, 700) / 28), mr = MR(), md = MRD(), kd = dekorKenar(), rf = RF(), kc = kenarCizgi();
     var L0 = fs * 2.8, T = D * ky + fs * 1.2, floor = T + H + D * ky * 0, s = "";
     // pr: dikmeye göre yükseklik (C dikmede yerden taban kadar yukarıda), pa: yerden mutlak yükseklik
@@ -511,6 +566,23 @@
       var km = pa(kx0 + kg / 2, kh * 0.8, 0);
       s += yazi(km[0], km[1], "KAPI", fs * 0.75, "#2b6cb0", ' text-anchor="middle" font-weight="700"') + yazi(km[0], km[1] + fs * 0.9, cm(kg) + " cm", fs * 0.7, "#2b6cb0", ' text-anchor="middle" font-weight="700"');
     }
+    // kolon, girinti ve diğer engeller
+    duvarEngelleri(i).forEach(function (e) {
+      var a = e.x, b = e.x + e.g, yaziH;
+      if (e.tip === "girinti") {
+        s += poly([pa(a, 0, 0), pa(b, 0, 0), pa(b, H, 0), pa(a, H, 0)], "#e9e6e0", ' stroke="#bdb6ab" stroke-dasharray="5 4"');
+        yaziH = Math.min(H, S.tavan) - 12;
+        var g1 = pa((a + b) / 2, yaziH, 0);
+        s += yazi(g1[0], g1[1], "girinti " + cm(e.g) + " × " + cm(e.d) + " cm", fs * 0.65, "#8a8378", ' text-anchor="middle"');
+        return;
+      }
+      var hh = e.tip === "kolon" ? Math.min(H, S.tavan) : Math.max(1, e.h || 0), on = e.tip === "kolon" ? "#c9ced3" : "#d5dee2", yan = e.tip === "kolon" ? "#a9b0b6" : "#b8c5cb";
+      s += poly([pa(b, 0, e.d), pa(b, 0, 0), pa(b, hh, 0), pa(b, hh, e.d)], yan);
+      s += poly([pa(a, hh, 0), pa(b, hh, 0), pa(b, hh, e.d), pa(a, hh, e.d)], yan);
+      s += poly([pa(a, 0, e.d), pa(b, 0, e.d), pa(b, hh, e.d), pa(a, hh, e.d)], on, ' stroke="#8d949a" stroke-width=".8"');
+      var e1 = pa((a + b) / 2, e.tip === "kolon" ? hh - 15 : hh - 8, e.d);
+      s += yazi(e1[0], e1[1], (e.tip === "kolon" ? "kolon " : "engel ") + cm(e.g) + " × " + cm(e.d), fs * 0.6, "#4d545a", ' text-anchor="middle"');
+    });
     // kapı duvarı: kapının iki yanına podyum ve cansız manken (görsel)
     podyumlar(i).forEach(function (q) {
       var PD = AYAR.podyum, a = q.bas + 3, b = q.son - 3, ph = PD.yukseklik, zd = PD.derinlik;
@@ -686,6 +758,20 @@
       '<label class="mg-f">Kapı genişliği (cm)<input type="number" inputmode="numeric" min="0" id="mg-kg" value="' + S.kapi.g + '"></label>' +
       '<label class="mg-f">Duvarın başından kapıya (cm)<input type="number" inputmode="numeric" min="0" id="mg-kx" value="' + S.kapi.x + '"></label>' +
       '</div><p class="mg-n">Kapının olduğu duvara raf sistemi kurulmaz; kapının yanlarına podyum ve cansız manken konur. Duvarın başı, plandaki ok yönüne göre duvarın ilk ucudur (1. duvarda sol uç).</p></div>';
+    html += '<div class="mg-dg"><h4>Kolon, girinti ve engeller</h4>' + S.engeller.map(function (e, j) {
+      var duvarOpt = "";
+      for (var q = 0; q < S.duzen; q++) duvarOpt += '<option value="' + q + '"' + (e.duvar === q ? " selected" : "") + ">" + (q + 1) + ". duvar</option>";
+      return '<div class="mg-eg"><div class="mg-g">' +
+        '<label class="mg-f">Ne var?<select data-eg="' + j + '|tip">' + Object.keys(AYAR.engelTipleri).map(function (k) { return '<option value="' + k + '"' + (e.tip === k ? " selected" : "") + ">" + AYAR.engelTipleri[k].ad + "</option>"; }).join("") + "</select></label>" +
+        '<label class="mg-f">Hangi duvarda?<select data-eg="' + j + '|duvar">' + duvarOpt + "</select></label>" +
+        '<label class="mg-f">Duvarın başından (cm)<input type="number" inputmode="numeric" min="0" data-eg="' + j + '|x" value="' + e.x + '"></label>' +
+        '<label class="mg-f">Genişlik (cm)<input type="number" inputmode="numeric" min="0" data-eg="' + j + '|g" value="' + e.g + '"></label>' +
+        '<label class="mg-f">' + (e.tip === "girinti" ? "Derinlik: duvardan içeri (cm)" : "Derinlik: duvardan dışarı (cm)") + '<input type="number" inputmode="numeric" min="0" data-eg="' + j + '|d" value="' + e.d + '"></label>' +
+        (e.tip === "engel" ? '<label class="mg-f">Yükseklik (cm)<input type="number" inputmode="numeric" min="0" data-eg="' + j + '|h" value="' + e.h + '"></label>' : "") +
+        '</div><button type="button" class="mg-sil" data-egsil="' + j + '">Kaldır</button></div>';
+    }).join("") +
+      '<button type="button" class="mg-ekle" id="mg-egekle">+ Kolon, girinti veya engel ekle</button>' +
+      '<p class="mg-n">Kolon ve engellerin önüne sistem kurulmaz, sistemler iki yanına dizilir. Girintinin içine ayrı sistem kurulur.</p></div>';
     $("mg-dw").innerHTML = html;
   }
   function modelIkon(k) {
@@ -747,6 +833,9 @@
       if (S.dikme[tp].boy + AYAR.dikmeler[tp].taban > S.tavan) uyari.push(AYAR.dikmeler[tp].ad + (AYAR.dikmeler[tp].taban ? " (yerden " + AYAR.dikmeler[tp].taban + " cm ile birlikte)" : "") + " tavan yüksekliğini aşıyor.");
     });
     ["F", "C"].forEach(function (tp) { $("mg-dk" + tp).style.display = kullanilan().indexOf(tp) >= 0 ? "" : "none"; });
+    S.engeller.forEach(function (e, j) {
+      if (e.duvar < S.duzen && e.x + e.g > S.duvarlar[e.duvar].w) uyari.push((j + 1) + ". engel (" + AYAR.engelTipleri[e.tip].ad + ") duvarın dışına taşıyor; konumunu ve genişliğini kontrol edin.");
+    });
     if (S.kapi.duvar >= 0 && S.kapi.x + S.kapi.g > S.duvarlar[S.kapi.duvar].w) uyari.push("Kapı duvarın dışına taşıyor; kapı konumunu ve genişliğini kontrol edin.");
     var ws = $("mg-ws");
     ws.innerHTML = uyari.map(function (u) { return '<p class="mg-n mg-w">' + u + "</p>"; }).join("") + yer.map(function (d, i) {
@@ -761,7 +850,7 @@
       var no = 0;
       d.forEach(function (p, pi) {
         var uz = p.son - p.bas, kul = kaplanan(p.a), kalan = uz - kul;
-        if (d.length > 1 || p.yan) html += '<div class="mg-pb">' + (p.yan === "sol" ? "Kapının solu" : p.yan === "sag" ? "Kapının sağı" : "Bölüm " + (pi + 1)) + " · " + cm(uz) + " cm</div>";
+        if (d.length > 1 || p.ad) html += '<div class="mg-pb">' + (p.ad || "Bölüm " + (pi + 1)) + " · " + cm(uz) + " cm</div>";
         html += '<div class="mg-u">' + G().map(function (g) {
           return '<div><div><div class="w">' + g + ' cm sistem</div><div class="c">' + (p.a[g] || 0) + ' adet</div></div><div class="b"><button type="button" data-i="' + i + '" data-p="' + pi + '" data-g="' + g + '" data-d="-1" aria-label="' + g + ' cm sistem azalt">−</button><button type="button" data-i="' + i + '" data-p="' + pi + '" data-g="' + g + '" data-d="1" aria-label="' + g + ' cm sistem ekle">+</button></div></div>';
         }).join("") + "</div>" +
@@ -804,6 +893,9 @@
     if (S.cesan !== "yok") ek.push(AYAR.cesanlar[S.cesan].ad + " (" + (S.cesanYer === "aralikli" ? "aralıklı" : "her ünite") + ")");
     if (S.kubbe !== "yok") ek.push("kubbe (" + (S.kubbe === "aralikli" ? "aralıklı" : "her ünite") + ")");
     if (ek.length) satirlar.push("Ekstralar: " + ek.join(", "));
+    S.engeller.forEach(function (e) {
+      if (e.duvar < S.duzen) satirlar.push(AYAR.engelTipleri[e.tip].ad + ": " + (e.duvar + 1) + ". duvarda, başından " + cm(e.x) + " cm, genişlik " + cm(e.g) + " cm, derinlik " + cm(e.d) + " cm" + (e.tip === "engel" ? ", yükseklik " + cm(e.h) + " cm" : ""));
+    });
     if (S.kapi.duvar >= 0) satirlar.push("Kapı: " + (S.kapi.duvar + 1) + ". duvarda, başından " + cm(S.kapi.x) + " cm, genişlik " + cm(S.kapi.g) + " cm");
     yer.forEach(function (d, i) {
       var u = [];
@@ -844,13 +936,36 @@
   $("mg-bd").addEventListener("change", function (e) { var v = e.target.value.split("|"); S.cesan = v[0]; S.cesanYer = v[1] || "hepsi"; guncelle(); });
   $("mg-kb").addEventListener("change", function (e) { S.kubbe = e.target.value; guncelle(); });
   $("mg-rf").addEventListener("change", function (e) { S.raf = e.target.value; kaplamaSecimi(); guncelle(); });
+  function engelAyar(e) {
+    var k = e.target.dataset.eg;
+    if (!k) return false;
+    k = k.split("|");
+    var en = S.engeller[+k[0]];
+    if (k[1] === "tip") {
+      var T = AYAR.engelTipleri[e.target.value];
+      en.tip = e.target.value; en.g = T.g; en.d = T.d; en.h = T.h || 0;
+      sifirla(); duvarKutulari(); guncelle(); return true;
+    }
+    en[k[1]] = k[1] === "duvar" ? +e.target.value : sayi(e.target.value);
+    sifirla(); guncelle(); return true;
+  }
+  $("mg-dw").addEventListener("click", function (e) {
+    if (e.target.id === "mg-egekle") {
+      var T = AYAR.engelTipleri.kolon, dv = S.kapi.duvar === 0 && S.duzen > 1 ? 1 : 0;
+      S.engeller.push({ duvar: dv, tip: "kolon", x: Math.max(0, Math.round((S.duvarlar[dv].w - T.g) / 2)), g: T.g, d: T.d, h: 0 });
+      sifirla(); duvarKutulari(); guncelle();
+    }
+    if (e.target.dataset.egsil !== undefined) { S.engeller.splice(+e.target.dataset.egsil, 1); sifirla(); duvarKutulari(); guncelle(); }
+  });
   $("mg-dw").addEventListener("input", function (e) {
     var t = e.target;
+    if (t.dataset.eg && t.tagName === "INPUT") { engelAyar(e); return; }
     if (t.dataset.dw !== undefined) { S.duvarlar[+t.dataset.dw].w = sayi(t.value); sifirla(); guncelle(); }
     if (t.id === "mg-kg") { S.kapi.g = sayi(t.value); sifirla(); guncelle(); }
     if (t.id === "mg-kx") { S.kapi.x = sayi(t.value); sifirla(); guncelle(); }
   });
   $("mg-dw").addEventListener("change", function (e) {
+    if (e.target.dataset.eg && e.target.tagName === "SELECT") { engelAyar(e); return; }
     if (e.target.dataset.dt !== undefined) { S.duvarlar[+e.target.dataset.dt].tip = e.target.value; sifirla(); guncelle(); return; }
     if (e.target.id !== "mg-kd") return;
     S.kapi.duvar = +e.target.value;
